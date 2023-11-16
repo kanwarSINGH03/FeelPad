@@ -1,4 +1,4 @@
-package com.example.journalapp;
+package com.example.journalapp.ui.main;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
