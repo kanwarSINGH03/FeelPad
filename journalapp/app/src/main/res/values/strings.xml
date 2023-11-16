@@ -11,4 +11,5 @@
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="line">Line</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>
