@@ -78,6 +78,9 @@
         <activity android:name=".ui.note.NoteActivity" />
         <activity
             android:name=".ui.main.SearchActivity"
+        <activity android:name=".NewNoteActivity" />
+        <activity
+            android:name=".SearchActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -88,6 +91,8 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".ui.note.ReactionActivity" />
+        <activity android:name=".exportpdf.ExportPdfDialog" />
+        <activity android:name=".exportpdf.SelectPdfContentsActivity" />
     </application>
 
 </manifest>

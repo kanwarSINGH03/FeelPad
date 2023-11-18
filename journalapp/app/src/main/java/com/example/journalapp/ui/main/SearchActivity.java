@@ -1,4 +1,4 @@
-package com.example.journalapp.ui.main;
+package com.example.journalapp;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -67,9 +67,7 @@ public class SearchActivity extends AppCompatActivity {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         noteSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        cancelNoteSearchButton.setOnClickListener(view -> {
-            finish();
-        });
+        cancelNoteSearchButton.setOnClickListener(view -> finish());
 
         Observable<String> searchObservable = Observable.create(emitter -> noteSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
