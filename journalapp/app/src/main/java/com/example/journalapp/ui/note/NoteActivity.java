@@ -37,6 +37,7 @@ import com.example.journalapp.R;
 import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.database.entity.NoteItemEntity;
 import com.example.journalapp.database.NoteRepository;
+import com.example.journalapp.ui.main.MapsActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -77,6 +78,9 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private Note note;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor(); // thread manager
+
+
+
 
     // Permission Variables
     private static final int REQUEST_STORAGE_PERMISSION = 1;
@@ -173,6 +177,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         initWidgets();
         initOptionsMenu();
         initRecyclerView();
+        initLocation();
 
         // Check if the received intent is for a new note or existing note
         Intent intent = getIntent();
@@ -265,6 +270,14 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             Intent intent = new Intent(NoteActivity.this, ReactionActivity.class);
             saveNoteContent();
             mEmotionReturn.launch(intent);
+        });
+    }
+
+    private void initLocation(){
+        ImageButton location = (ImageButton) findViewById(R.id.location);
+        location.setOnClickListener(v -> {
+            Intent intent = new Intent(NoteActivity.this, MapsActivity.class);
+            startActivity(intent);
         });
     }
 

@@ -1,6 +1,7 @@
 package com.example.journalapp.ui.main;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -13,8 +14,10 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final String TAG = "MapsActivity";
     private static final String FINE_LOCATION = android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -48,6 +51,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //widgets
     private EditText mSearchText;
+    private ImageView mGps;
+
 
 
     private GoogleMap mMap;
@@ -62,6 +67,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mSearchText = (EditText) findViewById(R.id.input_search);
+        mGps =(ImageView) findViewById(R.id.ic_gps );
 
         getLocationPermission();
 
@@ -84,6 +90,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return false;
             }
         });
+
+        mGps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: clicked gps icon");
+                getDeviceLocation();
+            }
+        });
     }
     private void geoLocate(){
         Log.d(TAG,"geoLocate: geoLocating");
@@ -103,6 +117,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             Log.d(TAG, "geoLocate: found a location" + address.toString());
 
+            moveCamera(new LatLng(address.getLatitude(),address.getLongitude()),DEFAULT_ZOOM,
+                    address.getAddressLine(0));
 
         }
     }
@@ -120,7 +136,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             Log.d(TAG, "onComplete: found location!");
                             Location currentLocation = (Location) task.getResult();
 
-                            moveCamera(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),DEFAULT_ZOOM);
+                            moveCamera(new LatLng(currentLocation.getLatitude(),
+                                    currentLocation.getLongitude()),DEFAULT_ZOOM,"My Location");
                         }
                         else{
                             Log.d(TAG,"onComplete: current location is null");
@@ -136,10 +153,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void moveCamera(LatLng latLng, float zoom){
+    private void moveCamera(LatLng latLng, float zoom,String title){
         Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude +
                 ", lng: " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
+
+        if(!title.equals("My Location")){
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .title(title);
+        mMap.addMarker(options);
+        }
     }
 
     /**
@@ -161,7 +185,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             getDeviceLocation();
 
             if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    !=PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    !=PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)
                     !=PackageManager.PERMISSION_GRANTED)
             {return;}
             mMap.setMyLocationEnabled(true);
@@ -244,6 +269,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
+
+    public void exitMap(View view) {
+
+        // save the map into the database
+
+        finish();
+    }
+
 
 
 
