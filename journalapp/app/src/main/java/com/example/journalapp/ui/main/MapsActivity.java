@@ -270,6 +270,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    public void exitMap(View view) {
+
+        // save the map into the database
+
+        finish();
+    }
+
+
 
 
 }

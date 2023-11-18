@@ -16,6 +16,17 @@
 
         tools:context=".MapsActivity" />
 
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/white_border"
+        android:onClick="exitMap"
+        android:scaleType="fitCenter"
+        android:src="@drawable/back" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -23,6 +34,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         android:elevation="10dp"
+        android:layout_toRightOf="@id/backButton"
         android:background="@drawable/white_border"
         android:id="@+id/relLayout1"
         >
