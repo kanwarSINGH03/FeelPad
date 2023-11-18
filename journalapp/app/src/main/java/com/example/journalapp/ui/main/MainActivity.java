@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.journalapp.exportpdf.SelectPdfContentsActivity;
+import com.example.journalapp.ui.note.NoteActivity;
 import com.example.journalapp.R;
 import com.example.journalapp.database.NoteRepository;
 import com.example.journalapp.database.entity.Note;
@@ -34,8 +36,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
 
         setNoteRecyclerView(); // initialize RecyclerView (display notes)
         createNoteObserver(); // observer to watch for changes in list of notes
@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         });
         combinePdfButton.setOnClickListener(v -> {
             // Handle the click for the combine PDF button here
+            Intent intent = new Intent(MainActivity.this, SelectPdfContentsActivity.class);
+            startActivity(intent);
         });
         addNoteButton.setOnClickListener(v -> {
             // Handle the click for the add note button here

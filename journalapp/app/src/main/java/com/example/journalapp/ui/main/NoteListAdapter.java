@@ -22,6 +22,7 @@ public class NoteListAdapter extends ListAdapter<Note, NoteViewHolder> {
     /**
      * Constructor for a new NoteListAdapter
      * Note: DiffUtil utility calculates differences between old and new datasets (for updating page)
+     *
      * @param diffCallback class that compares two items & contents in the old & new dataset
      */
     protected NoteListAdapter(@NonNull DiffUtil.ItemCallback<Note> diffCallback) {
@@ -32,8 +33,9 @@ public class NoteListAdapter extends ListAdapter<Note, NoteViewHolder> {
     /**
      * Creates a new ViewHolder (entry) into the RecyclerView when needed
      * Automatically created and reused, each time calling onBindViewHolder()
-     * @param parent The ViewGroup into which the new View will be added after it is bound to
-     *               an adapter position.
+     *
+     * @param parent   The ViewGroup into which the new View will be added after it is bound to
+     *                 an adapter position.
      * @param viewType The view type of the new View.
      * @return a new NoteViewHolder that holds the View for a lsit item
      */
@@ -46,8 +48,9 @@ public class NoteListAdapter extends ListAdapter<Note, NoteViewHolder> {
     /**
      * Binds data to the View within the ViewHolder at the specified position
      * Shows the Title & Desc in the RecyclerView
-     * @param holder The ViewHolder which should be updated to represent the contents of the
-     *        item at the given position in the data set.
+     *
+     * @param holder   The ViewHolder which should be updated to represent the contents of the
+     *                 item at the given position in the data set.
      * @param position The position of the item within the adapter's data set.
      */
     @Override
@@ -65,10 +68,10 @@ public class NoteListAdapter extends ListAdapter<Note, NoteViewHolder> {
         /**
          * Click listener for each entry inside RecyclerView to link to a note
          */
-        holder.itemView.setOnClickListener(new View.OnClickListener(){
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
 
                 // Intent to go to the note editing page
                 Intent intent = new Intent(v.getContext(), NoteActivity.class);
@@ -89,17 +92,19 @@ public class NoteListAdapter extends ListAdapter<Note, NoteViewHolder> {
 
         /**
          * Checks if two Notes represent the same item
+         *
          * @param oldItem The item in the old list.
          * @param newItem The item in the new list.
          * @return boolean representing if items are the same
          */
         @Override
         public boolean areItemsTheSame(@NonNull Note oldItem, @NonNull Note newItem) {
-            return oldItem.getId() == newItem.getId();
+            return oldItem.getId().equals(newItem.getId());
         }
 
         /**
          * Checks if the content of two Notes are the same
+         *
          * @param oldItem The item in the old list.
          * @param newItem The item in the new list.
          * @return boolean representing whether content is the same

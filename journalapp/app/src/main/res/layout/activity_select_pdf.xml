@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/title"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/exportItemConstraintView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/cancelNoteSearchButton"
+            android:layout_width="41dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="10dp"
+            android:background="@color/white"
+            android:contentDescription="@string/cancel_search_button"
+            android:scaleType="fitCenter"
+            android:src="@drawable/back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/noteSearchSelectAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:text="@string/select_all"
+            app:backgroundTint="@color/dim_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/selectNoteListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:divider="@color/dark_gray"
+        android:dividerHeight="3dp"
+        android:padding="@dimen/cardview_default_radius"
+        app:layout_constraintTop_toBottomOf="@id/exportItemConstraintView"
+        tools:layout_editor_absoluteX="2dp"
+        tools:listitem="@layout/select_note_cell" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
