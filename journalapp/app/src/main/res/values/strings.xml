@@ -11,6 +11,9 @@
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="line">Line</string>
+    <string name="date">Date</string>
+    <string name="mon_dd_yyyy">Mon dd, yyyy</string>
+    <string name="select_all">Select All</string>
     <string name="beach_button">beach button</string>
     <string name="theme_2">Theme 2</string>
     <string name="theme_3">idk button</string>
