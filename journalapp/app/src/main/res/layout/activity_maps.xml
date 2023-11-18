@@ -52,7 +52,7 @@
     </RelativeLayout>
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/ic_gps"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_below="@+id/relLayout1"
