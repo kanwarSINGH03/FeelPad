@@ -63,7 +63,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
     // Note Component Variables
     private EditText titleEditText;
-    private ImageButton openReactionMenu;
 
     // Note Contents Variables
     private RecyclerView noteContentRecyclerView;
@@ -97,7 +96,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                                     // Handle images
                                     Uri localUri = saveMediaToInternalStorage(uri, true); // true for image
                                     insertMedia(localUri, NoteItem.ItemType.IMAGE);
-                                } else if (mimeType.startsWith("video/")) {
+                                }
+                                else if (mimeType.startsWith("video/")) {
                                     // Handle videos
                                     Uri localUri = saveMediaToInternalStorage(uri, false); // false for video
                                     insertMedia(localUri, NoteItem.ItemType.VIDEO);
@@ -112,7 +112,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             });
 
     private final ActivityResultLauncher<Void> mTakePicture =
-            registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), bitmap -> {
+            registerForActivityResult( new ActivityResultContracts.TakePicturePreview(), bitmap -> {
                 // Handle returned Uri's
                 Uri uri = null;
                 try {
@@ -127,18 +127,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                 }
 
             });
-
-    private final ActivityResultLauncher<Intent> mEmotionReturn =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                    Intent intent = result.getData();
-                    int emotion = intent.getIntExtra("emotion", 0);
-                    note.setEmotion(emotion);
-                    noteRepository.updateNoteEmtotion(note);
-                    updateEmotionImage();
-                }
-            });
-
 
     // Special member variable for drag and dropping contents @TODO change UI to be more visible
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START | ItemTouchHelper.END, 0) {
@@ -159,6 +147,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     };
 
 
+
     /**
      * Called when activity is first created
      *
@@ -168,6 +157,14 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     protected void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
         setContentView(R.layout.activity_note);
+
+        ImageButton openReactionMenu = findViewById(R.id.reactionMenu);
+
+        openReactionMenu.setOnClickListener(v -> {
+            Intent intent = new Intent(NoteActivity.this, ReactionActivity.class);
+            saveNoteContent();
+            startActivity(intent);
+        });
 
         // Initialize UI Widgets & set current date
         initWidgets();
@@ -185,31 +182,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         } else {
             // New Note: create note_id and create new note
             setNewNote();
-        }
-    }
-
-    private void updateEmotionImage() {
-        int value = note.getEmotion();
-        Log.i("Emotion", value + "");
-        switch (value) {
-            case 1:
-                openReactionMenu.setImageResource(R.drawable.angry_face);
-                break;
-            case 2:
-                openReactionMenu.setImageResource(R.drawable.medium_angry_face);
-                break;
-            case 3:
-                openReactionMenu.setImageResource(R.drawable.neutral_face);
-                break;
-            case 4:
-                openReactionMenu.setImageResource(R.drawable.slightly_smiling_face);
-                break;
-            case 5:
-                openReactionMenu.setImageResource(R.drawable.big_smile_face);
-                break;
-            default:
-                openReactionMenu.setImageResource(R.drawable.add_reaction_icon);
-                break;
         }
     }
 
@@ -258,14 +230,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         // Subscribe to observables to trigger a save to database
         compositeDisposable.addAll(
                 titleObservable.subscribe(this::saveNoteTitle));
-
-        openReactionMenu = findViewById(R.id.reactionMenu);
-
-        openReactionMenu.setOnClickListener(v -> {
-            Intent intent = new Intent(NoteActivity.this, ReactionActivity.class);
-            saveNoteContent();
-            mEmotionReturn.launch(intent);
-        });
     }
 
     /**
@@ -320,7 +284,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * Initialize the RecyclerView that represents a Note's contents
      * Contents can include: EditTexts, ImageViews, etc.
      */
-    private void initRecyclerView() {
+    private void initRecyclerView(){
 
         // First initialize the noteItems variable
         noteItems = new ArrayList<>();
@@ -354,7 +318,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * Autosave function
      */
     @Override
-    public void onNoteItemContentChanged() {
+    public void onNoteItemContentChanged(){
         saveNoteContent();
     }
 
@@ -366,10 +330,11 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      */
     @Override
     public void onItemFocusChange(int position, boolean hasFocus) {
-        if (hasFocus) {
+        if (hasFocus){
             focusedItem = position;
             Log.e("Focus", "Focus has changed to position " + focusedItem);
-        } else if (focusedItem == position) {
+        }
+        else if (focusedItem == position){
             focusedItem = -1;
         }
     }
@@ -418,15 +383,16 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      */
     private void checkPermissionAndOpenGallery() {
         // API Level 33+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
             // API Level 33+
             boolean hasImagePermission = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED;
             boolean hasVideoPermission = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED;
 
             if (!hasImagePermission || !hasVideoPermission) {
                 // Request both permissions if either is not granted
-                ActivityCompat.requestPermissions(NoteActivity.this, new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO}, REQUEST_STORAGE_PERMISSION);
-            } else {
+                ActivityCompat.requestPermissions(NoteActivity.this, new String[] {Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO}, REQUEST_STORAGE_PERMISSION);
+            }
+            else {
                 // Permissions granted, open gallery
                 selectMedia();
             }
@@ -445,11 +411,11 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         }
     }
 
-    void checkPermissionAndOpenCamera() {
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+    void checkPermissionAndOpenCamera(){
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
             // Permission has not been granted for using Camera, request it
-            ActivityCompat.requestPermissions(NoteActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-        } else {
+            ActivityCompat.requestPermissions(NoteActivity.this, new String[] {Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        }else{
             // Permission has been granted, go to the camera
             takePicture();
         }
@@ -457,23 +423,24 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
     /**
      * Callback for the result from requesting permissions
-     *
-     * @param requestCode  The request code in
-     * @param permissions  The requested permissions. Never null.
+     * @param requestCode The request code in
+     * @param permissions The requested permissions. Never null.
      * @param grantResults The grant results for the corresponding permissions
-     *                     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
-     *                     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+     *
      */
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         // check permission requests for READ_MEDIA_IMAGES
-        if (requestCode == REQUEST_STORAGE_PERMISSION && grantResults.length > 0) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == REQUEST_STORAGE_PERMISSION && grantResults.length > 0){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 // if permission granted, then allow access
                 selectMedia();
-            } else {
+            }
+            else{
 
                 // if permission denied, inform user
                 Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show();
@@ -484,7 +451,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     /**
      * Launches an intent to open files for both images and videos
      */
-    private void selectMedia() {
+    private void selectMedia(){
         // MIME type for both images and videos
         String[] mimeTypes = {"image/*", "video/*"};
 
@@ -499,16 +466,15 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         mGetContent.launch(intent);
     }
 
-    private void takePicture() {
+    private void takePicture(){
         mTakePicture.launch(null);
     }
 
     /**
      * Save the media to internal storage so it still exists even if user deletes from gallery
      * -- should be called right after the user picks their media
-     *
      * @param mediaUri the URI of the media type
-     * @param isImage  whether or not the media is an image. For identification
+     * @param isImage whether or not the media is an image. For identification
      * @return the internal storage URI
      */
     @Nullable
@@ -542,7 +508,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
             // Return URI to saved media
             return FileProvider.getUriForFile(this, "com.example.journalapp.fileprovider", outputFile);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             return null; // Handle null in calling function
         }
@@ -550,12 +517,12 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
     private Uri saveImageFromBitmapToStorage(Bitmap image) {
         Uri uri = null;
-        try {
+        try{
             String imageName = "image_" + System.currentTimeMillis() + ".png";
             FileOutputStream stream = openFileOutput(imageName, MODE_PRIVATE);
             image.compress(Bitmap.CompressFormat.PNG, 100, stream);
             stream.close();
-            return FileProvider.getUriForFile(this, "com.example.journalapp.fileprovider", new File(getFilesDir(), imageName));
+            return FileProvider.getUriForFile(this,"com.example.journalapp.fileprovider", new File(getFilesDir(), imageName));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -563,7 +530,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
     /**
      * Deletes media (image,video) given the URI, from internal storage
-     *
      * @param mediaUri
      * @return
      */
@@ -574,7 +540,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             File fileToDelete = new File(getFilesDir(), fileName);
             return fileToDelete.delete();
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -585,7 +552,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * Case 1: Focused Item: EditText && isEmpty -> Replace with image and push EditText down
      * Case 2: Focused Item: EditText && !(isEmpty) -> Put image underneath EditText and create new EditText under image
      * Case 3: Focused Item: Image -> Put image underneath Image
-     *
      * @TODO missed case... more testing
      */
     public void insertMedia(Uri mediaUri, NoteItem.ItemType mediaType) {
@@ -647,8 +613,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     /**
      * Clears all highlights based on NoteAdapter function.
      */
-    public void clearHighlight() {
-        if (highlightedItem != 1) {
+    public void clearHighlight(){
+        if (highlightedItem != 1){
             Log.e("Highlights", "clearing highlights");
             noteAdapter.clearHighlights();
             highlightedItem = -1;
@@ -657,10 +623,9 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
     /**
      * Deletes a View (EditText, ImageView, etc.)
-     *
      * @param position
      */
-    private void deleteItem(int position) {
+    private void deleteItem(int position){
         Log.e("Deletion", "Deleting an item. Position: " + position);
 
         // remove items from the list
@@ -672,7 +637,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         logNoteItems();
 
         // update ordering for subsequent items in the list
-        for (int i = position; i < noteItems.size(); i++) {
+        for (int i = position; i < noteItems.size(); i++){
             noteItems.get(i).setOrderIndex(i);
         }
 
@@ -695,11 +660,11 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private void setNewNote() {
 
         Date currentDate = new Date();
-        note = new Note("", currentDate.toString(), 0);
+        note = new Note("", currentDate.toString(), 1);
         noteRepository.insertNote(note);
 
         // Initialize the contents of noteItems as a single EditText
-        noteItems.add(new NoteItem(NoteItem.ItemType.TEXT, null, "", 0)); // Empty text for the user to start typing
+        noteItems.add(new NoteItem(NoteItem.ItemType.TEXT,null,"",  0)); // Empty text for the user to start typing
 
         // set focusedItem to first item
         focusedItem = 0;
@@ -738,7 +703,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                 runOnUiThread(() -> {
                     note = fetchedNote;
                     titleEditText.setText(note.getTitle());
-                    updateEmotionImage();
+
                 });
             } else {
                 // Handle the case where the note is null (e.`g., not found in the database)
@@ -769,6 +734,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * Saves the contents of the note to the database
      * First checks if it should update or add content to the database
      * Usually called by program when changes are detected by auto save
+     *
      */
     public void saveNoteContent() {
         // must be done on a background thread
@@ -859,7 +825,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     @Override
     protected void onPause() {
         super.onPause();
-        if (isFinishing()) {
+        if (isFinishing()){
             exitNote(null);
         }
     }
@@ -872,15 +838,15 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      */
     public void exitNote(View view) {
         String title = note.getTitle();
-        if ((noteItems.size() == 1 && noteItems.get(0).getContent().equals("")) && title.isEmpty()) {
+        if ( (noteItems.size() == 1 && noteItems.get(0).getContent().equals("") ) && title.isEmpty()) {
             Log.e("Exiting note", "Deleting note");
             noteRepository.deleteNote(note);
-        } else {
+        }
+        else{
             saveNoteContent(); // add to onExit?? method instead?
         }
         finish();
     }
-
 
     // ==============================
     // REGION: Other
