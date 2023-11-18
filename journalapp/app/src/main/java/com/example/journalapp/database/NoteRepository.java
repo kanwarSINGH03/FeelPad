@@ -61,6 +61,10 @@ public class NoteRepository {
         NoteDatabase.databaseWriteExecutor.execute(() -> noteDao.updateNoteTitle(note.getTitle(), note.getId()));
     }
 
+    public void updateNoteEmtotion(Note note) {
+        NoteDatabase.databaseWriteExecutor.execute(() -> noteDao.updateNoteEmotion(note.getEmotion(), note.getId()));
+    }
+
     /**
      * Retrieve all notes using LiveData list of notes. Live
      * data list of notes descending order by date.

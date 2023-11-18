@@ -1,5 +1,6 @@
 package com.example.journalapp.ui.note;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -62,9 +63,10 @@ public class ReactionActivity extends AppCompatActivity {
     }
 
     public void exitReaction(View view) {
-
         // save the reaction into the database
-
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("emotion", emotionValue);
+        setResult(RESULT_OK, resultIntent);
         finish();
     }
 

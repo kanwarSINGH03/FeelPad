@@ -90,6 +90,9 @@ public interface NoteDao {
     @Query("UPDATE note_table SET title = :providedTitle WHERE id = :noteId")
     void updateNoteTitle(String providedTitle, String noteId);
 
+
+    @Query("UPDATE note_table SET emotion = :providedEmotion WHERE id = :noteId")
+    void updateNoteEmotion(int providedEmotion, String noteId);
     /**
      * Deletes a note from the database
      *
