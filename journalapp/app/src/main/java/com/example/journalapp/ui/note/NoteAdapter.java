@@ -1,5 +1,6 @@
 package com.example.journalapp.ui.note;
 
+import android.app.Activity;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -582,14 +584,20 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
          */
         public void bind(NoteItem noteItem, boolean isHighlighted) {
             Uri imageUri = noteItem.getContentMediaUri();
-            if (imageUri != null){
-
-                // Set click listener
-                imageView.setOnClickListener(v ->{
+            if (imageUri != null) {
+                // Set click listener for image to open imageFragment
+                imageView.setOnClickListener(v -> {
                     openImageFragment(imageUri);
                 });
 
-                // Use Glide to load the iamge from the URI @TODO add .placeholders/error images
+                // Calculate the screen width & set width/height for imageView
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                ((Activity) imageView.getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                int screenWidth = displayMetrics.widthPixels;
+                imageView.getLayoutParams().width = screenWidth;
+                imageView.getLayoutParams().height = screenWidth;
+
+                // Use Glide to load the image
                 Glide.with(itemView.getContext())
                         .load(imageUri)
                         .into(imageView);
