@@ -12,6 +12,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +40,7 @@ import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.database.entity.NoteItemEntity;
 import com.example.journalapp.database.NoteRepository;
 import com.example.journalapp.ui.main.MapsActivity;
+import com.example.journalapp.utils.ConversionUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -65,6 +68,12 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     // Note Component Variables
     private EditText titleEditText;
     private ImageButton openReactionMenu;
+
+    // Styling Variables
+    private ImageButton boldButton;
+    private ImageButton italicsButton;
+    private ImageButton underlineButton;
+    private ImageButton strikethroughButton;
 
     // Note Contents Variables
     private RecyclerView noteContentRecyclerView;
@@ -177,6 +186,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         initWidgets();
         initOptionsMenu();
         initRecyclerView();
+        initStyling();
         initLocation();
 
         // Check if the received intent is for a new note or existing note
@@ -345,6 +355,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         // Set up the RecyclerView
         noteContentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         noteContentRecyclerView.setAdapter(noteAdapter);
+        noteContentRecyclerView.setItemAnimator(null); // can remove if needed
 
         // Set all listeners
         noteAdapter.setOnNoteItemChangeListener(this); // notified to save if changes are made to noteItems
@@ -356,6 +367,67 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         // For drag and dropping
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(noteContentRecyclerView);
+    }
+
+    // ==============================
+    // REGION: Text Styling
+    // ==============================
+
+    /**
+     * Initialize styling buttons & functionality
+     */
+    private void initStyling(){
+        // Initialize all styling buttons and attach listeners
+
+        boldButton = findViewById(R.id.boldButton);
+        boldButton.setOnClickListener(v ->{
+            if (focusedItem >= 0){
+                RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
+                if (viewHolder instanceof NoteAdapter.TextViewHolder){
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyBold();
+                }
+            }
+        });
+
+        italicsButton = findViewById(R.id.italicsButton);
+        italicsButton.setOnClickListener(v -> {
+            if (focusedItem >= 0){
+                RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
+                if (viewHolder instanceof NoteAdapter.TextViewHolder){
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyItalics();
+                }
+            }
+        });
+
+        underlineButton = findViewById(R.id.underlineButton);
+        underlineButton.setOnClickListener(v -> {
+            if (focusedItem >= 0){
+                RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
+                if (viewHolder instanceof NoteAdapter.TextViewHolder){
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyUnderline();
+                }
+            }
+        });
+
+        strikethroughButton = findViewById(R.id.strikethroughButton);
+        strikethroughButton.setOnClickListener(v -> {
+            if (focusedItem >= 0){
+                RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
+                if (viewHolder instanceof NoteAdapter.TextViewHolder){
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyStrikethrough();
+                }
+            }
+        });
+    }
+
+    /**
+     * Callback Interface for the adapter to implement.
+     */
+    public interface TextFormattingHandler{
+        void applyBold();
+        void applyItalics();
+        void applyUnderline();
+        void applyStrikethrough();
     }
 
     // ==============================
@@ -381,9 +453,10 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     public void onItemFocusChange(int position, boolean hasFocus) {
         if (hasFocus) {
             focusedItem = position;
-            Log.e("Focus", "Focus has changed to position " + focusedItem);
+            Log.e("FocusChange", "Focus has changed to position " + focusedItem);
         } else if (focusedItem == position) {
             focusedItem = -1;
+            Log.e("FocusChange", "Focus has been set to invalid (-1)");
         }
     }
 
@@ -418,6 +491,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         });
         popupMenu.show();
     }
+
 
     // ==============================
     // REGION: Image Handling
@@ -650,7 +724,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             noteItems.get(i).setOrderIndex(i);
         }
 
-        logNoteItems();
+        logNoteItems("Inserted Media");
     }
 
     // ==============================
@@ -682,14 +756,14 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         // notify adapter
         noteAdapter.notifyItemRemoved(position);
 
-        logNoteItems();
+        logNoteItems("Contents before deletion");
 
         // update ordering for subsequent items in the list
         for (int i = position; i < noteItems.size(); i++) {
             noteItems.get(i).setOrderIndex(i);
         }
 
-        logNoteItems();
+        logNoteItems("Contents after deletion");
 
         // notify the adapter of the item range changed for updating the view
         noteAdapter.notifyItemRangeChanged(position, noteItems.size() - position);
@@ -727,36 +801,41 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      */
     private void setExistingNote(String note_id) {
 
-        // Observe the LiveData returned by the repository for note items
-        noteRepository.getNoteItemsForNote(note_id).observe(this, noteItemEntities -> {
-            // This code will run when the note items are loaded or when they change.
-
-            // Convert NoteItemEntity to NoteItem
-            List<NoteItem> newNoteItems = convertNoteItemEntitiesToNoteItems(noteItemEntities);
-
-            // Make sure the noteItems list is clear to add all items from the database to it
-            noteItems.clear();
-            noteItems.addAll(newNoteItems);
-
-            // Notify the adapter of the change to refresh RecyclerView.
-            noteAdapter.notifyDataSetChanged(); // resource intensive, but okay because its only done when setting the existing note
-        });
-
         // Retrieve the note using the id on a background thread
         executorService.execute(() -> {
+
+            // Part I of setting up RecyclerView (note items)
+            List<NoteItemEntity> noteItemEntities = noteRepository.getNoteItemsForNoteSync(note_id);
+
+            // Part I of setting up Note metadata (title, etc.)
             Note fetchedNote = noteRepository.getNoteById(note_id);
             if (fetchedNote != null) {
 
                 // Use UI Thread to update UI with the fetched note
                 runOnUiThread(() -> {
+
+                    // Part II of setting up RecyclerView (note items)
+                    List<NoteItem> newNoteItems = convertNoteItemEntitiesToNoteItems(noteItemEntities);
+
+                    // update the list
+                    noteItems.clear();
+                    noteItems.addAll(newNoteItems);
+
+                    // refresh recycleview
+                    noteAdapter.notifyDataSetChanged();
+
+                    // Part II of setting up Note metadata (title, etc.)
                     note = fetchedNote;
                     titleEditText.setText(note.getTitle());
                     updateEmotionImage();
+                    logNoteItems("Items after setting existing note");
                 });
             } else {
                 // Handle the case where the note is null (e.`g., not found in the database)
                 runOnUiThread(this::finish);
             }
+
+
         });
 
         focusedItem = 0;
@@ -776,6 +855,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         Log.d("TextWatcher", "Updating the title: " + title);
         note.setTitle(title);
         noteRepository.updateNoteTitle(note);
+
+        runOnUiThread(() -> Toast.makeText(NoteActivity.this, "Title Saved", Toast.LENGTH_SHORT).show());
     }
 
     /**
@@ -848,6 +929,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                 }
             }
 
+            logNoteItems("Contents after saving");
+
             // Inform user of the save on the UI thread
             runOnUiThread(() -> Toast.makeText(NoteActivity.this, "Note saved", Toast.LENGTH_SHORT).show());
         });
@@ -902,10 +985,26 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     /**
      * Testing Purposes. Can log all of the contents inside the NoteItems list.
      */
-    public void logNoteItems() {
+    public void logNoteItems(String message) {
+        Log.d("NoteItemLog", message);
+        if (noteItems.size() == 0){
+            Log.d("NoteItemLog", "Note List is Empty");
+        }
         for (int i = 0; i < noteItems.size(); i++) {
             NoteItem item = noteItems.get(i);
             Log.d("NoteItemLog", "Index: " + i + ", Type: " + item.getType() + ", Content: " + item.getContent());
+        }
+
+    }
+
+    public void logFocus(){
+        View currentFocusedView = getCurrentFocus();
+        if (currentFocusedView != null) {
+            // Get the ID of the focused view
+            int focusedViewId = currentFocusedView.getId();
+            // Find the resource entry name of the ID
+            String resourceName = getResources().getResourceEntryName(focusedViewId);
+            Log.d("Focused View", "Current focused view is: " + resourceName);
         }
     }
 }

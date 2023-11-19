@@ -1,5 +1,11 @@
 package com.example.journalapp.utils;
 
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+
 import com.example.journalapp.ui.note.NoteItem;
 import com.example.journalapp.database.entity.NoteItemEntity;
 
@@ -50,5 +56,35 @@ public class ConversionUtil {
             noteItems.add(new NoteItem(itemType,entity.getItemId(), entity.getContent(),entity.getOrderIndex()));
         }
         return noteItems;
+    }
+
+    /**
+     * Convert a Spannable into a String HTML
+     * @param spannableBuilder
+     * @return a String representing HTML of text
+     */
+    public static String spannableToHtml(SpannableStringBuilder spannableBuilder){
+        return Html.toHtml(spannableBuilder);
+    }
+
+    /**
+     * Convert HTML String to a Spannable
+     * @param html
+     * @return a Spannable that can be displayed
+     */
+    public static SpannableStringBuilder htmlToSpannable(String html){
+        // Replace <p> tags with nothing, and </p> tags with a single newline character
+        html = html.replaceAll("<p[^>]*>", "").replaceAll("</p>", "\n");
+
+        // Convert HTML to spannable
+        Spanned spanned = Html.fromHtml(html);
+
+        // trim the end if it has an extra whitespace from conversion
+        int end = spanned.length();
+        while (end > 0 && (Character.isWhitespace(spanned.charAt(end - 1)) || spanned.charAt(end - 1) == '\n')) {
+            end--;
+        }
+
+        return new SpannableStringBuilder(spanned, 0, end);
     }
 }
