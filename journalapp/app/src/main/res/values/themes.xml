@@ -9,5 +9,9 @@
         <item name="android:popupBackground">@drawable/menu_background</item>
     </style>
 
+    <style name="CustomDialogFragmentStyle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
 
 </resources>

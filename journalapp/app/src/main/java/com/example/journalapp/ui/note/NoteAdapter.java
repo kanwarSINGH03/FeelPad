@@ -1,7 +1,9 @@
 package com.example.journalapp.ui.note;
 
+import android.app.Activity;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -9,6 +11,7 @@ import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -19,6 +22,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -579,8 +584,20 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
          */
         public void bind(NoteItem noteItem, boolean isHighlighted) {
             Uri imageUri = noteItem.getContentMediaUri();
-            if (imageUri != null){
-                // Use Glide to load the iamge from the URI @TODO add .placeholders/error images
+            if (imageUri != null) {
+                // Set click listener for image to open imageFragment
+                imageView.setOnClickListener(v -> {
+                    openImageFragment(imageUri);
+                });
+
+                // Calculate the screen width & set width/height for imageView
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                ((Activity) imageView.getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                int screenWidth = displayMetrics.widthPixels;
+                imageView.getLayoutParams().width = screenWidth;
+                imageView.getLayoutParams().height = screenWidth;
+
+                // Use Glide to load the image
                 Glide.with(itemView.getContext())
                         .load(imageUri)
                         .into(imageView);
@@ -590,6 +607,24 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             int backgroundId = isHighlighted ? R.drawable.image_view_background_highlight : R.drawable.image_view_background;
             imageView.setBackgroundResource(backgroundId);
         }
+
+        /**
+         * Opens the image fragment showing the image in a better view
+         * @param imageUri
+         */
+        private void openImageFragment(Uri imageUri){
+            ImageFragment imageFragment = new ImageFragment();
+
+            // pass arguments
+            Bundle args = new Bundle();
+            args.putString("imageUri", imageUri.toString());
+            imageFragment.setArguments(args);
+
+            // show fragment
+            imageFragment.show(((AppCompatActivity) itemView.getContext()).getSupportFragmentManager(), "image_dialog");
+
+        }
+
     }
 
     static class VideoViewHolder extends RecyclerView.ViewHolder{
