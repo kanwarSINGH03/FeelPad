@@ -2,6 +2,7 @@ package com.example.journalapp.ui.note;
 
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -19,6 +20,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -580,6 +583,12 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         public void bind(NoteItem noteItem, boolean isHighlighted) {
             Uri imageUri = noteItem.getContentMediaUri();
             if (imageUri != null){
+
+                // Set click listener
+                imageView.setOnClickListener(v ->{
+                    openImageFragment(imageUri);
+                });
+
                 // Use Glide to load the iamge from the URI @TODO add .placeholders/error images
                 Glide.with(itemView.getContext())
                         .load(imageUri)
@@ -590,6 +599,24 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             int backgroundId = isHighlighted ? R.drawable.image_view_background_highlight : R.drawable.image_view_background;
             imageView.setBackgroundResource(backgroundId);
         }
+
+        /**
+         * Opens the image fragment showing the image in a better view
+         * @param imageUri
+         */
+        private void openImageFragment(Uri imageUri){
+            ImageFragment imageFragment = new ImageFragment();
+
+            // pass arguments
+            Bundle args = new Bundle();
+            args.putString("imageUri", imageUri.toString());
+            imageFragment.setArguments(args);
+
+            // show fragment
+            imageFragment.show(((AppCompatActivity) itemView.getContext()).getSupportFragmentManager(), "image_dialog");
+
+        }
+
     }
 
     static class VideoViewHolder extends RecyclerView.ViewHolder{
