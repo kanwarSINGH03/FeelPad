@@ -124,31 +124,31 @@
             app:layout_constraintTop_toBottomOf="@id/recycler_view_notes"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"><!-- Set your desired background color -->
+            app:layout_constraintEnd_toEndOf="parent">
 
             <ImageButton
                 android:id="@+id/boldButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/baseline_format_bold_24" /> <!-- Replace with your icon -->
+                android:src="@drawable/baseline_format_bold_24" />
 
             <ImageButton
                 android:id="@+id/italicsButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/baseline_format_italic_24" /> <!-- Replace with your icon -->
+                android:src="@drawable/baseline_format_italic_24" />
 
             <ImageButton
                 android:id="@+id/underlineButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/baseline_format_underline_24" /> <!-- Replace with your icon -->
+                android:src="@drawable/baseline_format_underline_24" />
 
             <ImageButton
                 android:id="@+id/strikethroughButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/baseline_format_strikethrough_24" /> <!-- Replace with your icon -->
+                android:src="@drawable/baseline_format_strikethrough_24" />
 
         </LinearLayout>
 
