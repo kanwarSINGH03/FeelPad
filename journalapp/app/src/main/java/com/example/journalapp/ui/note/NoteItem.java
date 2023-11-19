@@ -1,7 +1,12 @@
 package com.example.journalapp.ui.note;
 
 import android.net.Uri;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
+
+import com.example.journalapp.utils.ConversionUtil;
 
 import java.util.UUID;
 
@@ -19,7 +24,14 @@ public class NoteItem {
     }
     private String itemId; // unique identifier
     private ItemType type; // type of the note item (Enum)
-    private String content; // can store either text or string representation of the URI
+
+    /*
+    Content to be stored as a String, but can represent different formats that can be converted
+    TEXT: Convert from Spannables to String
+    IMAGE: Convert from URI to String
+    VIDEO: Convert from URI to String
+     */
+    private String content;
     private int orderIndex; // keep track of order in a list
 
     /**
@@ -111,6 +123,23 @@ public class NoteItem {
         else{
             this.content = null;
         }
+    }
+
+    /**
+     * Set the content using a Spannable
+     * Converts the Spannable into a String HTML before storing
+     */
+    public void setContentWithSpannable(SpannableStringBuilder stringBuilder){
+        this.content = ConversionUtil.spannableToHtml(stringBuilder);
+    }
+
+    /**
+     * Gets the content as a Spannable
+     * Converts the String HTML into a Spannable before returning
+     * @return
+     */
+    public SpannableStringBuilder getContentSpannable(){
+        return ConversionUtil.htmlToSpannable(this.content);
     }
 
     /**

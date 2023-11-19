@@ -108,11 +108,53 @@
             android:layout_marginBottom="15sp"
             android:background="@null"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/bottom_toolbar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <LinearLayout
+            android:id="@+id/bottom_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="8dp"
+            android:background="@color/white"
+            app:layout_constraintTop_toBottomOf="@id/recycler_view_notes"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"><!-- Set your desired background color -->
+
+            <ImageButton
+                android:id="@+id/boldButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_format_bold_24" /> <!-- Replace with your icon -->
+
+            <ImageButton
+                android:id="@+id/italicsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_format_italic_24" /> <!-- Replace with your icon -->
+
+            <ImageButton
+                android:id="@+id/underlineButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_format_underline_24" /> <!-- Replace with your icon -->
+
+            <ImageButton
+                android:id="@+id/strikethroughButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_format_strikethrough_24" /> <!-- Replace with your icon -->
+
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

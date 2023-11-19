@@ -66,6 +66,12 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private EditText titleEditText;
     private ImageButton openReactionMenu;
 
+    // Styling Variables
+    private ImageButton boldButton;
+    private ImageButton italicsButton;
+    private ImageButton underlineButton;
+    private ImageButton strikethroughButton;
+
     // Note Contents Variables
     private RecyclerView noteContentRecyclerView;
     private NoteAdapter noteAdapter;
@@ -177,6 +183,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         initWidgets();
         initOptionsMenu();
         initRecyclerView();
+        initStyling();
         initLocation();
 
         // Check if the received intent is for a new note or existing note
@@ -358,6 +365,45 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         itemTouchHelper.attachToRecyclerView(noteContentRecyclerView);
     }
 
+    private void initStyling(){
+        // Initialize all styling buttons and attach listeners
+        boldButton = findViewById(R.id.boldButton);
+        boldButton.setOnClickListener(v ->{
+            if (focusedItem >= 0){
+                RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
+                if (viewHolder instanceof NoteAdapter.TextViewHolder){
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyBold();
+                }
+            }
+        });
+
+        italicsButton = findViewById(R.id.italicsButton);
+        italicsButton.setOnClickListener(v -> {
+            if (focusedItem >= 0){
+                RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
+                if (viewHolder instanceof NoteAdapter.TextViewHolder){
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyItalics();
+                }
+            }
+        });
+
+        underlineButton = findViewById(R.id.underlineButton);
+        underlineButton.setOnClickListener(v -> {
+            if (focusedItem >= 0){
+                RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
+                if (viewHolder instanceof NoteAdapter.TextViewHolder){
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyUnderline();
+                }
+            }
+        });
+    }
+
+    public interface TextFormattingHandler{
+        void applyBold();
+        void applyItalics();
+        void applyUnderline();
+    }
+
     // ==============================
     // REGION: Listeners
     // ==============================
@@ -381,9 +427,10 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     public void onItemFocusChange(int position, boolean hasFocus) {
         if (hasFocus) {
             focusedItem = position;
-            Log.e("Focus", "Focus has changed to position " + focusedItem);
+            Log.e("FocusChange", "Focus has changed to position " + focusedItem);
         } else if (focusedItem == position) {
             focusedItem = -1;
+            Log.e("FocusChange", "Focus has been set to invalid (-1)");
         }
     }
 
@@ -418,6 +465,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         });
         popupMenu.show();
     }
+
 
     // ==============================
     // REGION: Image Handling
