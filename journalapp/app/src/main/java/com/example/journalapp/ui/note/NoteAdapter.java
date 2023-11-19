@@ -49,6 +49,7 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
      */
     public NoteAdapter(List<NoteItem> noteItems){
         this.noteItems = noteItems;
+        setHasStableIds(true);
     }
 
     /**
@@ -139,6 +140,11 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public int getItemViewType(int position) {
         // Return the view type of the item at position for correct View holder binding
         return noteItems.get(position).getType().ordinal();
+    }
+
+    @Override
+    public long getItemId(int position){
+        return noteItems.get(position).getItemId().hashCode();
     }
 
     /**
@@ -242,6 +248,7 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     /**
      * ViewHolder for text content within a note
+     * @TODO Bug when saving note. Recreation: Existing notes only. When saving note, it moves the cursor to the Title
      */
     static class TextViewHolder extends RecyclerView.ViewHolder implements NoteActivity.TextFormattingHandler {
 
@@ -359,6 +366,7 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 SpannableStringBuilder spannableBuilder = new SpannableStringBuilder(editText.getText());
                 currentNoteItem.setContentWithSpannable(spannableBuilder);
 
+
                 // notify the activity that content has changed to save to database
                 if (noteItemChangeListener != null){
                     noteItemChangeListener.onNoteItemContentChanged();
@@ -433,6 +441,9 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             }
         }
 
+        /**
+         * @TODO change to make cursor not go to start
+         */
         @Override
         public void applyUnderline(){
             int start = editText.getSelectionStart();

@@ -352,6 +352,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         // Set up the RecyclerView
         noteContentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         noteContentRecyclerView.setAdapter(noteAdapter);
+        noteContentRecyclerView.setItemAnimator(null); // can remove if needed
 
         // Set all listeners
         noteAdapter.setOnNoteItemChangeListener(this); // notified to save if changes are made to noteItems
@@ -824,6 +825,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         Log.d("TextWatcher", "Updating the title: " + title);
         note.setTitle(title);
         noteRepository.updateNoteTitle(note);
+
+        runOnUiThread(() -> Toast.makeText(NoteActivity.this, "Title Saved", Toast.LENGTH_SHORT).show());
     }
 
     /**
@@ -832,6 +835,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * Usually called by program when changes are detected by auto save
      */
     public void saveNoteContent() {
+        Log.e("FocusedItem", "Focused item before saving is:" + focusedItem);
         // must be done on a background thread
         executorService.execute(() -> {
             // Get the current list of note items from the database
@@ -896,6 +900,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                 }
             }
 
+            Log.e("FocusedItem", "Focused item after saving is: " + focusedItem);
+
             // Inform user of the save on the UI thread
             runOnUiThread(() -> Toast.makeText(NoteActivity.this, "Note saved", Toast.LENGTH_SHORT).show());
         });
@@ -954,6 +960,17 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         for (int i = 0; i < noteItems.size(); i++) {
             NoteItem item = noteItems.get(i);
             Log.d("NoteItemLog", "Index: " + i + ", Type: " + item.getType() + ", Content: " + item.getContent());
+        }
+    }
+
+    public void logFocus(){
+        View currentFocusedView = getCurrentFocus();
+        if (currentFocusedView != null) {
+            // Get the ID of the focused view
+            int focusedViewId = currentFocusedView.getId();
+            // Find the resource entry name of the ID
+            String resourceName = getResources().getResourceEntryName(focusedViewId);
+            Log.d("Focused View", "Current focused view is: " + resourceName);
         }
     }
 }
