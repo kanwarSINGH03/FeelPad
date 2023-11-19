@@ -366,8 +366,16 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         itemTouchHelper.attachToRecyclerView(noteContentRecyclerView);
     }
 
+    // ==============================
+    // REGION: Text Styling
+    // ==============================
+
+    /**
+     * Initialize styling buttons & functionality
+     */
     private void initStyling(){
         // Initialize all styling buttons and attach listeners
+
         boldButton = findViewById(R.id.boldButton);
         boldButton.setOnClickListener(v ->{
             if (focusedItem >= 0){
@@ -397,12 +405,26 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                 }
             }
         });
+
+        strikethroughButton = findViewById(R.id.strikethroughButton);
+        strikethroughButton.setOnClickListener(v -> {
+            if (focusedItem >= 0){
+                RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
+                if (viewHolder instanceof NoteAdapter.TextViewHolder){
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyStrikethrough();
+                }
+            }
+        });
     }
 
+    /**
+     * Callback Interface for the adapter to implement.
+     */
     public interface TextFormattingHandler{
         void applyBold();
         void applyItalics();
         void applyUnderline();
+        void applyStrikethrough();
     }
 
     // ==============================

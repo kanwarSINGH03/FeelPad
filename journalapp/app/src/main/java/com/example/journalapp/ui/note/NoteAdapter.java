@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
+import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
@@ -390,14 +391,20 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         }
 
+        /**
+         * Styling function to apply bold / remove existing bold to highlighted text
+         */
         @Override
         public void applyBold() {
             int start = editText.getSelectionStart();
             int end = editText.getSelectionEnd();
             if (start < end) {
+
+                // make Spannable & specify span type
                 SpannableStringBuilder spannableBuilder = new SpannableStringBuilder(editText.getText());
                 StyleSpan[] spans = spannableBuilder.getSpans(start, end, StyleSpan.class);
 
+                // Check for existing span type and remove
                 boolean isBold = false;
                 for (StyleSpan span : spans) {
                     if (span.getStyle() == Typeface.BOLD) {
@@ -406,23 +413,31 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     }
                 }
 
+                // otherwise apply span type
                 if (!isBold) {
                     spannableBuilder.setSpan(new StyleSpan(Typeface.BOLD), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 
+                // set spanned text and set selection same as before
                 editText.setText(spannableBuilder);
                 editText.setSelection(start, end);
             }
         }
 
+        /**
+         * Styling function to apply italics / remove existing italics to highlighted text
+         */
         @Override
-        public void applyItalics(){
+        public void applyItalics() {
             int start = editText.getSelectionStart();
             int end = editText.getSelectionEnd();
             if (start < end) {
+
+                // make Spannable & specify span type
                 SpannableStringBuilder spannableBuilder = new SpannableStringBuilder(editText.getText());
                 StyleSpan[] spans = spannableBuilder.getSpans(start, end, StyleSpan.class);
 
+                // Check for existing span type and remove
                 boolean isItalic = false;
                 for (StyleSpan span : spans) {
                     if (span.getStyle() == Typeface.ITALIC) {
@@ -431,41 +446,81 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     }
                 }
 
+                // otherwise apply span type
                 if (!isItalic) {
                     spannableBuilder.setSpan(new StyleSpan(Typeface.ITALIC), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 
+                // set spanned text and set selection same as before
                 editText.setText(spannableBuilder);
                 editText.setSelection(start, end);
             }
         }
 
         /**
-         * @TODO change to make cursor not go to start
+         * Styling function to apply underline / remove existing underline to highlighted text
          */
         @Override
-        public void applyUnderline(){
+        public void applyUnderline() {
             int start = editText.getSelectionStart();
             int end = editText.getSelectionEnd();
-
             if (start < end) {
+
+                // make Spannable & specify span type
                 SpannableStringBuilder spannableBuilder = new SpannableStringBuilder(editText.getText());
                 UnderlineSpan[] spans = spannableBuilder.getSpans(start, end, UnderlineSpan.class);
 
-                // Check if underline spans already exist in this range
-                if (spans.length > 0) {
-                    // Remove existing underline spans
-                    for (UnderlineSpan span : spans) {
+                // Check for existing span type and remove
+                boolean hasUnderline = false;
+                for (UnderlineSpan span : spans) {
+                    if (spannableBuilder.getSpanStart(span) <= start && spannableBuilder.getSpanEnd(span) >= end) {
                         spannableBuilder.removeSpan(span);
+                        hasUnderline = true;
                     }
-                } else {
-                    // Apply new UnderlineSpan
+                }
+
+                // otherwise apply span type
+                if (!hasUnderline) {
                     spannableBuilder.setSpan(new UnderlineSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 
-                editText.setText(spannableBuilder); // Update the EditText with the modified spannable
+                // set spanned text and set selection same as before
+                editText.setText(spannableBuilder);
+                editText.setSelection(start, end);
             }
+        }
 
+        /**
+         * Styling function to apply strikethrough / remove existing strikethrough to highlighted text
+         */
+        @Override
+        public void applyStrikethrough() {
+            int start = editText.getSelectionStart();
+            int end = editText.getSelectionEnd();
+            if (start < end) {
+
+                // make Spannable & specify span type
+                SpannableStringBuilder spannableBuilder = new SpannableStringBuilder(editText.getText());
+                StrikethroughSpan[] spans = spannableBuilder.getSpans(start, end, StrikethroughSpan.class);
+
+                // Check for existing span type and remove
+                boolean hasStrikethrough = false;
+                for (StrikethroughSpan span : spans) {
+                    if (spannableBuilder.getSpanStart(span) <= start && spannableBuilder.getSpanEnd(span) >= end) {
+                        spannableBuilder.removeSpan(span);
+                        hasStrikethrough = true;
+                    }
+                }
+
+                // otherwise apply span type
+                if (!hasStrikethrough) {
+                    spannableBuilder.setSpan(new StrikethroughSpan(), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+
+                // set spanned text and set selection same as before
+                editText.setText(spannableBuilder);
+                editText.setSelection(start, end);
+            }
         }
 
 
