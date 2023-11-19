@@ -85,7 +85,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
     // Media Handling Variables
     // Special member variable used to launch activities that expect a result
-    private final ActivityResultLauncher<Intent> mGetContent =
+    public final ActivityResultLauncher<Intent> mGetContent =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     Uri uri = result.getData().getData();
@@ -512,7 +512,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * @return the internal storage URI
      */
     @Nullable
-    private Uri saveMediaToInternalStorage(Uri mediaUri, boolean isImage) {
+    public Uri saveMediaToInternalStorage(Uri mediaUri, boolean isImage) {
         try {
             // Create appropriate filename with timestamp and create new file object
             String fileName = (isImage ? "image_" : "video_") + System.currentTimeMillis() + (isImage ? ".png" : ".mp4"); // if image, .png, otherwise, .mp4
@@ -831,7 +831,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                             noteItem.getContent(),
                             noteItem.getOrderIndex()
                     );
-                    noteRepository.insertNoteItem(newEntity); // Insert immediately
+                    noteRepository.insertNoteItem(newEntity); //  Insert immediately
                 }
             }
 
