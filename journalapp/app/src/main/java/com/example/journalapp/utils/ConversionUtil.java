@@ -73,7 +73,18 @@ public class ConversionUtil {
      * @return a Spannable that can be displayed
      */
     public static SpannableStringBuilder htmlToSpannable(String html){
+        // Replace <p> tags with nothing, and </p> tags with a single newline character
+        html = html.replaceAll("<p[^>]*>", "").replaceAll("</p>", "\n");
+
+        // Convert HTML to spannable
         Spanned spanned = Html.fromHtml(html);
-        return new SpannableStringBuilder(spanned);
+
+        // trim the end if it has an extra whitespace from conversion
+        int end = spanned.length();
+        while (end > 0 && (Character.isWhitespace(spanned.charAt(end - 1)) || spanned.charAt(end - 1) == '\n')) {
+            end--;
+        }
+
+        return new SpannableStringBuilder(spanned, 0, end);
     }
 }

@@ -12,6 +12,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +40,7 @@ import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.database.entity.NoteItemEntity;
 import com.example.journalapp.database.NoteRepository;
 import com.example.journalapp.ui.main.MapsActivity;
+import com.example.journalapp.utils.ConversionUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -721,7 +724,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             noteItems.get(i).setOrderIndex(i);
         }
 
-        logNoteItems();
+        logNoteItems("Inserted Media");
     }
 
     // ==============================
@@ -753,14 +756,14 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         // notify adapter
         noteAdapter.notifyItemRemoved(position);
 
-        logNoteItems();
+        logNoteItems("Contents before deletion");
 
         // update ordering for subsequent items in the list
         for (int i = position; i < noteItems.size(); i++) {
             noteItems.get(i).setOrderIndex(i);
         }
 
-        logNoteItems();
+        logNoteItems("Contents after deletion");
 
         // notify the adapter of the item range changed for updating the view
         noteAdapter.notifyItemRangeChanged(position, noteItems.size() - position);
@@ -825,11 +828,14 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                     note = fetchedNote;
                     titleEditText.setText(note.getTitle());
                     updateEmotionImage();
+                    logNoteItems("Items after setting existing note");
                 });
             } else {
                 // Handle the case where the note is null (e.`g., not found in the database)
                 runOnUiThread(this::finish);
             }
+
+
         });
 
         focusedItem = 0;
@@ -859,7 +865,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * Usually called by program when changes are detected by auto save
      */
     public void saveNoteContent() {
-        Log.e("FocusedItem", "Focused item before saving is:" + focusedItem);
         // must be done on a background thread
         executorService.execute(() -> {
             // Get the current list of note items from the database
@@ -924,7 +929,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                 }
             }
 
-            Log.e("FocusedItem", "Focused item after saving is: " + focusedItem);
+            logNoteItems("Contents after saving");
 
             // Inform user of the save on the UI thread
             runOnUiThread(() -> Toast.makeText(NoteActivity.this, "Note saved", Toast.LENGTH_SHORT).show());
@@ -980,11 +985,16 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     /**
      * Testing Purposes. Can log all of the contents inside the NoteItems list.
      */
-    public void logNoteItems() {
+    public void logNoteItems(String message) {
+        Log.d("NoteItemLog", message);
+        if (noteItems.size() == 0){
+            Log.d("NoteItemLog", "Note List is Empty");
+        }
         for (int i = 0; i < noteItems.size(); i++) {
             NoteItem item = noteItems.get(i);
             Log.d("NoteItemLog", "Index: " + i + ", Type: " + item.getType() + ", Content: " + item.getContent());
         }
+
     }
 
     public void logFocus(){

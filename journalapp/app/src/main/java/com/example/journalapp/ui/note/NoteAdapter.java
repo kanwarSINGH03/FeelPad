@@ -303,6 +303,7 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
          */
         public void bind(NoteItem noteItem, boolean isHighlighted) {
             currentNoteItem = noteItem;
+            Log.e("SetText", "Setting text contents from content: " + noteItem.getContent());
             editText.setText(noteItem.getContentSpannable()); // sets the text as a SpannableStringBuilder
 
             // Dispose previous subscription if any
@@ -341,6 +342,7 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             editText.setBackgroundResource(backgroundId);
 
             // OnKeyListener for enter key. @TODO not being used at the moment.
+            /*
             editText.setOnKeyListener(new View.OnKeyListener(){
 
                 @Override
@@ -354,6 +356,8 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     return false; // do not consume event
                 }
             });
+            */
+
         }
 
         /**
