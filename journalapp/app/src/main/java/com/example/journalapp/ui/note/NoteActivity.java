@@ -776,28 +776,30 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      */
     private void setExistingNote(String note_id) {
 
-        // Observe the LiveData returned by the repository for note items
-        noteRepository.getNoteItemsForNote(note_id).observe(this, noteItemEntities -> {
-            // This code will run when the note items are loaded or when they change.
-
-            // Convert NoteItemEntity to NoteItem
-            List<NoteItem> newNoteItems = convertNoteItemEntitiesToNoteItems(noteItemEntities);
-
-            // Make sure the noteItems list is clear to add all items from the database to it
-            noteItems.clear();
-            noteItems.addAll(newNoteItems);
-
-            // Notify the adapter of the change to refresh RecyclerView.
-            noteAdapter.notifyDataSetChanged(); // resource intensive, but okay because its only done when setting the existing note
-        });
-
         // Retrieve the note using the id on a background thread
         executorService.execute(() -> {
+
+            // Part I of setting up RecyclerView (note items)
+            List<NoteItemEntity> noteItemEntities = noteRepository.getNoteItemsForNoteSync(note_id);
+
+            // Part I of setting up Note metadata (title, etc.)
             Note fetchedNote = noteRepository.getNoteById(note_id);
             if (fetchedNote != null) {
 
                 // Use UI Thread to update UI with the fetched note
                 runOnUiThread(() -> {
+
+                    // Part II of setting up RecyclerView (note items)
+                    List<NoteItem> newNoteItems = convertNoteItemEntitiesToNoteItems(noteItemEntities);
+
+                    // update the list
+                    noteItems.clear();
+                    noteItems.addAll(newNoteItems);
+
+                    // refresh recycleview
+                    noteAdapter.notifyDataSetChanged();
+
+                    // Part II of setting up Note metadata (title, etc.)
                     note = fetchedNote;
                     titleEditText.setText(note.getTitle());
                     updateEmotionImage();

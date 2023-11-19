@@ -248,7 +248,6 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     /**
      * ViewHolder for text content within a note
-     * @TODO Bug when saving note. Recreation: Existing notes only. When saving note, it moves the cursor to the Title
      */
     static class TextViewHolder extends RecyclerView.ViewHolder implements NoteActivity.TextFormattingHandler {
 
