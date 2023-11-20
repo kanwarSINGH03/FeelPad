@@ -15,6 +15,9 @@ import androidx.media3.ui.PlayerView;
 
 import com.example.journalapp.R;
 
+/**
+ * Class to play both videos AND audio
+ */
 public class VideoPlayerFragment extends DialogFragment {
     private ExoPlayer player;
     private PlayerView playerview;

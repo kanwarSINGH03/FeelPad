@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -38,6 +39,7 @@ import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.database.entity.NoteItemEntity;
 import com.example.journalapp.ui.main.MainViewModel;
 import com.example.journalapp.ui.main.MapsActivity;
+import com.google.common.net.MediaType;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -87,16 +89,13 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor(); // thread manager
 
-
-
-
     // Permission Variables
     private static final int REQUEST_STORAGE_PERMISSION = 1;
-
-    private static final int REQUEST_CAMERA_PERMISSION = 1;
+    private static final int REQUEST_AUDIO_PERMISSION = 2;
+    private static final int REQUEST_CAMERA_PERMISSION = 3;
 
     // Media Handling Variables
-    // Special member variable used to launch activities that expect a result
+    // Special member variable used to launch activities that expect Media results
     private final ActivityResultLauncher<Intent> mGetContent =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
@@ -107,12 +106,16 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                             if (mimeType != null) {
                                 if (mimeType.startsWith("image/")) {
                                     // Handle images
-                                    Uri localUri = saveMediaToInternalStorage(uri, true); // true for image
+                                    Uri localUri = saveMediaToInternalStorage(uri, NoteItem.ItemType.IMAGE);
                                     insertMedia(localUri, NoteItem.ItemType.IMAGE);
                                 } else if (mimeType.startsWith("video/")) {
                                     // Handle videos
-                                    Uri localUri = saveMediaToInternalStorage(uri, false); // false for video
+                                    Uri localUri = saveMediaToInternalStorage(uri, NoteItem.ItemType.VIDEO);
                                     insertMedia(localUri, NoteItem.ItemType.VIDEO);
+                                } else if (mimeType.startsWith("audio/")){
+                                    // Handle audio
+                                    Uri localUri = saveMediaToInternalStorage(uri, NoteItem.ItemType.VOICE);
+                                    insertMedia(localUri, NoteItem.ItemType.VOICE);
                                 }
                             }
                         } catch (Exception e) {
@@ -123,6 +126,9 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                 }
             });
 
+
+    // Special member variable used to launch camera activity
+    //@TODO should use TakePicture() that returns URI. Has better quality
     private final ActivityResultLauncher<Void> mTakePicture =
             registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), bitmap -> {
                 // Handle returned Uri's
@@ -140,6 +146,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
             });
 
+    // Special member variable used to launch an activity to select emotion
     private final ActivityResultLauncher<Intent> mEmotionReturn =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
@@ -170,7 +177,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
         }
     };
-
 
     /**
      * Called when activity is first created
@@ -323,6 +329,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                     return true;
                 } else if (menuItem.getItemId() == R.id.item2) {
                     Toast.makeText(getApplicationContext(), "Add Voice Note", Toast.LENGTH_SHORT).show();
+                    checkPermissionAndVoiceRecord();
                     return true;
                 } else if (menuItem.getItemId() == R.id.item3) {
                     Toast.makeText(getApplicationContext(), "Insert", Toast.LENGTH_SHORT).show();
@@ -494,13 +501,13 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
 
     // ==============================
-    // REGION: Image Handling
+    // REGION: Media Handling
     // ==============================
 
     /**
      * Called by a button
-     * Checks for permissions to read images from storage
-     * Permission Granted: Opens gallery for image selection
+     * Checks for permissions to read media (images/videos) from storage
+     * Permission Granted: Opens gallery for media selection
      * Permission not Granted: Request for permissions
      */
     private void checkPermissionAndOpenGallery() {
@@ -532,6 +539,26 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         }
     }
 
+    /**
+     * Checks for permissions to record audio.
+     * If granted: start voice recording using another app
+     * Not granted: request for permissions
+     */
+    private void checkPermissionAndVoiceRecord(){
+        if (ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
+            // Permission not granted, request
+            ActivityCompat.requestPermissions(NoteActivity.this,new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_AUDIO_PERMISSION);
+        }
+        else{
+            startVoiceRecording();
+        }
+    }
+
+    /**
+     * Checks for permissions to open camera to take a picture
+     * If granted: open camera and expect picture to be takne
+     * not granted: request for permissions
+     */
     void checkPermissionAndOpenCamera() {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             // Permission has not been granted for using Camera, request it
@@ -555,17 +582,58 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        // check permission requests for READ_MEDIA_IMAGES
+        // Handle storage permission results
         if (requestCode == REQUEST_STORAGE_PERMISSION && grantResults.length > 0) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // if permission granted, then allow access
                 selectMedia();
             } else {
-
                 // if permission denied, inform user
-                Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Storage Permission Denied!", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+        // Handle audio permission results
+        else if (requestCode == REQUEST_AUDIO_PERMISSION && grantResults.length > 0){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                // if permission granted, then allow access
+                startVoiceRecording();
+            } else{
+                // if permission denied, inform user
+                Toast.makeText(this, "Audio Permission Denied!", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+        // Handle camera permission results
+        else if (requestCode == REQUEST_CAMERA_PERMISSION && grantResults.length > 0){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                // if permission granted, then allow access
+                takePicture();
+            } else{
+                // if permission denied, inform user
+                Toast.makeText(this, "Camera Permission Denied!", Toast.LENGTH_SHORT).show();
             }
         }
+
+    }
+
+    /**
+     * Launches an intent to start voice recording using any viable apps that can handle the intent
+     */
+    private void startVoiceRecording(){
+        Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION); // uses default voice recording app to record
+        // first check if there is an app that can handle the intent
+        if (intent.resolveActivity(getPackageManager()) != null){
+            mGetContent.launch(intent);
+        }
+        else{
+            // otherwise, inform user that the don't have an installed voice recording app.
+            Toast.makeText(this, "No voice recording app found. Please install your default voice recording app.", Toast.LENGTH_LONG).show();
+
+        }
+
     }
 
     /**
@@ -595,21 +663,39 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * -- should be called right after the user picks their media
      *
      * @param mediaUri the URI of the media type
-     * @param isImage  whether or not the media is an image. For identification
      * @return the internal storage URI
      */
     @Nullable
-    private Uri saveMediaToInternalStorage(Uri mediaUri, boolean isImage) {
+    private Uri saveMediaToInternalStorage(Uri mediaUri, NoteItem.ItemType itemType) {
         try {
+            String fileExtension;
+            String fileNamePrefix;
+            switch (itemType) {
+                case IMAGE:
+                    fileExtension = ".png";
+                    fileNamePrefix = "image_";
+                    break;
+                case VIDEO:
+                    fileExtension = ".mp4";
+                    fileNamePrefix = "video_";
+                    break;
+                case VOICE:
+                    fileExtension = ".mp3";
+                    fileNamePrefix = "audio_";
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported media type");
+            }
+
             // Create appropriate filename with timestamp and create new file object
-            String fileName = (isImage ? "image_" : "video_") + System.currentTimeMillis() + (isImage ? ".png" : ".mp4"); // if image, .png, otherwise, .mp4
+            String fileName = fileNamePrefix + System.currentTimeMillis() + fileExtension;
             File outputFile = new File(getFilesDir(), fileName);
 
             // opens a stream to write data to new file
             FileOutputStream fos = new FileOutputStream(outputFile);
             InputStream inputStream = getContentResolver().openInputStream(mediaUri);
 
-            if (isImage) {
+            if (itemType == NoteItem.ItemType.IMAGE) {
                 // If image, process as bitmap
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
@@ -706,6 +792,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                     break;
                 case IMAGE:
                 case VIDEO:
+                case VOICE:
                     // Case 3: Image or Video Focused
                     noteItems.add(focusedIndex + 1, new NoteItem(mediaType, null, mediaUri.toString(), focusedIndex + 1));
                     noteAdapter.notifyItemInserted(focusedIndex + 1);
@@ -906,7 +993,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                 noteViewModel.deleteNoteItem(entity);
 
                 // If the entity is of type IMAGE OR VIDEO, delete from internal storage as well
-                if (entity.getType() == NoteItem.ItemType.IMAGE.ordinal() || entity.getType() == NoteItem.ItemType.VIDEO.ordinal()) {
+                if (entity.getType() == NoteItem.ItemType.IMAGE.ordinal() || entity.getType() == NoteItem.ItemType.VIDEO.ordinal() || entity.getType() == NoteItem.ItemType.VOICE.ordinal()) {
                     Uri imageUri = Uri.parse(entity.getContent()); // assuming the content is the URI in string format
                     boolean deleted = deleteMediaFromInternalStorage(imageUri);
                     if (!deleted) {

@@ -89,7 +89,7 @@ public class SearchActivity extends AppCompatActivity {
                 searchObservable.subscribe(this::performQuery));
     }
 
-    /** @TODO Broken query
+    /**
      * Perform the search query and update the recycler view
      *
      * @param query The search query

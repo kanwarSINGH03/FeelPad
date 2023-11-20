@@ -20,7 +20,8 @@ public class NoteItem {
     public enum ItemType{
         TEXT,
         IMAGE,
-        VIDEO
+        VIDEO,
+        VOICE
     }
     private String itemId; // unique identifier
     private ItemType type; // type of the note item (Enum)
@@ -106,7 +107,7 @@ public class NoteItem {
      * @return
      */
     public Uri getContentMediaUri(){
-        if ( (this.type == ItemType.IMAGE || this.type == ItemType.VIDEO) && this.content != null){
+        if ( (this.type == ItemType.IMAGE || this.type == ItemType.VIDEO || this.type == ItemType.VOICE) && this.content != null){
             return Uri.parse(this.content);
         }
         return null;
