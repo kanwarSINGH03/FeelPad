@@ -13,8 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.R;
-import com.example.journalapp.ui.main.NoteViewModel;
-import com.example.journalapp.ui.main.NoteListAdapter;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -45,7 +43,7 @@ public class SearchActivity extends AppCompatActivity {
      */
     private void createNoteObserver() {
         noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
-        noteViewModel.getAllNotesOrderedByCreateDateDesc().observe(this, notes -> noteListAdapter.submitList(notes));
+        noteViewModel.getAllNotesOrderedByLastEditedDateDesc().observe(this, notes -> noteListAdapter.submitList(notes));
     }
 
     /**

@@ -47,10 +47,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -783,13 +785,24 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     // ==============================
 
     /**
+     * Creates a string using the ISO 8601 format which is a sortable format for the database
+     * @return
+     */
+    private String getDateAsString(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        String currentDateStr = sdf.format(new Date());
+        return currentDateStr;
+    }
+
+    /**
      * Initialize a new note with a date and store it
      * in the database
      */
     private void setNewNote() {
 
-        Date currentDate = new Date();
-        note = new Note("", currentDate.toString(), 0);
+        // Sorted by ISO 8601 format which is sortable via queries
+        String currentDateStr = getDateAsString();
+        note = new Note("", currentDateStr, 0);
         noteRepository.insertNote(note);
 
         // Initialize the contents of noteItems as a single EditText
@@ -981,6 +994,9 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         } else {
             saveNoteContent(); // add to onExit?? method instead?
         }
+
+        // set last edited date before exiting
+        noteRepository.updateNotelastEditedDate(getDateAsString(), note.getId());
         finish();
     }
 

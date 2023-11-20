@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void createNoteObserver() {
         NoteViewModel noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
-        noteViewModel.getAllNotesOrderedByCreateDateDesc().observe(this, notes -> noteListAdapter.submitList(notes));
+        noteViewModel.getAllNotesOrderedByLastEditedDateDesc().observe(this, notes -> noteListAdapter.submitList(notes));
     }
 
     /**

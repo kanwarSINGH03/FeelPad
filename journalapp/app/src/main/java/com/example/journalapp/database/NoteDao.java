@@ -22,8 +22,12 @@ import java.util.List;
 public interface NoteDao {
 
     // ==============================
-    // Note Queries
+    // Single Note Queries
     // ==============================
+
+    // Retrieves a single Note by its id
+    @Query("SELECT * FROM note_table WHERE id = :note_id")
+    Note getNoteById(String note_id);
 
     // Inserts a new note
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -37,102 +41,61 @@ public interface NoteDao {
     @Query("UPDATE note_table SET emotion = :providedEmotion WHERE id = :noteId")
     void updateNoteEmotion(int providedEmotion, String noteId);
 
+    // Updates the last edited date
+    @Query("UPDATE note_table SET last_edited_date = :date WHERE id = :noteId")
+    void updateNoteLastEditedDate(String date, String noteId);
+
     // Deletes a note
     @Delete
     void deleteNote(Note note);
+
+    // ==============================
+    // <List> Note Queries
+    // ==============================
 
     // Retrieves all notes from the database
     @Query("SELECT * FROM note_table")
     LiveData<List<Note>> getAllNotes();
 
-    // Retrieves a single Note by its id
-    @Query("SELECT * FROM note_table WHERE id = :note_id")
-    Note getNoteById(String note_id);
-
-    /**
-     * Retrieves all notes from the database ordered by created date
-     * descending
-     *
-     * @return LiveData list of all notes descending order by date
-     */
-    @Query("SELECT * FROM note_table ORDER BY create_date DESC")
-    LiveData<List<Note>> getAllNotesOrderByCreatedDateDesc();
-
-    /** @TODO removed Description. Must be fixed to check all EditTexts
-     * Select a distinct record from the database that contains the provided string in the
-     * title, description, or date.
-     *
-     * @param string The string to search for
-     * @return LiveData list of all notes
-     */
-    @Query("SELECT DISTINCT * FROM note_table " +
-            "WHERE title LIKE '%' || :string || '%' " +
-            "OR create_date LIKE '%' || :string || '%'")
-    LiveData<List<Note>> getAllNotesWhereTitleDateDescContains(String string);
-
-    /**
-     * Retrieves notes with a specific title from the database
-     *
-     * @param providedTitle String Title to search for
-     * @return a LiveData list of notes with the specified title
-     */
-    @Query("SELECT * FROM note_table WHERE title = :providedTitle")
-    LiveData<List<Note>> getNotesWithTitle(String providedTitle);
+    // Retrieves all notes in order by last edited date
+    @Query("SELECT * FROM note_table ORDER BY last_edited_date DESC")
+    LiveData<List<Note>> getAllNotesOrderByLastEditedDateDesc();
 
     // ==============================
-    // Normal Note CRUD
+    // Single NoteItem Queries
     // ==============================
 
-
-
-    // ==============================
-    // Normal NoteItem CRUD
-    // ==============================
-
-    /**
-     * Inserts a new NoteItemEntity into the database
-     * @param noteItem
-     */
+    // Inserts a new NoteItemEntity
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertNoteItem(NoteItemEntity noteItem);
 
-    /**
-     * Updates an existing NoteItemEntity in the database
-     * @param noteItem
-     */
+    // Updates an existing NoteItemEntity
     @Update
     void updateNoteItem(NoteItemEntity noteItem);
 
-    /**
-     * Deletes a NoteItemEntity from the datbabase
-     * @param noteItem
-     */
+    // Deletes a NoteItemEntity
     @Delete
     void deleteNoteItem(NoteItemEntity noteItem);
 
+    // ==============================
+    // <List> NoteItem Queries
+    // ==============================
+
     /**
-     * Retrieves all NoteItemEntity objects for a specific note ordered by the order_index
-     * This is asynchronous and can be done using the main ui thread.
-     * @param noteId
-     * @return
+     * Retrieves all NoteItemEntity that belongs to a Note.
+     * This is ASYNCHRONOUS and can be done using the main ui thread.
      */
     @Query("SELECT * FROM note_items WHERE note_id = :noteId ORDER BY order_index")
     LiveData<List<NoteItemEntity>> getNoteItemsForNote(String noteId);
 
     /**
-     * Retrieves all NoteItemEntity objects for a specific note ordered by the order_index
-     * This is synchronous, so it must be done using a background thread.
-     * @param noteId
-     * @return
+     * Retrieves all NoteItemEntity that belongs to a Note.
+     * This is SYNCHRONOUS so it must be done using a background thread (executorService)
      */
     @Query("SELECT * FROM note_items WHERE note_id = :noteId ORDER BY order_index")
     List<NoteItemEntity> getNoteItemsForNoteSync(String noteId);
 
-    /**
-     * Inserts a full note along with its associated items into the database in a single transaction
-     * @param note
-     * @param noteItems
-     */
+    // Inserts a Full Note (Note and its associated items) in a single transaction
     @Transaction
     default void insertFullNote(Note note, List<NoteItemEntity> noteItems) {
         // Insert the note
@@ -144,22 +107,36 @@ public interface NoteDao {
     }
 
     // ==============================
-    // Normal NoteFts CRUD
+    // Single NoteFtsEntity Queries
     // ==============================
 
+    // Inserts a NoteFtsEntity
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertNoteFts(NoteFtsEntity noteFts);
 
+    /**
+     * Updates a NoteFtsEntity with the given noteId
+     * Custom query because of the nature of FTS tables and automatic row-id primary key assigning
+     */
     @Query("UPDATE NoteFtsEntity SET combinedText = :combinedText WHERE noteId = :noteId")
     void updateNoteFts(String noteId, String combinedText);
 
+    // Deletes a NoteFtsEntity given the noteId
     @Query("DELETE FROM NoteFtsEntity WHERE noteId = :noteId")
     void deleteNoteFts(String noteId);
 
     // ==============================
-    // NoteFts Search Queries
+    // Search Queries
     // ==============================
 
+    /**
+     * Searches notes by title or FTS combined content
+     */
     @Query("SELECT * FROM note_table WHERE title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)")
     LiveData<List<Note>> searchNotes(String query);
+
+    // Retrieves all notes with selected title
+    @Query("SELECT * FROM note_table WHERE title = :providedTitle")
+    LiveData<List<Note>> getNotesWithTitle(String providedTitle);
 }
+

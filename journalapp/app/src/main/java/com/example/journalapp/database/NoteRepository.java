@@ -79,19 +79,8 @@ public class NoteRepository {
      *
      * @return LiveData object containing a list of notes
      */
-    public LiveData<List<Note>> getAllNotesOrderedByCreatedDateDesc() {
-        return noteDao.getAllNotesOrderByCreatedDateDesc();
-    }
-
-    /** @TODO NoteDao operation broken for this. Fix NoteDao first
-     * Retrieve all note containing the provided string in their title, description, or date,
-     * using LiveData list of notes.
-     *
-     * @param string The string to search for
-     * @return LiveData object containing the list of notes
-     */
-    public LiveData<List<Note>> getAllNoteWhereTitleDateDescContains(String string) {
-        return noteDao.getAllNotesWhereTitleDateDescContains(string);
+    public LiveData<List<Note>> getAllNotesOrderedByLastEditedDateDesc() {
+        return noteDao.getAllNotesOrderByLastEditedDateDesc();
     }
 
     /**
@@ -113,6 +102,12 @@ public class NoteRepository {
         NoteDatabase.databaseWriteExecutor.execute(() -> {
             noteDao.deleteNote(note);
             noteDao.deleteNoteFts(note.getId());
+        });
+    }
+
+    public void updateNotelastEditedDate(String date, String noteId){
+        NoteDatabase.databaseWriteExecutor.execute(() -> {
+            noteDao.updateNoteLastEditedDate(date, noteId);
         });
     }
 
@@ -221,6 +216,7 @@ public class NoteRepository {
         Log.e("CombinedText", "Combined text is:" + combinedTextBuilder.toString().trim());
         return combinedTextBuilder.toString().trim();
     }
+
 
 
 }
