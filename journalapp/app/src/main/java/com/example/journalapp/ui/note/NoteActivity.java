@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,7 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.journalapp.R;
 import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.database.entity.NoteItemEntity;
-import com.example.journalapp.database.NoteRepository;
+import com.example.journalapp.ui.main.MainViewModel;
 import com.example.journalapp.ui.main.MapsActivity;
 
 import java.io.File;
@@ -81,7 +82,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private int highlightedItem = -1; // starts at invalid
 
     // Note Database Variables
-    private NoteRepository noteRepository;
+    private NoteViewModel noteViewModel;
     private Note note;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor(); // thread manager
@@ -145,7 +146,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                     Intent intent = result.getData();
                     int emotion = intent.getIntExtra("emotion", 0);
                     note.setEmotion(emotion);
-                    noteRepository.updateNoteEmotion(note);
+                    noteViewModel.updateNoteEmotion(note);
                     updateEmotionImage();
                 }
             });
@@ -237,7 +238,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private void initWidgets() {
         titleEditText = findViewById(R.id.titleEditText);
 
-        noteRepository = NoteRepository.getInstance(getApplication()); // initialize the note repo
+        noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class); // initialize NoteViewModel
 
         /*
          * create an Observable to monitor changes in the title using debouncing
@@ -799,7 +800,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         // Sorted by ISO 8601 format which is sortable via queries
         String currentDateStr = getDateAsString();
         note = new Note("", currentDateStr, 0);
-        noteRepository.insertNote(note);
+        noteViewModel.insertNote(note);
 
         // Initialize the contents of noteItems as a single EditText
         noteItems.add(new NoteItem(NoteItem.ItemType.TEXT, null, "", 0)); // Empty text for the user to start typing
@@ -821,10 +822,10 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         executorService.execute(() -> {
 
             // Part I of setting up RecyclerView (note items)
-            List<NoteItemEntity> noteItemEntities = noteRepository.getNoteItemsForNoteSync(note_id);
+            List<NoteItemEntity> noteItemEntities = noteViewModel.getNoteItemsForNoteSync(note_id);
 
             // Part I of setting up Note metadata (title, etc.)
-            Note fetchedNote = noteRepository.getNoteById(note_id);
+            Note fetchedNote = noteViewModel.getNoteById(note_id);
             if (fetchedNote != null) {
 
                 // Use UI Thread to update UI with the fetched note
@@ -870,7 +871,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     public void saveNoteTitle(String title) {
         Log.d("TextWatcher", "Updating the title: " + title);
         note.setTitle(title);
-        noteRepository.updateNoteTitle(note);
+        noteViewModel.updateNoteTitle(note);
 
         runOnUiThread(() -> Toast.makeText(NoteActivity.this, "Title Saved", Toast.LENGTH_SHORT).show());
     }
@@ -884,7 +885,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         // must be done on a background thread
         executorService.execute(() -> {
             // Get the current list of note items from the database
-            List<NoteItemEntity> currentNoteItems = noteRepository.getNoteItemsForNoteSync(note.getId());
+            List<NoteItemEntity> currentNoteItems = noteViewModel.getNoteItemsForNoteSync(note.getId());
 
             // Create a list to hold the IDs of LOCAL note items for comparison
             List<String> localNoteItemIds = new ArrayList<>();
@@ -902,7 +903,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
             // Delete the removed items from the database
             for (NoteItemEntity entity : itemsToDelete) {
-                noteRepository.deleteNoteItem(entity);
+                noteViewModel.deleteNoteItem(entity);
 
                 // If the entity is of type IMAGE OR VIDEO, delete from internal storage as well
                 if (entity.getType() == NoteItem.ItemType.IMAGE.ordinal() || entity.getType() == NoteItem.ItemType.VIDEO.ordinal()) {
@@ -931,7 +932,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                     // Update the existing entity with new content and order
                     matchingEntity.setContent(noteItem.getContent());
                     matchingEntity.setOrderIndex(noteItem.getOrderIndex());
-                    noteRepository.updateNoteItem(matchingEntity); // Update immediately
+                    noteViewModel.updateNoteItem(matchingEntity); // Update immediately
                 } else {
                     // It's a new NoteItem, so create it in the database
                     NoteItemEntity newEntity = new NoteItemEntity(
@@ -941,7 +942,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                             noteItem.getContent(),
                             noteItem.getOrderIndex()
                     );
-                    noteRepository.insertNoteItem(newEntity); // Insert immediately
+                    noteViewModel.insertNoteItem(newEntity); // Insert immediately
                 }
             }
 
@@ -986,13 +987,14 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         String title = note.getTitle();
         if ((noteItems.size() == 1 && noteItems.get(0).getContent().equals("")) && title.isEmpty()) {
             Log.e("Exiting note", "Deleting note");
-            noteRepository.deleteNote(note);
+            noteViewModel.deleteNote(note);
         } else {
             saveNoteContent(); // add to onExit?? method instead?
         }
 
         // set last edited date before exiting
-        noteRepository.updateNoteLastEditedDate(getDateAsString(), note.getId());
+        //@TODO currently, it only updates whenever note is visited, however should update if note is edited not visited
+        noteViewModel.updateNoteLastEditedDate(getDateAsString(), note.getId());
         finish();
     }
 

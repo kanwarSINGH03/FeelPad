@@ -24,7 +24,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
  */
 public class SearchActivity extends AppCompatActivity {
 
-    private NoteViewModel noteViewModel;
+    private MainViewModel mainViewModel;
     private NoteListAdapter noteListAdapter;
     private SearchView noteSearchView;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -42,8 +42,8 @@ public class SearchActivity extends AppCompatActivity {
      * Sets up an observer to watch for changes in the list of notes and updates the UI accordingly
      */
     private void createNoteObserver() {
-        noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
-        noteViewModel.getAllNotesOrderedByLastEditedDateDesc().observe(this, notes -> noteListAdapter.submitList(notes));
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        mainViewModel.getAllNotesOrderedByLastEditedDateDesc().observe(this, notes -> noteListAdapter.submitList(notes));
     }
 
     /**
@@ -96,6 +96,6 @@ public class SearchActivity extends AppCompatActivity {
      */
     public void performQuery(String query) {
         Log.d("SearchActivity", "Query String: " + query);
-        noteViewModel.searchNotes(query).observe(this, notes -> noteListAdapter.submitList(notes));
+        mainViewModel.searchNotes(query).observe(this, notes -> noteListAdapter.submitList(notes));
     }
 }
