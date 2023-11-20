@@ -13,7 +13,6 @@ import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,6 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -92,6 +90,13 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             return new VideoViewHolder(view, ((FragmentActivity) parent.getContext()).getSupportFragmentManager(), onItemFocusChangeListener);
         }
 
+        // if voice
+        else if (viewType == NoteItem.ItemType.VOICE.ordinal()){
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_note_voice, parent, false);
+            return new VoiceViewHolder(view, ((FragmentActivity) parent.getContext()).getSupportFragmentManager(), onItemFocusChangeListener);
+        }
+
         // otherwise
         else{
             Log.w("NoteRecyclerView", "Unknown View Type is trying to be displayed");
@@ -121,6 +126,10 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         }
         else if (holder instanceof VideoViewHolder){
             ((VideoViewHolder) holder).bind(noteItem, isHighlighted);
+        }
+
+        else if (holder instanceof VoiceViewHolder){
+            ((VoiceViewHolder) holder).bind(noteItem, isHighlighted);
         }
     }
 
@@ -642,7 +651,7 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             this.fragmentManager = fragmentManager;
             this.focusChangeListener = focusChangeListener;
             thumbnailView = itemView.findViewById(R.id.video_thumbnail);
-            playButton = itemView.findViewById(R.id.play_button);
+            playButton = itemView.findViewById(R.id.video_play_button);
 
             // Set up FocusChangeListener (focus = touched)
             thumbnailView.setFocusableInTouchMode(true);
@@ -690,6 +699,78 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             Log.e("Media", "Playing video on given Uri: " + videoUri.toString());
             VideoPlayerFragment videoPlayerFragment = VideoPlayerFragment.newInstance(videoUri.toString());
             videoPlayerFragment.show(fragmentManager, "videoPlayer");
+
+        }
+    }
+
+    static class VoiceViewHolder extends RecyclerView.ViewHolder{
+
+        private ImageView thumbnailView;
+        private ImageButton playButton;
+        private FragmentManager fragmentManager;
+        private OnItemFocusChangeListener focusChangeListener;
+
+        /**
+         * Constructs VoiceViewHolder for content
+         * @param itemView
+         */
+        public VoiceViewHolder(@NonNull View itemView, FragmentManager fragmentManager, OnItemFocusChangeListener focusChangeListener) {
+            super(itemView);
+            this.fragmentManager = fragmentManager;
+            this.focusChangeListener = focusChangeListener;
+            thumbnailView = itemView.findViewById(R.id.voice_thumbnail);
+            playButton = itemView.findViewById(R.id.voice_play_button);
+
+            // Set up FocusChangeListener (focus = touched)
+            thumbnailView.setFocusableInTouchMode(true);
+            thumbnailView.setOnClickListener(v -> { // Built-In Listener
+                // when image is clicked, consider as focused
+                focusChangeListener.onItemFocusChange(getAdapterPosition(), true);
+            });
+
+            thumbnailView.setOnLongClickListener(v -> { // Built-In Listener
+                // when image is held, call long click method
+                focusChangeListener.onItemLongClick(getAdapterPosition());
+
+                // also consider as focused
+                focusChangeListener.onItemFocusChange(getAdapterPosition(), true);
+                return true;
+            });
+        }
+
+        /**
+         * Binds the video content to a placeholder thumbnail.
+         * When play button is pressed, starts a fragment that plays the video
+         * @param noteItem
+         */
+        public void bind(NoteItem noteItem, boolean isHighlighted){
+            Uri voiceUri = noteItem.getContentMediaUri();
+
+            // Testing
+            if (voiceUri == null){
+                Log.e("Media", "audioURI is null");
+            }
+
+            // set play button visibility and onClickListener
+            playButton.setVisibility((View.VISIBLE));
+            playButton.setOnClickListener( v-> {
+                playAudio(voiceUri);
+            });
+
+            // set highlights @TODO fix highlights
+            // int backgroundId = isHighlighted ? R.drawable.thumbnail_view_background_highlight : R.drawable.thumbnail_view_background;
+            // thumbnailView.setBackgroundResource(backgroundId);
+
+        }
+
+        /**
+         * Launches the fragment to play the audio
+         * @param audioUri
+         */
+        private void playAudio(Uri audioUri){
+            Log.e("Media", "Playing audio on given Uri: " + audioUri.toString());
+            VideoPlayerFragment videoPlayerFragment = VideoPlayerFragment.newInstance(audioUri.toString());
+            videoPlayerFragment.show(fragmentManager, "audioPlayer");
 
         }
     }

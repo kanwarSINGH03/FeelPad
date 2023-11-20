@@ -54,7 +54,10 @@ public class NoteListAdapter extends ListAdapter<Note, NoteViewHolder> {
     public void onBindViewHolder(NoteViewHolder holder, int position) {
         Note current = getItem(position);
         String title = current.getTitle();
-        // String desc = current.getDescription(); // @TODO ViewHolder needs to be able to hold contents of RecyclerView. Maybe like a snapshot of the first few contents of Recyclerview?
+
+        // @TODO ViewHolder needs to be able to hold contents of RecyclerView. Maybe like a snapshot of the first few contents of Recyclerview?
+        // Based on first item. If text, show text. If Media, show media (bigger viewHolder)
+        // String desc = current.getDescription();
         Log.d("NoteListAdapter", "onBindViewHolder title: " + title);
         holder.bind(title);
 
