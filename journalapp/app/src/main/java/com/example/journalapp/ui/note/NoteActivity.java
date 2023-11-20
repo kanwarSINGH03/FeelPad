@@ -12,12 +12,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -40,7 +37,6 @@ import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.database.entity.NoteItemEntity;
 import com.example.journalapp.database.NoteRepository;
 import com.example.journalapp.ui.main.MapsActivity;
-import com.example.journalapp.utils.ConversionUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -149,7 +145,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                     Intent intent = result.getData();
                     int emotion = intent.getIntExtra("emotion", 0);
                     note.setEmotion(emotion);
-                    noteRepository.updateNoteEmtotion(note);
+                    noteRepository.updateNoteEmotion(note);
                     updateEmotionImage();
                 }
             });
@@ -996,7 +992,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         }
 
         // set last edited date before exiting
-        noteRepository.updateNotelastEditedDate(getDateAsString(), note.getId());
+        noteRepository.updateNoteLastEditedDate(getDateAsString(), note.getId());
         finish();
     }
 
