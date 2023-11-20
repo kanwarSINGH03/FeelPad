@@ -161,6 +161,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             int toPosition = target.getAdapterPosition();
 
             Collections.swap(noteItems, fromPosition, toPosition);
+            updateNoteItemsOrderIndex();
 
             recyclerView.getAdapter().notifyItemMoved(fromPosition, toPosition);
             return true;
@@ -771,6 +772,12 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         saveNoteContent();
     }
 
+    private void updateNoteItemsOrderIndex() {
+        for (int i = 0; i < noteItems.size(); i++) {
+            noteItems.get(i).setOrderIndex(i);
+        }
+    }
+
     // ==============================
     // REGION: Setting up Note Data
     // ==============================
@@ -992,7 +999,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         }
         for (int i = 0; i < noteItems.size(); i++) {
             NoteItem item = noteItems.get(i);
-            Log.d("NoteItemLog", "Index: " + i + ", Type: " + item.getType() + ", Content: " + item.getContent());
+            Log.d("NoteItemLog", "Index: " + item.getOrderIndex() + ", Type: " + item.getType() + ", Content: " + item.getContent());
         }
 
     }
