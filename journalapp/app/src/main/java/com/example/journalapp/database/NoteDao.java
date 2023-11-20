@@ -10,6 +10,7 @@ import androidx.room.Transaction;
 import androidx.room.Update;
 
 import com.example.journalapp.database.entity.Note;
+import com.example.journalapp.database.entity.NoteFtsEntity;
 import com.example.journalapp.database.entity.NoteItemEntity;
 
 import java.util.List;
@@ -159,7 +160,26 @@ public interface NoteDao {
         }
     }
 
+    // ==============================
+    // Normal NoteFts CRUD
+    // ==============================
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertNoteFts(NoteFtsEntity noteFts);
+
+    @Query("UPDATE NoteFtsEntity SET combinedText = :combinedText WHERE noteId = :noteId")
+    void updateNoteFts(String noteId, String combinedText);
+
+    @Query("DELETE FROM NoteFtsEntity WHERE noteId = :noteId")
+    void deleteNoteFts(String noteId);
+
+    // ==============================
+    // NoteFts Search Queries
+    // ==============================
+
+    @Query("SELECT note_table.* FROM note_table JOIN NoteFtsEntity ON note_table.id = NoteFtsEntity.noteId " +
+            "WHERE NoteFtsEntity MATCH :query")
+    LiveData<List<Note>> searchNotes(String query);
 
 
 }

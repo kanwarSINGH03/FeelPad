@@ -1,11 +1,16 @@
 package com.example.journalapp.database;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
 import com.example.journalapp.database.entity.Note;
+import com.example.journalapp.database.entity.NoteFtsEntity;
 import com.example.journalapp.database.entity.NoteItemEntity;
+import com.example.journalapp.ui.note.NoteItem;
+import com.example.journalapp.utils.ConversionUtil;
+import com.example.journalapp.utils.ItemTypeConverter;
 
 import java.util.List;
 
@@ -49,7 +54,10 @@ public class NoteRepository {
      * @param note Note object to be inserted
      */
     public void insertNote(Note note) {
-        NoteDatabase.databaseWriteExecutor.execute(() -> noteDao.insertNote(note));
+        NoteDatabase.databaseWriteExecutor.execute(() -> {
+            noteDao.insertNote(note);
+            noteDao.insertNoteFts(new NoteFtsEntity(note.getId(), ""));
+        });
     }
 
     /**
@@ -102,7 +110,10 @@ public class NoteRepository {
      * @param note The note to be removed
      */
     public void deleteNote(Note note) {
-        NoteDatabase.databaseWriteExecutor.execute(() -> noteDao.deleteNote(note));
+        NoteDatabase.databaseWriteExecutor.execute(() -> {
+            noteDao.deleteNote(note);
+            noteDao.deleteNoteFts(note.getId());
+        });
     }
 
     // =================================
@@ -114,7 +125,10 @@ public class NoteRepository {
      * @param noteItem
      */
     public void insertNoteItem(NoteItemEntity noteItem){
-        NoteDatabase.databaseWriteExecutor.execute(() -> noteDao.insertNoteItem(noteItem));
+        NoteDatabase.databaseWriteExecutor.execute(() -> {
+            noteDao.insertNoteItem(noteItem);
+            synchronizeNoteFts(noteItem.getNoteId());
+        });
     }
 
     /**
@@ -122,7 +136,10 @@ public class NoteRepository {
      * @param noteItem
      */
     public void updateNoteItem(NoteItemEntity noteItem){
-        NoteDatabase.databaseWriteExecutor.execute(() -> noteDao.updateNoteItem(noteItem));
+        NoteDatabase.databaseWriteExecutor.execute(() -> {
+            noteDao.updateNoteItem(noteItem);
+            synchronizeNoteFts(noteItem.getNoteId());
+        });
     }
 
     /**
@@ -130,7 +147,10 @@ public class NoteRepository {
      * @param noteItem
      */
     public void deleteNoteItem(NoteItemEntity noteItem){
-        NoteDatabase.databaseWriteExecutor.execute(() -> noteDao.deleteNoteItem(noteItem));
+        NoteDatabase.databaseWriteExecutor.execute(() -> {
+            noteDao.deleteNoteItem(noteItem);
+            synchronizeNoteFts(noteItem.getNoteId());
+        });
     }
 
     /**
@@ -164,5 +184,43 @@ public class NoteRepository {
             noteDao.insertFullNote(note, noteItems);
         });
     }
+
+    public void insertNoteFts(NoteFtsEntity noteFts) {
+        noteDao.insertNoteFts(noteFts);
+    }
+
+    public void updateNoteFts(String noteId, String combinedText) {
+        noteDao.updateNoteFts(noteId, combinedText);
+    }
+
+    public void deleteNoteFts(String noteId) {
+        noteDao.deleteNoteFts(noteId);
+    }
+
+    // Method to search notes
+    public LiveData<List<Note>> searchNotes(String query) {
+        return noteDao.searchNotes(query);
+    }
+
+    public void synchronizeNoteFts(String noteId){
+        NoteDatabase.databaseWriteExecutor.execute(()-> {
+            List<NoteItemEntity> noteItems = noteDao.getNoteItemsForNoteSync(noteId);
+            String combinedText = addAndCleanText(noteItems);
+            noteDao.updateNoteFts(noteId,combinedText);
+        });
+    }
+
+    private String addAndCleanText(List<NoteItemEntity> noteItems){
+        StringBuilder combinedTextBuilder = new StringBuilder();
+        for (NoteItemEntity item : noteItems){
+            if (item.getType() == ItemTypeConverter.toInteger(NoteItem.ItemType.TEXT)){
+                String textContent = ConversionUtil.stripHtmlTags(item.getContent());
+                combinedTextBuilder.append(textContent).append(" ");
+            }
+        }
+        Log.e("CombinedText", "Combined text is:" + combinedTextBuilder.toString().trim());
+        return combinedTextBuilder.toString().trim();
+    }
+
 
 }

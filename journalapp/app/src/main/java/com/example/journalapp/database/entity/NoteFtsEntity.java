@@ -3,6 +3,7 @@ package com.example.journalapp.database.entity;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Fts4;
+import androidx.room.PrimaryKey;
 
 /**
  * Full-Text-Search (FTS) Table to allow easier searching/filtering queries
@@ -11,6 +12,7 @@ import androidx.room.Fts4;
 @Fts4
 public class NoteFtsEntity {
 
+    @PrimaryKey
     @ColumnInfo(name = "rowid")
     private int rowid; // required by room to be used as primary key in FTS tables. Must be named rowid
 
