@@ -27,6 +27,9 @@ public class Note {
     @ColumnInfo(name = "create_date")
     private String createdDate;
 
+    @ColumnInfo(name = "last_edited_date")
+    private String lastEditedDate;
+
     @ColumnInfo(name = "emotion")
     private int emotion; // This will hold an int value 1-5
 
@@ -42,6 +45,7 @@ public class Note {
         this.title = title;
         this.createdDate = createdDate;
         this.emotion = emotion;
+        this.lastEditedDate = createdDate; // when creating a new Note, lastEditedDate will be same as creation, but can be updated
     }
 
     @NonNull
@@ -71,6 +75,14 @@ public class Note {
 
     public void setCreatedDate(String createDate) {
         this.createdDate = createDate;
+    }
+
+    public String getLastEditedDate(){
+        return lastEditedDate;
+    }
+
+    public void setLastEditedDate(String lastEditedDate){
+        this.lastEditedDate = lastEditedDate;
     }
 
 

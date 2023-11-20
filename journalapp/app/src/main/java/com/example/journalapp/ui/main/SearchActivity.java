@@ -13,8 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.R;
-import com.example.journalapp.ui.main.NoteViewModel;
-import com.example.journalapp.ui.main.NoteListAdapter;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -26,7 +24,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
  */
 public class SearchActivity extends AppCompatActivity {
 
-    private NoteViewModel noteViewModel;
+    private MainViewModel mainViewModel;
     private NoteListAdapter noteListAdapter;
     private SearchView noteSearchView;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -44,8 +42,8 @@ public class SearchActivity extends AppCompatActivity {
      * Sets up an observer to watch for changes in the list of notes and updates the UI accordingly
      */
     private void createNoteObserver() {
-        noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
-        noteViewModel.getAllNotesOrderedByCreateDateDesc().observe(this, notes -> noteListAdapter.submitList(notes));
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        mainViewModel.getAllNotesOrderedByLastEditedDateDesc().observe(this, notes -> noteListAdapter.submitList(notes));
     }
 
     /**
@@ -98,6 +96,6 @@ public class SearchActivity extends AppCompatActivity {
      */
     public void performQuery(String query) {
         Log.d("SearchActivity", "Query String: " + query);
-        noteViewModel.getAllNoteWhereTitleDateDescContains(query).observe(this, notes -> noteListAdapter.submitList(notes));
+        mainViewModel.searchNotes(query).observe(this, notes -> noteListAdapter.submitList(notes));
     }
 }

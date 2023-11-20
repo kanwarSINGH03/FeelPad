@@ -87,4 +87,16 @@ public class ConversionUtil {
 
         return new SpannableStringBuilder(spanned, 0, end);
     }
+
+    /**
+     * Strips all HTML Tags in a given string and returns the string without HTML Tags
+     * @param html
+     * @return
+     */
+    public static String stripHtmlTags(String html) {
+        if (html == null) {
+            return "";
+        }
+        return html.replaceAll("<[^>]*>", "").trim();
+    }
 }

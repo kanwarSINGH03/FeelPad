@@ -70,8 +70,8 @@ public class MainActivity extends AppCompatActivity {
      * Sets up an observer to watch for changes in the list of notes and updates the UI accordingly
      */
     private void createNoteObserver() {
-        NoteViewModel noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
-        noteViewModel.getAllNotesOrderedByCreateDateDesc().observe(this, notes -> noteListAdapter.submitList(notes));
+        MainViewModel mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        mainViewModel.getAllNotesOrderedByLastEditedDateDesc().observe(this, notes -> noteListAdapter.submitList(notes));
     }
 
     /**
