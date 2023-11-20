@@ -98,6 +98,6 @@ public class SearchActivity extends AppCompatActivity {
      */
     public void performQuery(String query) {
         Log.d("SearchActivity", "Query String: " + query);
-        noteViewModel.getAllNoteWhereTitleDateDescContains(query).observe(this, notes -> noteListAdapter.submitList(notes));
+        noteViewModel.searchNotes(query).observe(this, notes -> noteListAdapter.submitList(notes));
     }
 }

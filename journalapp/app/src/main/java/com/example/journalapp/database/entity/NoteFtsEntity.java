@@ -56,13 +56,4 @@ public class NoteFtsEntity {
         this.combinedText = combinedText;
     }
 
-    /*
-    Use to strip all HTML tags to be in NoteFtsEntity
-    public static String stripHtmlTags(String html) {
-    if (html == null) {
-        return "";
-    }
-    return html.replaceAll("<[^>]*>", "").trim();
-}
-     */
 }

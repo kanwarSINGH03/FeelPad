@@ -49,6 +49,10 @@ public class NoteViewModel extends AndroidViewModel {
         return noteRepository.getAllNoteWhereTitleDateDescContains(string);
     }
 
+    public LiveData<List<Note>> searchNotes(String string) {
+        return noteRepository.searchNotes(string);
+    }
+
     // ========================================
     // New NoteItem Functions
     // ========================================

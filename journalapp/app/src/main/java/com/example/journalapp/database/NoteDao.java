@@ -21,14 +21,33 @@ import java.util.List;
 @Dao
 public interface NoteDao {
 
-    /**
-     * Retrieves all notes from the database
-     *
-     * @return LiveData list of all notes
-     */
+    // ==============================
+    // Note Queries
+    // ==============================
+
+    // Inserts a new note
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertNote(Note note);
+
+    // Updates the Note Title field
+    @Query("UPDATE note_table SET title = :providedTitle WHERE id = :noteId")
+    void updateNoteTitle(String providedTitle, String noteId);
+
+    // Updates the Note Emotion value
+    @Query("UPDATE note_table SET emotion = :providedEmotion WHERE id = :noteId")
+    void updateNoteEmotion(int providedEmotion, String noteId);
+
+    // Deletes a note
+    @Delete
+    void deleteNote(Note note);
+
+    // Retrieves all notes from the database
     @Query("SELECT * FROM note_table")
     LiveData<List<Note>> getAllNotes();
 
+    // Retrieves a single Note by its id
+    @Query("SELECT * FROM note_table WHERE id = :note_id")
+    Note getNoteById(String note_id);
 
     /**
      * Retrieves all notes from the database ordered by created date
@@ -64,43 +83,7 @@ public interface NoteDao {
     // Normal Note CRUD
     // ==============================
 
-    /**
-     * Retrieves a single note given the id
-     *
-     * @param note_id String id to search for a note with
-     * @return a LiveData Note object
-     */
-    @Query("SELECT * FROM note_table WHERE id = :note_id")
-    Note getNoteById(String note_id);
 
-
-    /**
-     * Inserts a new note into the database
-     *
-     * @param note Note to insert
-     */
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insertNote(Note note);
-
-    /**
-     * Update the title of note with id
-     *
-     * @param noteId        The notes id
-     * @param providedTitle the new title
-     */
-    @Query("UPDATE note_table SET title = :providedTitle WHERE id = :noteId")
-    void updateNoteTitle(String providedTitle, String noteId);
-
-
-    @Query("UPDATE note_table SET emotion = :providedEmotion WHERE id = :noteId")
-    void updateNoteEmotion(int providedEmotion, String noteId);
-    /**
-     * Deletes a note from the database
-     *
-     * @param note Note to delete
-     */
-    @Delete
-    void deleteNote(Note note);
 
     // ==============================
     // Normal NoteItem CRUD
@@ -177,9 +160,6 @@ public interface NoteDao {
     // NoteFts Search Queries
     // ==============================
 
-    @Query("SELECT note_table.* FROM note_table JOIN NoteFtsEntity ON note_table.id = NoteFtsEntity.noteId " +
-            "WHERE NoteFtsEntity MATCH :query")
+    @Query("SELECT * FROM note_table WHERE title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)")
     LiveData<List<Note>> searchNotes(String query);
-
-
 }
