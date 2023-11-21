@@ -46,6 +46,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,6 +95,9 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private static final int REQUEST_AUDIO_PERMISSION = 2;
     private static final int REQUEST_CAMERA_PERMISSION = 3;
 
+    // Temporary Variables (always changing, but need access to)
+    private Uri tempUri;
+
     // Media Handling Variables
     // Special member variable used to launch activities that expect Media results
     private final ActivityResultLauncher<Intent> mGetContent =
@@ -130,22 +134,22 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                 }
             });
 
-
-    // Special member variable used to launch camera activity
-    //@TODO should use TakePicture() that returns URI. Has better quality
-    private final ActivityResultLauncher<Void> mTakePicture =
-            registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), bitmap -> {
-                // Handle returned Uri's
-                Uri uri = null;
-                try {
-                    uri = saveImageFromBitmapToStorage(bitmap);
-                    insertMedia(uri, NoteItem.ItemType.IMAGE);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(NoteActivity.this, "Failed to insert image", Toast.LENGTH_SHORT).show();
+    // Special member variable used to launch camera and save contents to given URI
+    private final ActivityResultLauncher<Uri> mTakePicture =
+            registerForActivityResult(new ActivityResultContracts.TakePicture(), savedToUri ->{
+                if (savedToUri){
+                    try{
+                        // Image saved successfully to provided URI
+                        insertMedia(tempUri, NoteItem.ItemType.IMAGE);
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                        Toast.makeText(NoteActivity.this, "Failed to insert media", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                if (uri != null) {
-                    // Do nothing
+                else{
+                    // handle failure
+                    Toast.makeText(NoteActivity.this, "Failed to insert media", Toast.LENGTH_SHORT).show();
                 }
 
             });
@@ -669,7 +673,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     }
 
     private void takePicture() {
-        mTakePicture.launch(null);
+        tempUri = createImageUri();
+        mTakePicture.launch(tempUri);
     }
 
     /**
@@ -739,18 +744,21 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         }
     }
 
-    private Uri saveImageFromBitmapToStorage(Bitmap image) {
-        Uri uri = null;
-        try {
-            String imageName = "image_" + System.currentTimeMillis() + ".png";
-            FileOutputStream stream = openFileOutput(imageName, MODE_PRIVATE);
-            image.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            stream.close();
-            return FileProvider.getUriForFile(this, "com.example.journalapp.fileprovider", new File(getFilesDir(), imageName));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    /**
+     * Creates a URI linked to internal storage for an image
+     * @return
+     */
+     private Uri createImageUri(){
+         String fileExtension = ".png";
+         String fileNamePrefix = "image_";
+
+         // Create appropriate filename with timestamp and create new file object
+         String fileName = fileNamePrefix + System.currentTimeMillis() + fileExtension;
+         File outputFile = new File(getFilesDir(), fileName);
+
+         // Return the file's URI using FileProvider
+         return FileProvider.getUriForFile(this, "com.example.journalapp.fileprovider", outputFile);
+     }
 
     /**
      * Deletes media (image,video) given the URI, from internal storage
