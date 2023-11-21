@@ -830,6 +830,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             noteItems.get(i).setOrderIndex(i);
         }
 
+        saveNoteContent();
+
         logNoteItems("Inserted Media");
     }
 
