@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:src="@drawable/graphic_eq"
-        android:background="@android:color/black" /> <!-- Black background for thumbnail -->
+        android:background="@drawable/rounded_rectangle" /> <!-- Black background for thumbnail -->
 
     <ImageButton android:id="@+id/voice_play_button"
         android:layout_width="wrap_content"

@@ -116,6 +116,10 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                                     // Handle audio
                                     Uri localUri = saveMediaToInternalStorage(uri, NoteItem.ItemType.VOICE);
                                     insertMedia(localUri, NoteItem.ItemType.VOICE);
+                                } else if (mimeType.startsWith("application/pdf")){
+                                    // Handle pdfs
+                                    Uri localUri = saveMediaToInternalStorage(uri, NoteItem.ItemType.PDF);
+                                    insertMedia(localUri, NoteItem.ItemType.PDF);
                                 }
                             }
                         } catch (Exception e) {
@@ -332,7 +336,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                     checkPermissionAndVoiceRecord();
                     return true;
                 } else if (menuItem.getItemId() == R.id.item3) {
-                    Toast.makeText(getApplicationContext(), "Insert", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Insert PDF", Toast.LENGTH_SHORT).show();
+                    selectPdf();
                     return true;
                 } else if (menuItem.getItemId() == R.id.item4) {
                     Toast.makeText(getApplicationContext(), "Save Note", Toast.LENGTH_SHORT).show();
@@ -654,6 +659,15 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         mGetContent.launch(intent);
     }
 
+    /**
+     * Launches an intent to open a PDF file. Does not need any permissions
+     */
+    private void selectPdf(){
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("application/pdf");
+        mGetContent.launch(intent);
+    }
+
     private void takePicture() {
         mTakePicture.launch(null);
     }
@@ -683,6 +697,10 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                     fileExtension = ".mp3";
                     fileNamePrefix = "audio_";
                     break;
+                case PDF:
+                    fileExtension = ".pdf";
+                    fileNamePrefix = "pdf_";
+                    break;
                 default:
                     throw new IllegalArgumentException("Unsupported media type");
             }
@@ -701,7 +719,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
 
             } else {
-                // if video, copy data directly
+                // if video, audio, or pdf copy data directly
                 byte[] buf = new byte[1024]; // buffer for data transfer
                 int len;
                 while ((len = inputStream.read(buf)) > 0) {
@@ -793,6 +811,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                 case IMAGE:
                 case VIDEO:
                 case VOICE:
+                case PDF:
                     // Case 3: Image or Video Focused
                     noteItems.add(focusedIndex + 1, new NoteItem(mediaType, null, mediaUri.toString(), focusedIndex + 1));
                     noteAdapter.notifyItemInserted(focusedIndex + 1);
@@ -810,6 +829,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         for (int i = focusedIndex + 1; i < noteItems.size(); i++) {
             noteItems.get(i).setOrderIndex(i);
         }
+
+        saveNoteContent();
 
         logNoteItems("Inserted Media");
     }
@@ -993,7 +1014,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                 noteViewModel.deleteNoteItem(entity);
 
                 // If the entity is of type IMAGE OR VIDEO, delete from internal storage as well
-                if (entity.getType() == NoteItem.ItemType.IMAGE.ordinal() || entity.getType() == NoteItem.ItemType.VIDEO.ordinal() || entity.getType() == NoteItem.ItemType.VOICE.ordinal()) {
+                if (entity.getType() != NoteItem.ItemType.TEXT.ordinal()) {
                     Uri imageUri = Uri.parse(entity.getContent()); // assuming the content is the URI in string format
                     boolean deleted = deleteMediaFromInternalStorage(imageUri);
                     if (!deleted) {

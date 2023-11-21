@@ -31,7 +31,7 @@
     <item
         android:id="@+id/item3"
         android:icon="@drawable/add_menu_icon"
-        android:title="Insert"
+        android:title="Insert PDF"
         app:showAsAction="never" />
 
     <item
