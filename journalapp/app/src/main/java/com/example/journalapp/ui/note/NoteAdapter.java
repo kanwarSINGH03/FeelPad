@@ -827,17 +827,17 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
          * @param noteItem
          */
         public void bind(NoteItem noteItem, boolean isHighlighted){
-            Uri PdfUri = noteItem.getContentMediaUri();
+            Uri pdfUri = noteItem.getContentMediaUri();
 
             // Testing
-            if (PdfUri == null){
+            if (pdfUri == null){
                 Log.e("Media", "audioURI is null");
             }
 
             // set play button visibility and onClickListener
             openButton.setVisibility((View.VISIBLE));
             openButton.setOnClickListener( v-> {
-                // openPdf(PdfUri);
+                openPdf(pdfUri);
                 Log.e("PDF", "Opening PDF");
             });
 
@@ -845,6 +845,16 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             // int backgroundId = isHighlighted ? R.drawable.thumbnail_view_background_highlight : R.drawable.thumbnail_view_background;
             // thumbnailView.setBackgroundResource(backgroundId);
 
+        }
+
+        /**
+         * Opens a fragment that has a PDF Viewer
+         * @param pdfUri
+         */
+        private void openPdf(Uri pdfUri){
+            Log.e("Media", "Playing audio on given Uri: " + pdfUri.toString());
+            PdfViewerFragment pdfViewerFragment = PdfViewerFragment.newInstance(pdfUri);
+            pdfViewerFragment.show(fragmentManager, "audioPlayer");
         }
 
     }
