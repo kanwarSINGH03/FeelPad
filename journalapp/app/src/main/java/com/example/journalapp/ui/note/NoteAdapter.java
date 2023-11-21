@@ -16,9 +16,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -97,6 +99,13 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             return new VoiceViewHolder(view, ((FragmentActivity) parent.getContext()).getSupportFragmentManager(), onItemFocusChangeListener);
         }
 
+        // if PDF
+        else if (viewType == NoteItem.ItemType.PDF.ordinal()){
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_note_pdf, parent, false);
+            return new PdfViewHolder(view, ((FragmentActivity) parent.getContext()).getSupportFragmentManager(), onItemFocusChangeListener);
+        }
+
         // otherwise
         else{
             Log.w("NoteRecyclerView", "Unknown View Type is trying to be displayed");
@@ -127,9 +136,11 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         else if (holder instanceof VideoViewHolder){
             ((VideoViewHolder) holder).bind(noteItem, isHighlighted);
         }
-
         else if (holder instanceof VoiceViewHolder){
             ((VoiceViewHolder) holder).bind(noteItem, isHighlighted);
+        }
+        else if (holder instanceof PdfViewHolder){
+            ((PdfViewHolder) holder).bind(noteItem, isHighlighted);
         }
     }
 
@@ -773,5 +784,68 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             videoPlayerFragment.show(fragmentManager, "audioPlayer");
 
         }
+    }
+
+    static class PdfViewHolder extends RecyclerView.ViewHolder{
+
+        private ImageView thumbnailView;
+        private Button openButton;
+        private FragmentManager fragmentManager;
+        private OnItemFocusChangeListener focusChangeListener;
+
+        /**
+         * Constructs VoiceViewHolder for content
+         * @param itemView
+         */
+        public PdfViewHolder(@NonNull View itemView, FragmentManager fragmentManager, OnItemFocusChangeListener focusChangeListener) {
+            super(itemView);
+            this.fragmentManager = fragmentManager;
+            this.focusChangeListener = focusChangeListener;
+            thumbnailView = itemView.findViewById(R.id.pdf_thumbnail);
+            openButton = itemView.findViewById(R.id.open_pdf_button);
+
+            // Set up FocusChangeListener (focus = touched)
+            thumbnailView.setFocusableInTouchMode(true);
+            thumbnailView.setOnClickListener(v -> { // Built-In Listener
+                // when image is clicked, consider as focused
+                focusChangeListener.onItemFocusChange(getAdapterPosition(), true);
+            });
+
+            thumbnailView.setOnLongClickListener(v -> { // Built-In Listener
+                // when image is held, call long click method
+                focusChangeListener.onItemLongClick(getAdapterPosition());
+
+                // also consider as focused
+                focusChangeListener.onItemFocusChange(getAdapterPosition(), true);
+                return true;
+            });
+        }
+
+        /**
+         * Binds the video content to a placeholder thumbnail.
+         * When play button is pressed, starts a fragment that plays the video
+         * @param noteItem
+         */
+        public void bind(NoteItem noteItem, boolean isHighlighted){
+            Uri PdfUri = noteItem.getContentMediaUri();
+
+            // Testing
+            if (PdfUri == null){
+                Log.e("Media", "audioURI is null");
+            }
+
+            // set play button visibility and onClickListener
+            openButton.setVisibility((View.VISIBLE));
+            openButton.setOnClickListener( v-> {
+                // openPdf(PdfUri);
+                Log.e("PDF", "Opening PDF");
+            });
+
+            // set highlights @TODO fix highlights
+            // int backgroundId = isHighlighted ? R.drawable.thumbnail_view_background_highlight : R.drawable.thumbnail_view_background;
+            // thumbnailView.setBackgroundResource(backgroundId);
+
+        }
+
     }
 }
