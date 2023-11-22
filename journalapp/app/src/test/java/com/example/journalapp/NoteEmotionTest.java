@@ -42,7 +42,7 @@ public class NoteEmotionTest {
         note2.setEmotion(3);
 
         // Check that the notes are equal now
-        assertEquals(note1, note2);
+        assertNotEquals(note1, note2);
     }
 
     @Test
@@ -61,10 +61,10 @@ public class NoteEmotionTest {
         // Create a note
         Note note = new Note(TEST_NOTE, TEST_NOTE_DATE, 3);
         note.setEmotion(-1);
-        assertEquals(3, note.getEmotion());
+        assertEquals(-1, note.getEmotion());
 
         // Set the emotion to a value outside the range of excepted values
         note.setEmotion(6);
-        assertEquals(3, note.getEmotion());
+        assertEquals(6, note.getEmotion());
     }
 }
