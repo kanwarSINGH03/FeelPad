@@ -442,7 +442,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             if (focusedItem >= 0){
                 RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
                 if (viewHolder instanceof NoteAdapter.TextViewHolder){
-                    ((NoteAdapter.TextViewHolder) viewHolder).applyBold();
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyBold(highlightedItem);
                 }
             }
         });
@@ -452,7 +452,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             if (focusedItem >= 0){
                 RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
                 if (viewHolder instanceof NoteAdapter.TextViewHolder){
-                    ((NoteAdapter.TextViewHolder) viewHolder).applyItalics();
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyItalics(highlightedItem);
                 }
             }
         });
@@ -462,7 +462,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             if (focusedItem >= 0){
                 RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
                 if (viewHolder instanceof NoteAdapter.TextViewHolder){
-                    ((NoteAdapter.TextViewHolder) viewHolder).applyUnderline();
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyUnderline(highlightedItem);
                 }
             }
         });
@@ -472,7 +472,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             if (focusedItem >= 0){
                 RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
                 if (viewHolder instanceof NoteAdapter.TextViewHolder){
-                    ((NoteAdapter.TextViewHolder) viewHolder).applyStrikethrough();
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyStrikethrough(highlightedItem);
                 }
             }
         });
@@ -482,10 +482,10 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * Callback Interface for the adapter to implement.
      */
     public interface TextFormattingHandler{
-        void applyBold();
-        void applyItalics();
-        void applyUnderline();
-        void applyStrikethrough();
+        void applyBold(int highlightedItem);
+        void applyItalics(int highlightedItem);
+        void applyUnderline(int highlightedItem);
+        void applyStrikethrough(int highlightedItem);
     }
 
     // ==============================

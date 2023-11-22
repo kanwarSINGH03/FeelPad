@@ -441,9 +441,15 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
          * Styling function to apply bold / remove existing bold to highlighted text
          */
         @Override
-        public void applyBold() {
+        public void applyBold(int highlightedItem) {
             int start = editText.getSelectionStart();
             int end = editText.getSelectionEnd();
+
+            // If this ViewHolder is the highlighted one, bold the entire text
+            if (highlightedItem == this.getAdapterPosition()) {
+                start = 0;
+                end = editText.getText().length();
+            }
             if (start < end) {
 
                 // make Spannable & specify span type
@@ -474,9 +480,15 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
          * Styling function to apply italics / remove existing italics to highlighted text
          */
         @Override
-        public void applyItalics() {
+        public void applyItalics(int highlightedItem) {
             int start = editText.getSelectionStart();
             int end = editText.getSelectionEnd();
+
+            // If this ViewHolder is the highlighted one, bold the entire text
+            if (highlightedItem == this.getAdapterPosition()) {
+                start = 0;
+                end = editText.getText().length();
+            }
             if (start < end) {
 
                 // make Spannable & specify span type
@@ -507,9 +519,15 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
          * Styling function to apply underline / remove existing underline to highlighted text
          */
         @Override
-        public void applyUnderline() {
+        public void applyUnderline(int highlightedItem) {
             int start = editText.getSelectionStart();
             int end = editText.getSelectionEnd();
+
+            // If this ViewHolder is the highlighted one, bold the entire text
+            if (highlightedItem == this.getAdapterPosition()) {
+                start = 0;
+                end = editText.getText().length();
+            }
             if (start < end) {
 
                 // make Spannable & specify span type
@@ -540,9 +558,15 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
          * Styling function to apply strikethrough / remove existing strikethrough to highlighted text
          */
         @Override
-        public void applyStrikethrough() {
+        public void applyStrikethrough(int highlightedItem) {
             int start = editText.getSelectionStart();
             int end = editText.getSelectionEnd();
+
+            // If this ViewHolder is the highlighted one, bold the entire text
+            if (highlightedItem == this.getAdapterPosition()) {
+                start = 0;
+                end = editText.getText().length();
+            }
             if (start < end) {
 
                 // make Spannable & specify span type
