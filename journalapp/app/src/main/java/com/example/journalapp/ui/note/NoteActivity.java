@@ -72,6 +72,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private int focusedItem = -1; // starts at invalid
     private int highlightedItem = -1; // starts at invalid
 
+    private Uri mediaUri;
+
     // Note Database Variables
     private NoteRepository noteRepository;
     private Note note;
@@ -83,23 +85,24 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
     private static final int REQUEST_CAMERA_PERMISSION = 1;
 
+
     // Media Handling Variables
     // Special member variable used to launch activities that expect a result
     public final ActivityResultLauncher<Intent> mGetContent =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                    Uri uri = result.getData().getData();
-                    if (uri != null) {
+                    mediaUri = result.getData().getData();
+                    if (mediaUri != null) {
                         try {
-                            String mimeType = getContentResolver().getType(uri); // get MIME type
+                            String mimeType = getContentResolver().getType(mediaUri); // get MIME type
                             if (mimeType != null) {
                                 if (mimeType.startsWith("image/")) {
                                     // Handle images
-                                    Uri localUri = saveMediaToInternalStorage(uri, true); // true for image
+                                    Uri localUri = saveMediaToInternalStorage(mediaUri, true); // true for image
                                     insertMedia(localUri, NoteItem.ItemType.IMAGE);
                                 } else if (mimeType.startsWith("video/")) {
                                     // Handle videos
-                                    Uri localUri = saveMediaToInternalStorage(uri, false); // false for video
+                                    Uri localUri = saveMediaToInternalStorage(mediaUri, false); // false for video
                                     insertMedia(localUri, NoteItem.ItemType.VIDEO);
                                 }
                             }
@@ -416,7 +419,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * Permission Granted: Opens gallery for image selection
      * Permission not Granted: Request for permissions
      */
-    private void checkPermissionAndOpenGallery() {
+    public void checkPermissionAndOpenGallery() {
         // API Level 33+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // API Level 33+
@@ -567,7 +570,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * @param mediaUri
      * @return
      */
-    private boolean deleteMediaFromInternalStorage(Uri mediaUri) {
+    public boolean deleteMediaFromInternalStorage(Uri mediaUri) {
         try {
             // Get the file's name from the URI, build, then delete file
             String fileName = new File(mediaUri.getPath()).getName();
@@ -894,5 +897,9 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             NoteItem item = noteItems.get(i);
             Log.d("NoteItemLog", "Index: " + i + ", Type: " + item.getType() + ", Content: " + item.getContent());
         }
+    }
+
+    public Uri getMediaUri() {
+        return mediaUri;
     }
 }
