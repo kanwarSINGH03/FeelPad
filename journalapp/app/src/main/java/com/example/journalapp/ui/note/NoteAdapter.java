@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,7 +48,7 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private OnItemFocusChangeListener onItemFocusChangeListener; // listener to handle item focus
     private OnKeyListener onKeyListener; // listener to handle key presses
     private int focusedItem = -1; // -1 means no focused item
-    private Integer highlightedItem = -1; // -1 is invalid
+    private int highlightedItem = -1; // -1 is invalid
 
     /**
      * Constructs a NoteAdapter with a list of NoteItems
@@ -223,7 +224,8 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public void highlightItem(int position){
 
         // Check if there's already a highlighted item
-        if (highlightedItem != null && highlightedItem != position){
+        if (highlightedItem != position){
+            Log.e("HighlightBug", "Item has been highlighted via highlightItem");
             notifyItemChanged(highlightedItem); // notify for rebinding
         }
 
@@ -235,11 +237,13 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
      * Clears any highlighted items in the adapter
      */
     public void clearHighlights(){
-        if (highlightedItem != null){
-            int oldPosition = highlightedItem;
-            highlightedItem = null;
-            notifyItemChanged(oldPosition); // rebind previously highlighted item
-        }
+
+        Log.e("HighlightBug","Highlights being cleared via NoteAdapter");
+
+        int oldPosition = highlightedItem;
+        highlightedItem = -1;
+        notifyItemChanged(oldPosition); // rebind previously highlighted item
+
     }
 
     /**
@@ -278,6 +282,8 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     static class TextViewHolder extends RecyclerView.ViewHolder implements NoteActivity.TextFormattingHandler {
 
         private EditText editText;
+        private CardView cardView;
+        public ImageButton dragHandle;
         private NoteItem currentNoteItem;
 
         // Auto save Variables
@@ -302,6 +308,9 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             this.focusChangeListener = focusChangeListener;
             this.onKeyListener = onKeyListener;
             editText = itemView.findViewById(R.id.edit_text_note_text);
+            cardView = itemView.findViewById(R.id.edit_text_card_view);
+            dragHandle = itemView.findViewById(R.id.drag_handle);
+            cardView.setMaxCardElevation(8);
 
             // Set up FocusChangeListener. Built-In Listener --> Custom Listener
             editText.setOnFocusChangeListener((view, hasFocus) -> { // Built-in listener
@@ -363,8 +372,16 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     titleObservable.subscribe(this::saveNoteContents));
 
             // Set the highlight if this ViewHolder needs to be highlighted
-            int backgroundId = isHighlighted ? R.drawable.edit_text_background_highlight : R.drawable.edit_text_background;
-            editText.setBackgroundResource(backgroundId);
+            if (isHighlighted){
+                cardView.setCardElevation(8);
+                dragHandle.setVisibility(View.VISIBLE);
+            }
+            else{
+                cardView.setCardElevation(0);
+                dragHandle.setVisibility(View.INVISIBLE);
+            }
+            //int backgroundId = isHighlighted ? R.drawable.edit_text_background_highlight : R.drawable.edit_text_background;
+            //editText.setBackgroundResource(backgroundId);
 
             // OnKeyListener for enter key. @TODO not being used at the moment.
             /*
@@ -565,6 +582,7 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     static class ImageViewHolder extends RecyclerView.ViewHolder {
         // Define your image view holder components
         private ImageView imageView;
+        private CardView cardView;
         private OnItemFocusChangeListener focusChangeListener;
 
         /**
@@ -576,6 +594,7 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             super(itemView);
             this.focusChangeListener = focusChangeListener;
             imageView = itemView.findViewById(R.id.image_view_note_image);
+            cardView = itemView.findViewById(R.id.image_view_card_view);
 
 
             // Set up FocusChangeListener (focus = touched)
@@ -623,9 +642,11 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                         .into(imageView);
             }
 
-            // Set highlights
+
+
             int backgroundId = isHighlighted ? R.drawable.image_view_background_highlight : R.drawable.image_view_background;
-            imageView.setBackgroundResource(backgroundId);
+            cardView.setBackgroundResource(backgroundId);
+
         }
 
         /**

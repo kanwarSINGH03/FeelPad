@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/image_view_card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="0dp"
+    android:background="@drawable/image_view_background_highlight">
 
     <ImageView
         android:id="@+id/image_view_note_image"
@@ -10,6 +14,6 @@
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
-        android:src="@drawable/image_view_background_state" /> <!-- Replace with your placeholder image -->
+        android:src="@drawable/image_menu_icon" /> <!-- Your image source -->
 
-</FrameLayout>
+</androidx.cardview.widget.CardView>
