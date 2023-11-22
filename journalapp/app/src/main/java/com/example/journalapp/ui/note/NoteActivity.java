@@ -553,6 +553,67 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             });
         }
 
+        // if image viewHolder
+        else if (viewHolder instanceof NoteAdapter.ImageViewHolder){
+
+            // convert to imageviewHolder
+            NoteAdapter.ImageViewHolder imageViewHolder = (NoteAdapter.ImageViewHolder) viewHolder;
+
+            // set listener to drag handle
+            imageViewHolder.dragHandle.setOnTouchListener((v, event) -> {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    itemTouchHelper.startDrag(viewHolder);
+                }
+                return false;
+            });
+        }
+
+        // if video viewholder
+        else if (viewHolder instanceof NoteAdapter.VideoViewHolder){
+
+            // convert to videoViewHolder
+            NoteAdapter.VideoViewHolder videoViewHolder = (NoteAdapter.VideoViewHolder) viewHolder;
+
+            // set listener to drag handle
+            videoViewHolder.dragHandle.setOnTouchListener((v, event) -> {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    itemTouchHelper.startDrag(viewHolder);
+                }
+                return false;
+            });
+        }
+
+        // if audio
+        else if (viewHolder instanceof NoteAdapter.VoiceViewHolder){
+
+            // convert to audioViewHolder
+            NoteAdapter.VoiceViewHolder voiceViewHolder = (NoteAdapter.VoiceViewHolder) viewHolder;
+
+            // set listener to drag handle
+            voiceViewHolder.dragHandle.setOnTouchListener((v, event) -> {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    itemTouchHelper.startDrag(viewHolder);
+                }
+                return false;
+            });
+        }
+
+        // if pdf
+        else if (viewHolder instanceof NoteAdapter.PdfViewHolder){
+
+            // convert to pdf
+            NoteAdapter.PdfViewHolder pdfViewHolder = (NoteAdapter.PdfViewHolder) viewHolder;
+
+            // set listener to drag handle
+            pdfViewHolder.dragHandle.setOnTouchListener((v, event) -> {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    itemTouchHelper.startDrag(viewHolder);
+                }
+                return false;
+            });
+        }
+
+
     }
 
 

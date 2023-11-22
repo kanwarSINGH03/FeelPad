@@ -283,7 +283,7 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         private EditText editText;
         private CardView cardView;
-        public ImageButton dragHandle;
+        public ImageView dragHandle;
         private NoteItem currentNoteItem;
 
         // Auto save Variables
@@ -583,6 +583,7 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         // Define your image view holder components
         private ImageView imageView;
         private CardView cardView;
+        public ImageView dragHandle;
         private OnItemFocusChangeListener focusChangeListener;
 
         /**
@@ -595,6 +596,8 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             this.focusChangeListener = focusChangeListener;
             imageView = itemView.findViewById(R.id.image_view_note_image);
             cardView = itemView.findViewById(R.id.image_view_card_view);
+            dragHandle = itemView.findViewById(R.id.image_view_drag_handle);
+            cardView.setMaxCardElevation(8);
 
 
             // Set up FocusChangeListener (focus = touched)
@@ -644,8 +647,15 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
 
 
-            int backgroundId = isHighlighted ? R.drawable.image_view_background_highlight : R.drawable.image_view_background;
-            cardView.setBackgroundResource(backgroundId);
+            // Set the highlight if this ViewHolder needs to be highlighted
+            if (isHighlighted){
+                cardView.setCardElevation(8);
+                dragHandle.setVisibility(View.VISIBLE);
+            }
+            else{
+                cardView.setCardElevation(0);
+                dragHandle.setVisibility(View.INVISIBLE);
+            }
 
         }
 
@@ -671,6 +681,8 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     static class VideoViewHolder extends RecyclerView.ViewHolder{
         private ImageView thumbnailView;
         private ImageButton playButton;
+        private CardView cardView;
+        public ImageView dragHandle;
         private FragmentManager fragmentManager;
         private OnItemFocusChangeListener focusChangeListener;
 
@@ -684,6 +696,9 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             this.focusChangeListener = focusChangeListener;
             thumbnailView = itemView.findViewById(R.id.video_thumbnail);
             playButton = itemView.findViewById(R.id.video_play_button);
+            cardView = itemView.findViewById(R.id.video_view_card_view);
+            dragHandle = itemView.findViewById(R.id.video_view_drag_handle);
+            cardView.setCardElevation(8);
 
             // Set up FocusChangeListener (focus = touched)
             thumbnailView.setFocusableInTouchMode(true);
@@ -721,9 +736,15 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 playVideo(videoUri);
             });
 
-            // set highlights @TODO fix highlights
-            // int backgroundId = isHighlighted ? R.drawable.thumbnail_view_background_highlight : R.drawable.thumbnail_view_background;
-            // thumbnailView.setBackgroundResource(backgroundId);
+            // Set the highlight if this ViewHolder needs to be highlighted
+            if (isHighlighted){
+                cardView.setCardElevation(8);
+                dragHandle.setVisibility(View.VISIBLE);
+            }
+            else{
+                cardView.setCardElevation(0);
+                dragHandle.setVisibility(View.INVISIBLE);
+            }
 
         }
 
@@ -739,6 +760,8 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         private ImageView thumbnailView;
         private ImageButton playButton;
+        private CardView cardView;
+        public ImageView dragHandle;
         private FragmentManager fragmentManager;
         private OnItemFocusChangeListener focusChangeListener;
 
@@ -752,6 +775,9 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             this.focusChangeListener = focusChangeListener;
             thumbnailView = itemView.findViewById(R.id.voice_thumbnail);
             playButton = itemView.findViewById(R.id.voice_play_button);
+            cardView = itemView.findViewById(R.id.voice_view_card_view);
+            dragHandle = itemView.findViewById(R.id.voice_view_drag_handle);
+            cardView.setCardElevation(8);
 
             // Set up FocusChangeListener (focus = touched)
             thumbnailView.setFocusableInTouchMode(true);
@@ -789,9 +815,15 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 playAudio(voiceUri);
             });
 
-            // set highlights @TODO fix highlights
-            // int backgroundId = isHighlighted ? R.drawable.thumbnail_view_background_highlight : R.drawable.thumbnail_view_background;
-            // thumbnailView.setBackgroundResource(backgroundId);
+            // Set the highlight if this ViewHolder needs to be highlighted
+            if (isHighlighted){
+                cardView.setCardElevation(8);
+                dragHandle.setVisibility(View.VISIBLE);
+            }
+            else{
+                cardView.setCardElevation(0);
+                dragHandle.setVisibility(View.INVISIBLE);
+            }
 
         }
 
@@ -811,6 +843,8 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         private ImageView thumbnailView;
         private Button openButton;
+        private CardView cardView;
+        public ImageView dragHandle;
         private FragmentManager fragmentManager;
         private OnItemFocusChangeListener focusChangeListener;
 
@@ -824,6 +858,8 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             this.focusChangeListener = focusChangeListener;
             thumbnailView = itemView.findViewById(R.id.pdf_thumbnail);
             openButton = itemView.findViewById(R.id.open_pdf_button);
+            cardView = itemView.findViewById(R.id.pdf_view_card_view);
+            dragHandle = itemView.findViewById(R.id.pdf_view_drag_handle);
 
             // Set up FocusChangeListener (focus = touched)
             thumbnailView.setFocusableInTouchMode(true);
@@ -862,9 +898,15 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 Log.e("PDF", "Opening PDF");
             });
 
-            // set highlights @TODO fix highlights
-            // int backgroundId = isHighlighted ? R.drawable.thumbnail_view_background_highlight : R.drawable.thumbnail_view_background;
-            // thumbnailView.setBackgroundResource(backgroundId);
+            // Set the highlight if this ViewHolder needs to be highlighted
+            if (isHighlighted){
+                cardView.setCardElevation(8);
+                dragHandle.setVisibility(View.VISIBLE);
+            }
+            else{
+                cardView.setCardElevation(0);
+                dragHandle.setVisibility(View.INVISIBLE);
+            }
 
         }
 

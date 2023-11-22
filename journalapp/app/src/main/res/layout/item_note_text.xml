@@ -26,7 +26,7 @@
             android:textSize="16sp"
             android:background="@color/white"/>
 
-        <ImageButton
+        <ImageView
             android:id="@+id/drag_handle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,6 +34,7 @@
             android:padding="8dp"
             android:focusable="false"
             android:background="@android:color/transparent"
-            android:visibility="invisible"/>
+            android:visibility="invisible"
+            android:elevation="10dp"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
