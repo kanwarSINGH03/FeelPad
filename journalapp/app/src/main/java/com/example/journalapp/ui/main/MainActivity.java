@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
         arrowButton.setOnClickListener(v -> {
             // Handle the click for the arrow button here
+            Intent intent = new Intent(MainActivity.this,PdfActivity.class);
+            startActivity(intent);
         });
         combinePdfButton.setOnClickListener(v -> {
             // Handle the click for the combine PDF button here
