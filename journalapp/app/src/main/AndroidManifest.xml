@@ -57,6 +57,11 @@
             android:exported="false"
             android:label="LaunchActivity"
             />
+        <activity
+            android:name=".ui.main.HomeActivity"
+            android:exported="false"
+            android:label="HomeActivity"
+            />
 
         <provider
             android:name="androidx.core.content.FileProvider"

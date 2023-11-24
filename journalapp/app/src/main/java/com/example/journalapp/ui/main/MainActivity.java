@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         setNoteRecyclerView(); // initialize RecyclerView (display notes)
         createNoteObserver(); // observer to watch for changes in list of notes
         initMainMenu(); // initialize main menu buttons
+
+
     }
 
     /**

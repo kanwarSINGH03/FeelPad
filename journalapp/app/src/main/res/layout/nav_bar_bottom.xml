@@ -3,11 +3,11 @@
     android:id="@+id/nav_bar_bottom"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_bar_height"
-    android:background="@android:color/transparent"
+    android:background="@drawable/bg_nav_bar_bottom"
     android:gravity="center"
     android:orientation="horizontal"
     android:padding="8dp">
-    >
+
 
     <ImageButton
         android:id="@+id/nav_home"
@@ -27,7 +27,8 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_nav_bar_add"
         android:contentDescription="Add"
-        android:padding="16dp" />
+        android:padding="16dp"
+        android:layout_marginBottom="5dp"/>
 
     <ImageButton
         android:id="@+id/nav_settings"

@@ -80,6 +80,7 @@
                 app:layout_constraintWidth_percent="0.94"/>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/launch_activity_btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Start Writing"

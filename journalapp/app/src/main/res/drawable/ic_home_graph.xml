@@ -1,0 +1,37 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="360dp"
+    android:height="84dp"
+    android:viewportWidth="360"
+    android:viewportHeight="84">
+
+    <!-- Background for the graph -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M0,0h360v84H0z"/>
+
+    <!-- Blocky Graph Elements -->
+    <!-- Each Rect represents a block in the graph -->
+    <group>
+        <path
+            android:fillColor="?attr/colorAccent"
+            android:pathData="M10,74v-20h40v20z"/> <!-- Block 1 -->
+        <path
+            android:fillColor="?attr/colorAccent"
+            android:pathData="M60,74v-40h40v40z"/> <!-- Block 2 -->
+        <path
+            android:fillColor="?attr/colorAccent"
+            android:pathData="M110,74v-30h40v30z"/> <!-- Block 3 -->
+        <path
+            android:fillColor="?attr/colorAccent"
+            android:pathData="M160,74v-50h40v50z"/> <!-- Block 4 -->
+        <path
+            android:fillColor="?attr/colorAccent"
+            android:pathData="M210,74v-45h40v45z"/> <!-- Block 5 -->
+        <path
+            android:fillColor="?attr/colorAccent"
+            android:pathData="M260,74v-15h40v15z"/> <!-- Block 6 -->
+        <path
+            android:fillColor="?attr/colorAccent"
+            android:pathData="M310,74v-25h40v25z"/> <!-- Block 7 -->
+    </group>
+</vector>
