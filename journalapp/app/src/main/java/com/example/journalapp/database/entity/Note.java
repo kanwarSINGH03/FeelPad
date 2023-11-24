@@ -14,7 +14,7 @@ import java.util.UUID;
  * Represents an individual notes' metadata
  */
 @Entity(tableName = "note_table")
-public class Note {
+public class  Note {
 
     @PrimaryKey
     @NonNull
@@ -47,6 +47,14 @@ public class Note {
         this.emotion = emotion;
         this.lastEditedDate = createdDate; // when creating a new Note, lastEditedDate will be same as creation, but can be updated
     }
+
+
+
+    /**
+     * Getter for unique ID of a note
+     *
+     * @return integer ID of a note
+     */
 
     @NonNull
     public String getId() {

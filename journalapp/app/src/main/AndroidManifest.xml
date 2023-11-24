@@ -72,6 +72,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.main.ThemeSelectionActivity" />
+
+
         <activity android:name=".ui.note.NoteActivity" />
         <activity
             android:name=".ui.main.SearchActivity"

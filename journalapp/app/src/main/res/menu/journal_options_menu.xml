@@ -45,5 +45,10 @@
         android:title="Add Template"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/item6"
+        android:title="Remove Theme"
+        app:showAsAction="never" />
+
 
 </menu>
