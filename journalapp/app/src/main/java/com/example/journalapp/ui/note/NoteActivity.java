@@ -5,6 +5,7 @@ import static com.example.journalapp.utils.ConversionUtil.convertNoteItemEntitie
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -37,16 +38,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.journalapp.R;
 import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.database.entity.NoteItemEntity;
-import com.example.journalapp.ui.main.MainViewModel;
 import com.example.journalapp.ui.main.MapsActivity;
-import com.google.common.net.MediaType;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,6 +91,9 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private static final int REQUEST_STORAGE_PERMISSION = 1;
     private static final int REQUEST_AUDIO_PERMISSION = 2;
     private static final int REQUEST_CAMERA_PERMISSION = 3;
+
+    public static final String THEME_PREFERENCES = "theme_preferences";
+    public static final String SELECTED_THEME = "selected_theme";
 
     // Temporary Variables (always changing, but need access to)
     private Uri tempUri;
@@ -194,7 +194,21 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     @Override
     protected void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
-        setContentView(R.layout.activity_note);
+        Intent intent = getIntent();
+
+        if (intent.hasExtra("themeBackground")) {
+            int themeBackgroundId = intent.getIntExtra("themeBackground", 0);
+            setContentView(themeBackgroundId);
+            saveThemeToPreferences(String.valueOf(themeBackgroundId));
+        } else {
+            // If no theme is provided, load the default theme from SharedPreferences
+            String savedTheme = getThemeFromPreferences();
+            if (savedTheme != null && !savedTheme.isEmpty()) {
+                setContentView(Integer.parseInt(savedTheme));
+            } else {
+                setContentView(R.layout.activity_note);
+            }
+        }
 
         // Initialize UI Widgets & set current date
         initWidgets();
@@ -203,8 +217,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         initStyling();
         initLocation();
 
-        // Check if the received intent is for a new note or existing note
-        Intent intent = getIntent();
 
         if (intent.hasExtra("note_id")) {
             // Existing Note: retrieve note_id and set up existing note
@@ -215,6 +227,30 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             // New Note: create note_id and create new note
             setNewNote();
         }
+    }
+
+    private void saveThemeToPreferences(String themeId) {
+        SharedPreferences preferences = getSharedPreferences(THEME_PREFERENCES, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(SELECTED_THEME, themeId);
+        editor.apply();
+    }
+
+    /**
+     * Retrieve the selected theme from SharedPreferences
+     *
+     * @return The resource ID of the selected theme, or null if not found
+     */
+    private String getThemeFromPreferences() {
+        SharedPreferences preferences = getSharedPreferences(THEME_PREFERENCES, MODE_PRIVATE);
+        return preferences.getString(SELECTED_THEME, null);
+    }
+
+    private void removeThemeFromPreferences() {
+        SharedPreferences preferences = getSharedPreferences(THEME_PREFERENCES, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove(SELECTED_THEME);
+        editor.apply();
     }
 
     private void updateEmotionImage() {
@@ -348,6 +384,12 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                     return true;
                 } else if (menuItem.getItemId() == R.id.item5) {
                     Toast.makeText(getApplicationContext(), "Add Template", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                else if (menuItem.getItemId() == R.id.item6) {
+                    Toast.makeText(getApplicationContext(), "Remove Theme", Toast.LENGTH_SHORT).show();
+                    removeThemeFromPreferences();
+                    recreate();
                     return true;
                 }
                 return true;

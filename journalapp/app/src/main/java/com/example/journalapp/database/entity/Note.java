@@ -14,7 +14,7 @@ import java.util.UUID;
  * Represents an individual notes' metadata
  */
 @Entity(tableName = "note_table")
-public class Note {
+public class  Note {
 
     @PrimaryKey
     @NonNull
@@ -27,11 +27,14 @@ public class Note {
     @ColumnInfo(name = "create_date")
     private String createdDate;
 
+<<<<<<< HEAD:journalapp/app/src/main/java/com/example/journalapp/database/entity/Note.java
     @ColumnInfo(name = "last_edited_date")
     private String lastEditedDate;
 
     @ColumnInfo(name = "emotion")
     private int emotion; // This will hold an int value 1-5
+=======
+>>>>>>> testTheme:journalapp/app/src/main/java/com/example/journalapp/note/Note.java
 
 
     /**
@@ -48,6 +51,15 @@ public class Note {
         this.lastEditedDate = createdDate; // when creating a new Note, lastEditedDate will be same as creation, but can be updated
     }
 
+<<<<<<< HEAD:journalapp/app/src/main/java/com/example/journalapp/database/entity/Note.java
+=======
+
+    /**
+     * Getter for unique ID of a note
+     *
+     * @return integer ID of a note
+     */
+>>>>>>> testTheme:journalapp/app/src/main/java/com/example/journalapp/note/Note.java
     @NonNull
     public String getId() {
         return id;
