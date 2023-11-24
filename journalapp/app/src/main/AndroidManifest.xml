@@ -26,7 +26,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Journalapp"
+        android:theme="@style/Base.Theme.Light"
         tools:targetApi="31">
 
         <!--
@@ -51,6 +51,11 @@
             android:name=".ui.main.MapsActivity"
             android:exported="false"
             android:label="@string/title_activity_maps"
+            />
+        <activity
+            android:name=".ui.main.LaunchActivity"
+            android:exported="false"
+            android:label="LaunchActivity"
             />
 
         <provider
