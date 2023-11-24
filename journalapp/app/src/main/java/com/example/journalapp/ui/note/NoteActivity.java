@@ -748,6 +748,13 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         else{
             // otherwise, inform user that the don't have an installed voice recording app.
             Toast.makeText(this, "No voice recording app found. Please install your default voice recording app.", Toast.LENGTH_LONG).show();
+            // redirect to app store for a voice-recording app
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.sec.android.app.voicenote")));
+            } catch (android.content.ActivityNotFoundException anfe) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.sec.android.app.voicenote")));
+            }
+            Toast.makeText(this,"Redirecting to the Play Store for a Voice Recording app", Toast.LENGTH_SHORT).show();
 
         }
 

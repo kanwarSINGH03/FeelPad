@@ -1,6 +1,8 @@
 package com.example.journalapp.ui.note;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -27,6 +30,7 @@ public class PdfViewerFragment extends DialogFragment {
 
     private TextView pageNumView;
     private ImageButton backButton;
+    private ImageButton annotateButton;
     private Uri pdfUri;
     private static final String ARG_PDF_URI = "pdf_uri";
 
@@ -85,6 +89,7 @@ public class PdfViewerFragment extends DialogFragment {
         PDFView pdfView = view.findViewById(R.id.pdfView);
         pageNumView = view.findViewById(R.id.pageNumber);
         backButton = view.findViewById(R.id.backButtonPdf);
+        annotateButton = view.findViewById(R.id.annotateButtonPdf);
 
 
         // Initializes the PDF Viewer
@@ -108,6 +113,35 @@ public class PdfViewerFragment extends DialogFragment {
         // Back button
         backButton.setOnClickListener(v -> {
             dismiss();
+        });
+
+        // Annotate Pdf Button
+        annotateButton.setOnClickListener(v ->{
+            // Use an intent to open the PDF in an external app
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(pdfUri, "application/pdf");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+            // Get the Context from the view
+            Context context = v.getContext();
+
+            // Check if there is an app that can handle this intent
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+                Log.e("PDF", "Opening PDF in external app");
+            } else {
+                // Inform the user if no application can handle the PDF
+                Toast.makeText(context, "No application available to open PDF", Toast.LENGTH_SHORT).show();
+                try {
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.adobe.reader")));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.adobe.reader")));
+                }
+                Toast.makeText(context, "Redirecting to the Play Store for a PDF annotation app", Toast.LENGTH_SHORT).show();
+
+
+            }
         });
 
         return view;

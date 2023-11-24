@@ -1,6 +1,8 @@
 package com.example.journalapp.ui.note;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -920,6 +922,7 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             openButton.setOnClickListener( v-> {
                 openPdf(pdfUri);
                 Log.e("PDF", "Opening PDF");
+
             });
 
             // Set the highlight if this ViewHolder needs to be highlighted
