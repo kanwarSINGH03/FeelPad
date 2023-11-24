@@ -98,9 +98,4 @@ public class SearchActivity extends AppCompatActivity {
         Log.d("SearchActivity", "Query String: " + query);
         mainViewModel.searchNotes(query).observe(this, notes -> noteListAdapter.submitList(notes));
     }
-    // Extracted method for testing
-    void updateNoteList(String query) {
-        noteViewModel.getAllNoteWhereTitleDateDescContains(query)
-                .observe(this, notes -> noteListAdapter.submitList(notes));
-    }
 }
