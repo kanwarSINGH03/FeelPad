@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#E0E0E0"/> <!-- This is the background color for the highlighted state -->
-    <corners android:radius="10dp"/>
-    <stroke android:width="2dp" android:color="#B0B0B0"/> <!-- This is the border color -->
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Shadow Layer -->
+    <item android:left="2dp" android:top="2dp" android:right="2dp" android:bottom="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#B0B0B0"/> <!-- Shadow color -->
+            <corners android:radius="12dp"/> <!-- Slightly larger radius than the top layer to appear as shadow -->
+        </shape>
+    </item>
+
+    <!-- Background Layer -->
+    <item android:left="0dp" android:top="0dp" android:right="0dp" android:bottom="4dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white"/> <!-- Background color -->
+            <corners android:radius="10dp"/>
+            <stroke android:width="2dp" android:color="#B0B0B0"/> <!-- Border color -->
+        </shape>
+    </item>
+
+</layer-list>

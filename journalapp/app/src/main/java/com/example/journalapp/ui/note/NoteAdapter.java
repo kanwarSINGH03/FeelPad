@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,7 +48,7 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private OnItemFocusChangeListener onItemFocusChangeListener; // listener to handle item focus
     private OnKeyListener onKeyListener; // listener to handle key presses
     private int focusedItem = -1; // -1 means no focused item
-    private Integer highlightedItem = -1; // -1 is invalid
+    private int highlightedItem = -1; // -1 is invalid
 
     /**
      * Constructs a NoteAdapter with a list of NoteItems
@@ -223,7 +224,8 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public void highlightItem(int position){
 
         // Check if there's already a highlighted item
-        if (highlightedItem != null && highlightedItem != position){
+        if (highlightedItem != position){
+            Log.e("HighlightBug", "Item has been highlighted via highlightItem");
             notifyItemChanged(highlightedItem); // notify for rebinding
         }
 
@@ -235,11 +237,13 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
      * Clears any highlighted items in the adapter
      */
     public void clearHighlights(){
-        if (highlightedItem != null){
-            int oldPosition = highlightedItem;
-            highlightedItem = null;
-            notifyItemChanged(oldPosition); // rebind previously highlighted item
-        }
+
+        Log.e("HighlightBug","Highlights being cleared via NoteAdapter");
+
+        int oldPosition = highlightedItem;
+        highlightedItem = -1;
+        notifyItemChanged(oldPosition); // rebind previously highlighted item
+
     }
 
     /**
@@ -278,6 +282,8 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     static class TextViewHolder extends RecyclerView.ViewHolder implements NoteActivity.TextFormattingHandler {
 
         private EditText editText;
+        private CardView cardView;
+        public ImageView dragHandle;
         private NoteItem currentNoteItem;
 
         // Auto save Variables
@@ -302,6 +308,9 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             this.focusChangeListener = focusChangeListener;
             this.onKeyListener = onKeyListener;
             editText = itemView.findViewById(R.id.edit_text_note_text);
+            cardView = itemView.findViewById(R.id.edit_text_card_view);
+            dragHandle = itemView.findViewById(R.id.drag_handle);
+            cardView.setMaxCardElevation(8);
 
             // Set up FocusChangeListener. Built-In Listener --> Custom Listener
             editText.setOnFocusChangeListener((view, hasFocus) -> { // Built-in listener
@@ -363,8 +372,16 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     titleObservable.subscribe(this::saveNoteContents));
 
             // Set the highlight if this ViewHolder needs to be highlighted
-            int backgroundId = isHighlighted ? R.drawable.edit_text_background_highlight : R.drawable.edit_text_background;
-            editText.setBackgroundResource(backgroundId);
+            if (isHighlighted){
+                cardView.setCardElevation(8);
+                dragHandle.setVisibility(View.VISIBLE);
+            }
+            else{
+                cardView.setCardElevation(0);
+                dragHandle.setVisibility(View.INVISIBLE);
+            }
+            //int backgroundId = isHighlighted ? R.drawable.edit_text_background_highlight : R.drawable.edit_text_background;
+            //editText.setBackgroundResource(backgroundId);
 
             // OnKeyListener for enter key. @TODO not being used at the moment.
             /*
@@ -424,9 +441,15 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
          * Styling function to apply bold / remove existing bold to highlighted text
          */
         @Override
-        public void applyBold() {
+        public void applyBold(int highlightedItem) {
             int start = editText.getSelectionStart();
             int end = editText.getSelectionEnd();
+
+            // If this ViewHolder is the highlighted one, bold the entire text
+            if (highlightedItem == this.getAdapterPosition()) {
+                start = 0;
+                end = editText.getText().length();
+            }
             if (start < end) {
 
                 // make Spannable & specify span type
@@ -457,9 +480,15 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
          * Styling function to apply italics / remove existing italics to highlighted text
          */
         @Override
-        public void applyItalics() {
+        public void applyItalics(int highlightedItem) {
             int start = editText.getSelectionStart();
             int end = editText.getSelectionEnd();
+
+            // If this ViewHolder is the highlighted one, bold the entire text
+            if (highlightedItem == this.getAdapterPosition()) {
+                start = 0;
+                end = editText.getText().length();
+            }
             if (start < end) {
 
                 // make Spannable & specify span type
@@ -490,9 +519,15 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
          * Styling function to apply underline / remove existing underline to highlighted text
          */
         @Override
-        public void applyUnderline() {
+        public void applyUnderline(int highlightedItem) {
             int start = editText.getSelectionStart();
             int end = editText.getSelectionEnd();
+
+            // If this ViewHolder is the highlighted one, bold the entire text
+            if (highlightedItem == this.getAdapterPosition()) {
+                start = 0;
+                end = editText.getText().length();
+            }
             if (start < end) {
 
                 // make Spannable & specify span type
@@ -523,9 +558,15 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
          * Styling function to apply strikethrough / remove existing strikethrough to highlighted text
          */
         @Override
-        public void applyStrikethrough() {
+        public void applyStrikethrough(int highlightedItem) {
             int start = editText.getSelectionStart();
             int end = editText.getSelectionEnd();
+
+            // If this ViewHolder is the highlighted one, bold the entire text
+            if (highlightedItem == this.getAdapterPosition()) {
+                start = 0;
+                end = editText.getText().length();
+            }
             if (start < end) {
 
                 // make Spannable & specify span type
@@ -565,6 +606,8 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     static class ImageViewHolder extends RecyclerView.ViewHolder {
         // Define your image view holder components
         private ImageView imageView;
+        private CardView cardView;
+        public ImageView dragHandle;
         private OnItemFocusChangeListener focusChangeListener;
 
         /**
@@ -576,6 +619,9 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             super(itemView);
             this.focusChangeListener = focusChangeListener;
             imageView = itemView.findViewById(R.id.image_view_note_image);
+            cardView = itemView.findViewById(R.id.image_view_card_view);
+            dragHandle = itemView.findViewById(R.id.image_view_drag_handle);
+            cardView.setMaxCardElevation(8);
 
 
             // Set up FocusChangeListener (focus = touched)
@@ -623,9 +669,18 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                         .into(imageView);
             }
 
-            // Set highlights
-            int backgroundId = isHighlighted ? R.drawable.image_view_background_highlight : R.drawable.image_view_background;
-            imageView.setBackgroundResource(backgroundId);
+
+
+            // Set the highlight if this ViewHolder needs to be highlighted
+            if (isHighlighted){
+                cardView.setCardElevation(8);
+                dragHandle.setVisibility(View.VISIBLE);
+            }
+            else{
+                cardView.setCardElevation(0);
+                dragHandle.setVisibility(View.INVISIBLE);
+            }
+
         }
 
         /**
@@ -650,6 +705,8 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     static class VideoViewHolder extends RecyclerView.ViewHolder{
         private ImageView thumbnailView;
         private ImageButton playButton;
+        private CardView cardView;
+        public ImageView dragHandle;
         private FragmentManager fragmentManager;
         private OnItemFocusChangeListener focusChangeListener;
 
@@ -663,6 +720,9 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             this.focusChangeListener = focusChangeListener;
             thumbnailView = itemView.findViewById(R.id.video_thumbnail);
             playButton = itemView.findViewById(R.id.video_play_button);
+            cardView = itemView.findViewById(R.id.video_view_card_view);
+            dragHandle = itemView.findViewById(R.id.video_view_drag_handle);
+            cardView.setCardElevation(8);
 
             // Set up FocusChangeListener (focus = touched)
             thumbnailView.setFocusableInTouchMode(true);
@@ -700,9 +760,15 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 playVideo(videoUri);
             });
 
-            // set highlights @TODO fix highlights
-            // int backgroundId = isHighlighted ? R.drawable.thumbnail_view_background_highlight : R.drawable.thumbnail_view_background;
-            // thumbnailView.setBackgroundResource(backgroundId);
+            // Set the highlight if this ViewHolder needs to be highlighted
+            if (isHighlighted){
+                cardView.setCardElevation(8);
+                dragHandle.setVisibility(View.VISIBLE);
+            }
+            else{
+                cardView.setCardElevation(0);
+                dragHandle.setVisibility(View.INVISIBLE);
+            }
 
         }
 
@@ -718,6 +784,8 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         private ImageView thumbnailView;
         private ImageButton playButton;
+        private CardView cardView;
+        public ImageView dragHandle;
         private FragmentManager fragmentManager;
         private OnItemFocusChangeListener focusChangeListener;
 
@@ -731,6 +799,9 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             this.focusChangeListener = focusChangeListener;
             thumbnailView = itemView.findViewById(R.id.voice_thumbnail);
             playButton = itemView.findViewById(R.id.voice_play_button);
+            cardView = itemView.findViewById(R.id.voice_view_card_view);
+            dragHandle = itemView.findViewById(R.id.voice_view_drag_handle);
+            cardView.setCardElevation(8);
 
             // Set up FocusChangeListener (focus = touched)
             thumbnailView.setFocusableInTouchMode(true);
@@ -768,9 +839,15 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 playAudio(voiceUri);
             });
 
-            // set highlights @TODO fix highlights
-            // int backgroundId = isHighlighted ? R.drawable.thumbnail_view_background_highlight : R.drawable.thumbnail_view_background;
-            // thumbnailView.setBackgroundResource(backgroundId);
+            // Set the highlight if this ViewHolder needs to be highlighted
+            if (isHighlighted){
+                cardView.setCardElevation(8);
+                dragHandle.setVisibility(View.VISIBLE);
+            }
+            else{
+                cardView.setCardElevation(0);
+                dragHandle.setVisibility(View.INVISIBLE);
+            }
 
         }
 
@@ -790,6 +867,8 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         private ImageView thumbnailView;
         private Button openButton;
+        private CardView cardView;
+        public ImageView dragHandle;
         private FragmentManager fragmentManager;
         private OnItemFocusChangeListener focusChangeListener;
 
@@ -803,6 +882,8 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             this.focusChangeListener = focusChangeListener;
             thumbnailView = itemView.findViewById(R.id.pdf_thumbnail);
             openButton = itemView.findViewById(R.id.open_pdf_button);
+            cardView = itemView.findViewById(R.id.pdf_view_card_view);
+            dragHandle = itemView.findViewById(R.id.pdf_view_drag_handle);
 
             // Set up FocusChangeListener (focus = touched)
             thumbnailView.setFocusableInTouchMode(true);
@@ -841,9 +922,15 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 Log.e("PDF", "Opening PDF");
             });
 
-            // set highlights @TODO fix highlights
-            // int backgroundId = isHighlighted ? R.drawable.thumbnail_view_background_highlight : R.drawable.thumbnail_view_background;
-            // thumbnailView.setBackgroundResource(backgroundId);
+            // Set the highlight if this ViewHolder needs to be highlighted
+            if (isHighlighted){
+                cardView.setCardElevation(8);
+                dragHandle.setVisibility(View.VISIBLE);
+            }
+            else{
+                cardView.setCardElevation(0);
+                dragHandle.setVisibility(View.INVISIBLE);
+            }
 
         }
 

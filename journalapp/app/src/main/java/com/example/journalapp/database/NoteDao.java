@@ -138,5 +138,11 @@ public interface NoteDao {
     // Retrieves all notes with selected title
     @Query("SELECT * FROM note_table WHERE title = :providedTitle")
     LiveData<List<Note>> getNotesWithTitle(String providedTitle);
+
+    @Query("SELECT rowid, noteId, combinedText FROM NoteFtsEntity WHERE noteId = :noteId")
+    NoteFtsEntity getNoteFtsById(String noteId);
+
+    @Query("DELETE FROM note_table")
+    void deleteAllNotes();
 }
 

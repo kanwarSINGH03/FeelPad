@@ -1,24 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pdf_view_card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="4dp"
+    android:layout_marginVertical="4dp"
+    app:cardElevation="0dp"
+    app:cardCornerRadius="10dp">
 
-    <ImageView android:id="@+id/pdf_thumbnail"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:src="@drawable/description_24"
-        android:background="@drawable/rounded_rectangle" />
+        android:layout_height="wrap_content">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/open_pdf_button"
-        android:layout_width="180dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:layout_margin="8dp"
-        android:text="Open PDF"
-        android:textSize="8sp"
-        android:textColor="@color/white_smoke"
-        android:background="@drawable/rounded_button_selector"
-        android:padding="4dp" />
-</FrameLayout>
+        <ImageView android:id="@+id/pdf_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/description_24"
+            android:background="@color/black" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/open_pdf_button"
+            android:layout_width="180dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_margin="8dp"
+            android:text="Open PDF"
+            android:textSize="8sp"
+            android:textColor="@color/white_smoke"
+            android:background="@drawable/rounded_button_selector"
+            android:padding="4dp" />
+
+        <ImageView
+            android:id="@+id/pdf_view_drag_handle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_note_drag_handle_white"
+            android:padding="8dp"
+            android:layout_gravity="end|center_vertical"
+            android:visibility="invisible"
+            android:elevation="10dp"/>
+
+
+    </FrameLayout>
+
+</androidx.cardview.widget.CardView>
