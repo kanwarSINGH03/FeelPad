@@ -2,6 +2,6 @@
 
 <resources>
 
-
+    <dimen name="nav_bar_height">50dp</dimen>
 
 </resources>

@@ -14,7 +14,7 @@ public class LaunchActivity extends AppCompatActivity {
 
         // add top navbar fragment
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.topNavBarFragmentContainer, new TopNavBarFragment())
+                .replace(R.id.topNavBarFragmentContainer, TopNavBarFragment.newInstance(true))
                 .commit();
 
         // add bottom navbar fragment

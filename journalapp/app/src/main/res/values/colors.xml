@@ -147,12 +147,11 @@
     <!-- Theme Colors -->
     <color name="theme_grey">#8E8E8E</color>
     <color name="theme_light_grey">#EDEDED</color>
+    <color name="theme_black">#1B1B1B</color>
 
     <!-- Primary Theme Colors -->
-    <color name="colorPrimaryLight">#FFFFFF</color>
-    <color name="colorContrastLight">#030303</color>
-    <color name="colorPrimaryDark">#030303</color>
-    <color name="colorContrastDark">#FFFFFF</color>
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorContrast">#030303</color>
 
     <!-- Theme 1: Light red -->
     <color name="colorAccentLightRed">#F5D1C3</color>

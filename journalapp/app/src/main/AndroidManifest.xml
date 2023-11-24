@@ -26,7 +26,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Base.Theme.Light"
+        android:theme="@style/Base.Theme"
         tools:targetApi="31">
 
         <!--

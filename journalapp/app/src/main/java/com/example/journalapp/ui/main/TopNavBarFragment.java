@@ -14,6 +14,16 @@ import com.example.journalapp.R;
 
 public class TopNavBarFragment extends Fragment {
 
+    private static final String ARG_HIDE_BUTTONS = "hideButtons";
+
+    public static TopNavBarFragment newInstance(boolean hideButtons){
+        TopNavBarFragment fragment = new TopNavBarFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_HIDE_BUTTONS, hideButtons);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -27,6 +37,12 @@ public class TopNavBarFragment extends Fragment {
 
         ImageButton btnSearch = view.findViewById(R.id.btnSearch);
         ImageButton btnMenu = view.findViewById(R.id.btnMenu);
+
+        // first set visibility depending on args passed
+        if (getArguments() != null && getArguments().getBoolean(ARG_HIDE_BUTTONS)){
+            btnSearch.setVisibility(View.GONE);
+            btnMenu.setVisibility(View.GONE);
+        }
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override

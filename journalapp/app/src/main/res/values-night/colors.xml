@@ -1,0 +1,34 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Theme Colors -->
+    <color name="theme_grey">#8E8E8E</color>
+    <color name="theme_light_grey">#EDEDED</color>
+    <color name="theme_black">#1B1B1B</color>
+
+    <!-- Primary Theme Colors -->
+    <color name="colorPrimary">#1B1B1B</color>
+    <color name="colorContrast">#FFFFFF</color>
+
+    <!-- Theme 1: Light red -->
+    <color name="colorAccentLightRed">#F5D1C3</color>
+    <color name="colorTertiaryLightRed">#FAEAE4</color>
+
+    <!-- Theme 2: Red -->
+    <color name="colorAccentRed">#FFB6A3</color>
+    <color name="colorTertiaryRed">#FFDED5</color>
+
+    <!-- Theme 3: Blue-Green -->
+    <color name="colorAccentBlueGreen">#94AFA7</color>
+    <color name="colorTertiaryBlueGreen">#CFDBD7</color>
+
+    <!-- Theme 4: Grey -->
+    <color name="colorAccentGrey">#D9D9D9</color>
+    <color name="colorTertiaryGrey">#EEEEEE</color>
+
+    <!-- Theme 5: Grey-Blue -->
+    <color name="colorAccentGreyBlue">#9BA7A9</color>
+    <color name="colorTertiaryGreyBlue">#D2D7D8</color>
+
+    <!-- Theme 6: Yellow -->
+    <color name="colorAccentYellow">#F0BC68</color>
+    <color name="colorTertiaryYellow">#F8E1BB</color>
+</resources>

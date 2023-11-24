@@ -1,79 +1,57 @@
 <resources>
-    <!-- Base application theme. -->
-    <style name="Theme.Journalapp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="popupMenuBackground">@drawable/menu_background</item>
-        <item name="android:popupMenuStyle">@style/popupBGStyle</item>
-    </style>
+    <!-- Base application theme handles switching from day to night -->
+    <style name="Base.Theme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="backgroundColor">@color/colorPrimary</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="android:background">@color/colorPrimary</item>
 
-    <!-- Light Themes. -->
-    <attr name="iconColor" format="color" />
-    <!-- Base Light Theme -->
-    <style name="Base.Theme.Light" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimaryLight</item>
-        <item name="colorSecondary">@color/colorContrastLight</item>
-        <item name="colorAccent">@color/theme_grey</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorSecondary">@color/colorContrast</item>
+        <item name="colorAccent">@color/colorContrast</item>
         <item name="colorTertiary">@color/theme_light_grey</item>
-        <item name="textFillColor">@color/colorContrastLight</item>
-        <item name="android:background">@color/colorPrimaryLight</item>
+
+        <item name="android:textColor">@color/colorContrast</item>
+
     </style>
 
-    <style name="Theme.Light.LightRed" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimaryLight</item>
-        <item name="colorSecondary">@color/colorContrastLight</item>
+    <style name="Theme.LightRed" parent="Base.Theme">
         <item name="colorAccent">@color/colorAccentLightRed</item>
         <item name="colorTertiary">@color/colorTertiaryLightRed</item>
-        <item name="textFillColor">@color/colorContrastLight</item>
-        <item name="android:background">@color/colorPrimaryLight</item>
     </style>
 
-    <style name="Theme.Light.Red" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimaryLight</item>
-        <item name="colorSecondary">@color/colorContrastLight</item>
+    <style name="Theme.Red" parent="Base.Theme">
         <item name="colorAccent">@color/colorAccentRed</item>
         <item name="colorTertiary">@color/colorTertiaryRed</item>
-        <item name="textFillColor">@color/colorContrastLight</item>
-        <item name="android:background">@color/colorPrimaryLight</item>
     </style>
 
-    <style name="Theme.Light.BlueGreen" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimaryLight</item>
-        <item name="colorSecondary">@color/colorContrastLight</item>
+    <style name="Theme.BlueGreen" parent="Base.Theme">
         <item name="colorAccent">@color/colorAccentBlueGreen</item>
         <item name="colorTertiary">@color/colorTertiaryBlueGreen</item>
-        <item name="textFillColor">@color/colorContrastLight</item>
-        <item name="android:background">@color/colorPrimaryLight</item>
     </style>
 
-    <style name="Theme.Light.Grey" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimaryLight</item>
-        <item name="colorSecondary">@color/colorContrastLight</item>
+    <style name="Theme.Grey" parent="Base.Theme">
         <item name="colorAccent">@color/colorAccentGrey</item>
         <item name="colorTertiary">@color/colorTertiaryGrey</item>
-        <item name="textFillColor">@color/colorContrastLight</item>
-        <item name="android:background">@color/colorPrimaryLight</item>
     </style>
 
-    <style name="Theme.Light.GreyBlue" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimaryLight</item>
-        <item name="colorSecondary">@color/colorContrastLight</item>
+    <style name="Theme.GreyBlue" parent="Base.Theme">
         <item name="colorAccent">@color/colorAccentGreyBlue</item>
         <item name="colorTertiary">@color/colorTertiaryGreyBlue</item>
-        <item name="textFillColor">@color/colorContrastLight</item>
-        <item name="android:background">@color/colorPrimaryLight</item>
     </style>
 
-    <style name="Theme.Light.Yellow" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimaryLight</item>
-        <item name="colorSecondary">@color/colorContrastLight</item>
+    <style name="Theme.Yellow" parent="Base.Theme">
         <item name="colorAccent">@color/colorAccentYellow</item>
         <item name="colorTertiary">@color/colorTertiaryYellow</item>
-        <item name="textFillColor">@color/colorContrastLight</item>
-        <item name="android:background">@color/colorPrimaryLight</item>
     </style>
 
 
 
     <!-- Other Styles -->
+
+    <style name="roundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10dp</item>
+    </style>
 
     <style name="popupBGStyle" parent="Widget.MaterialComponents.PopupMenu">
         <item name="android:popupBackground">@drawable/menu_background</item>

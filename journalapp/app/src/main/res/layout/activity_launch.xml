@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
         android:id="@+id/topNavBarFragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:visibility="visible"/>
 
     <FrameLayout
         android:id="@+id/bottomNavBarFragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"/>
 
     <!-- Your main content goes here -->
     <FrameLayout
@@ -21,5 +24,81 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottomNavBarFragmentContainer"
-        android:layout_below="@id/topNavBarFragmentContainer" />
+        android:layout_below="@id/topNavBarFragmentContainer"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="16dp"
+        android:background="?attr/backgroundColor">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/launch_activity_image"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:src="@drawable/feelpad_logo1"
+                android:layout_marginTop="10dp"
+                app:shapeAppearanceOverlay="@style/roundedImageView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.9"
+                />
+
+            <!-- Header Text -->
+            <TextView
+                android:id="@+id/launch_activity_header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="textStart"
+                android:text="Capture your thoughts and emotions"
+                android:textSize="24sp"
+                android:layout_marginTop="25dp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/launch_activity_image"
+                app:layout_constraintWidth_percent="0.94"
+                />
+
+            <!-- SubHeader Text -->
+            <TextView
+                android:id="@+id/launch_activity_subheader"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="textStart"
+                android:text="Organize ideas, log emotions, and note essentials with our emotion-based note-taking app."
+                android:textSize="17sp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/launch_activity_header"
+                app:layout_constraintWidth_percent="0.94"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Start Writing"
+                android:textColor="@color/theme_black"
+                android:textSize="17dp"
+                android:textStyle="bold"
+                android:backgroundTint="@color/theme_light_grey"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/launch_activity_subheader"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintWidth_percent="0.94"
+                app:cornerRadius="7dp"
+                android:padding="5dp"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+
 </RelativeLayout>
