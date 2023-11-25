@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.R;
-import com.example.journalapp.exportpdf.SelectPdfContentsActivity;
+import com.example.journalapp.ui.exportpdf.SelectPdfContentsActivity;
 import com.example.journalapp.ui.note.NoteActivity;
 
 /**

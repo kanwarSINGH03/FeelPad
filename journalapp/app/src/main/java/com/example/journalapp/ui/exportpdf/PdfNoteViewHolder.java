@@ -1,4 +1,4 @@
-package com.example.journalapp.exportpdf;
+package com.example.journalapp.ui.exportpdf;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +28,13 @@ public class PdfNoteViewHolder extends RecyclerView.ViewHolder {
         checkBox = itemView.findViewById(R.id.noteCheckBox);
     }
 
+    /**
+     * Binds the note to the select for pdf booklet view element with checkbox to indicate
+     * that note should be included in the pdf.
+     *
+     * @param note The bind Note
+     * @param selectNoteForPdf The Interface for check box changes
+     */
     public void bind(Note note, SelectNoteForPdf selectNoteForPdf) {
         selectNoteViewTitle.setText(note.getTitle());
         selectNoteViewDate.setText(note.getCreatedDate());
