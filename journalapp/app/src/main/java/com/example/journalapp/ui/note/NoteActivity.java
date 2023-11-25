@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,7 +31,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -127,11 +125,11 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                                     // Handle videos
                                     Uri localUri = saveMediaToInternalStorage(uri, NoteItem.ItemType.VIDEO);
                                     insertMedia(localUri, NoteItem.ItemType.VIDEO);
-                                } else if (mimeType.startsWith("audio/")){
+                                } else if (mimeType.startsWith("audio/")) {
                                     // Handle audio
                                     Uri localUri = saveMediaToInternalStorage(uri, NoteItem.ItemType.VOICE);
                                     insertMedia(localUri, NoteItem.ItemType.VOICE);
-                                } else if (mimeType.startsWith("application/pdf")){
+                                } else if (mimeType.startsWith("application/pdf")) {
                                     // Handle pdfs
                                     Uri localUri = saveMediaToInternalStorage(uri, NoteItem.ItemType.PDF);
                                     insertMedia(localUri, NoteItem.ItemType.PDF);
@@ -147,18 +145,16 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
     // Special member variable used to launch camera and save contents to given URI
     private final ActivityResultLauncher<Uri> mTakePicture =
-            registerForActivityResult(new ActivityResultContracts.TakePicture(), savedToUri ->{
-                if (savedToUri){
-                    try{
+            registerForActivityResult(new ActivityResultContracts.TakePicture(), savedToUri -> {
+                if (savedToUri) {
+                    try {
                         // Image saved successfully to provided URI
                         insertMedia(tempUri, NoteItem.ItemType.IMAGE);
-                    }
-                    catch(Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(NoteActivity.this, "Failed to insert media", Toast.LENGTH_SHORT).show();
                     }
-                }
-                else{
+                } else {
                     // handle failure
                     Toast.makeText(NoteActivity.this, "Failed to insert media", Toast.LENGTH_SHORT).show();
                 }
@@ -179,12 +175,13 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
 
     // Special member variable for drag and dropping contents
-    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN , ItemTouchHelper.LEFT) {
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
 
         @Override
-        public boolean isLongPressDragEnabled(){
+        public boolean isLongPressDragEnabled() {
             return false;
         }
+
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
             noteAdapter.highlightItem(viewHolder.getAdapterPosition());
@@ -206,7 +203,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-            if (direction == ItemTouchHelper.LEFT){
+            if (direction == ItemTouchHelper.LEFT) {
                 deleteItem(viewHolder.getAdapterPosition());
             }
         }
@@ -216,9 +213,9 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
 
             new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-                    .addSwipeLeftBackgroundColor(ContextCompat.getColor(NoteActivity.this,R.color.theme_red))
+                    .addSwipeLeftBackgroundColor(ContextCompat.getColor(NoteActivity.this, R.color.theme_red))
                     .addSwipeLeftActionIcon(R.drawable.ic_note_delete)
-                    .addSwipeLeftCornerRadius(TypedValue.COMPLEX_UNIT_DIP,10)
+                    .addSwipeLeftCornerRadius(TypedValue.COMPLEX_UNIT_DIP, 10)
                     .create()
                     .decorate();
 
@@ -375,7 +372,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         });
     }
 
-    private void initLocation(){
+    private void initLocation() {
         ImageButton location = (ImageButton) findViewById(R.id.location);
         location.setOnClickListener(v -> {
             Intent intent = new Intent(NoteActivity.this, MapsActivity.class);
@@ -427,8 +424,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                 } else if (menuItem.getItemId() == R.id.item5) {
                     Toast.makeText(getApplicationContext(), "Add Template", Toast.LENGTH_SHORT).show();
                     return true;
-                }
-                else if (menuItem.getItemId() == R.id.item6) {
+                } else if (menuItem.getItemId() == R.id.item6) {
                     Toast.makeText(getApplicationContext(), "Remove Theme", Toast.LENGTH_SHORT).show();
                     removeThemeFromPreferences();
                     recreate();
@@ -477,14 +473,14 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     /**
      * Initialize styling buttons & functionality
      */
-    private void initStyling(){
+    private void initStyling() {
         // Initialize all styling buttons and attach listeners
 
         boldButton = findViewById(R.id.boldButton);
-        boldButton.setOnClickListener(v ->{
-            if (focusedItem >= 0){
+        boldButton.setOnClickListener(v -> {
+            if (focusedItem >= 0) {
                 RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
-                if (viewHolder instanceof NoteAdapter.TextViewHolder){
+                if (viewHolder instanceof NoteAdapter.TextViewHolder) {
                     ((NoteAdapter.TextViewHolder) viewHolder).applyBold(highlightedItem);
                 }
             }
@@ -492,9 +488,9 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
         italicsButton = findViewById(R.id.italicsButton);
         italicsButton.setOnClickListener(v -> {
-            if (focusedItem >= 0){
+            if (focusedItem >= 0) {
                 RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
-                if (viewHolder instanceof NoteAdapter.TextViewHolder){
+                if (viewHolder instanceof NoteAdapter.TextViewHolder) {
                     ((NoteAdapter.TextViewHolder) viewHolder).applyItalics(highlightedItem);
                 }
             }
@@ -502,9 +498,9 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
         underlineButton = findViewById(R.id.underlineButton);
         underlineButton.setOnClickListener(v -> {
-            if (focusedItem >= 0){
+            if (focusedItem >= 0) {
                 RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
-                if (viewHolder instanceof NoteAdapter.TextViewHolder){
+                if (viewHolder instanceof NoteAdapter.TextViewHolder) {
                     ((NoteAdapter.TextViewHolder) viewHolder).applyUnderline(highlightedItem);
                 }
             }
@@ -512,9 +508,9 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
         strikethroughButton = findViewById(R.id.strikethroughButton);
         strikethroughButton.setOnClickListener(v -> {
-            if (focusedItem >= 0){
+            if (focusedItem >= 0) {
                 RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
-                if (viewHolder instanceof NoteAdapter.TextViewHolder){
+                if (viewHolder instanceof NoteAdapter.TextViewHolder) {
                     ((NoteAdapter.TextViewHolder) viewHolder).applyStrikethrough(highlightedItem);
                 }
             }
@@ -524,10 +520,13 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     /**
      * Callback Interface for the adapter to implement.
      */
-    public interface TextFormattingHandler{
+    public interface TextFormattingHandler {
         void applyBold(int highlightedItem);
+
         void applyItalics(int highlightedItem);
+
         void applyUnderline(int highlightedItem);
+
         void applyStrikethrough(int highlightedItem);
     }
 
@@ -547,6 +546,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     /**
      * Called when focus changes (either user types on EditText or clicks in image)
      * Switches focusedItem index
+     *
      * @param position
      * @param hasFocus
      */
@@ -564,6 +564,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     /**
      * Called when user long clicks a view
      * Popup menu with options: delete, @TODO: move to different index
+     *
      * @param position
      */
     @SuppressLint("ClickableViewAccessibility")
@@ -582,7 +583,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(position);
 
         // if text viewHolder
-        if (viewHolder instanceof NoteAdapter.TextViewHolder){
+        if (viewHolder instanceof NoteAdapter.TextViewHolder) {
 
             // convert to textViewHolder
             NoteAdapter.TextViewHolder textViewHolder = (NoteAdapter.TextViewHolder) viewHolder;
@@ -597,7 +598,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         }
 
         // if image viewHolder
-        else if (viewHolder instanceof NoteAdapter.ImageViewHolder){
+        else if (viewHolder instanceof NoteAdapter.ImageViewHolder) {
 
             // convert to imageviewHolder
             NoteAdapter.ImageViewHolder imageViewHolder = (NoteAdapter.ImageViewHolder) viewHolder;
@@ -612,7 +613,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         }
 
         // if video viewholder
-        else if (viewHolder instanceof NoteAdapter.VideoViewHolder){
+        else if (viewHolder instanceof NoteAdapter.VideoViewHolder) {
 
             // convert to videoViewHolder
             NoteAdapter.VideoViewHolder videoViewHolder = (NoteAdapter.VideoViewHolder) viewHolder;
@@ -627,7 +628,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         }
 
         // if audio
-        else if (viewHolder instanceof NoteAdapter.VoiceViewHolder){
+        else if (viewHolder instanceof NoteAdapter.VoiceViewHolder) {
 
             // convert to audioViewHolder
             NoteAdapter.VoiceViewHolder voiceViewHolder = (NoteAdapter.VoiceViewHolder) viewHolder;
@@ -642,7 +643,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         }
 
         // if pdf
-        else if (viewHolder instanceof NoteAdapter.PdfViewHolder){
+        else if (viewHolder instanceof NoteAdapter.PdfViewHolder) {
 
             // convert to pdf
             NoteAdapter.PdfViewHolder pdfViewHolder = (NoteAdapter.PdfViewHolder) viewHolder;
@@ -704,12 +705,11 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * If granted: start voice recording using another app
      * Not granted: request for permissions
      */
-    private void checkPermissionAndVoiceRecord(){
-        if (ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
+    private void checkPermissionAndVoiceRecord() {
+        if (ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             // Permission not granted, request
-            ActivityCompat.requestPermissions(NoteActivity.this,new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_AUDIO_PERMISSION);
-        }
-        else{
+            ActivityCompat.requestPermissions(NoteActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_AUDIO_PERMISSION);
+        } else {
             startVoiceRecording();
         }
     }
@@ -755,11 +755,11 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         }
 
         // Handle audio permission results
-        else if (requestCode == REQUEST_AUDIO_PERMISSION && grantResults.length > 0){
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+        else if (requestCode == REQUEST_AUDIO_PERMISSION && grantResults.length > 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // if permission granted, then allow access
                 startVoiceRecording();
-            } else{
+            } else {
                 // if permission denied, inform user
                 Toast.makeText(this, "Audio Permission Denied!", Toast.LENGTH_SHORT).show();
             }
@@ -767,11 +767,11 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         }
 
         // Handle camera permission results
-        else if (requestCode == REQUEST_CAMERA_PERMISSION && grantResults.length > 0){
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+        else if (requestCode == REQUEST_CAMERA_PERMISSION && grantResults.length > 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // if permission granted, then allow access
                 takePicture();
-            } else{
+            } else {
                 // if permission denied, inform user
                 Toast.makeText(this, "Camera Permission Denied!", Toast.LENGTH_SHORT).show();
             }
@@ -782,13 +782,12 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     /**
      * Launches an intent to start voice recording using any viable apps that can handle the intent
      */
-    private void startVoiceRecording(){
+    private void startVoiceRecording() {
         Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION); // uses default voice recording app to record
         // first check if there is an app that can handle the intent
-        if (intent.resolveActivity(getPackageManager()) != null){
+        if (intent.resolveActivity(getPackageManager()) != null) {
             mGetContent.launch(intent);
-        }
-        else{
+        } else {
             // otherwise, inform user that the don't have an installed voice recording app.
             Toast.makeText(this, "No voice recording app found. Please install your default voice recording app.", Toast.LENGTH_LONG).show();
             // redirect to app store for a voice-recording app
@@ -797,7 +796,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             } catch (android.content.ActivityNotFoundException anfe) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.sec.android.app.voicenote")));
             }
-            Toast.makeText(this,"Redirecting to the Play Store for a Voice Recording app", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Redirecting to the Play Store for a Voice Recording app", Toast.LENGTH_SHORT).show();
 
         }
 
@@ -824,7 +823,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     /**
      * Launches an intent to open a PDF file. Does not need any permissions
      */
-    private void selectPdf(){
+    private void selectPdf() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("application/pdf");
         mGetContent.launch(intent);
@@ -904,19 +903,20 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
     /**
      * Creates a URI linked to internal storage for an image
+     *
      * @return
      */
-     private Uri createImageUri(){
-         String fileExtension = ".png";
-         String fileNamePrefix = "image_";
+    private Uri createImageUri() {
+        String fileExtension = ".png";
+        String fileNamePrefix = "image_";
 
-         // Create appropriate filename with timestamp and create new file object
-         String fileName = fileNamePrefix + System.currentTimeMillis() + fileExtension;
-         File outputFile = new File(getFilesDir(), fileName);
+        // Create appropriate filename with timestamp and create new file object
+        String fileName = fileNamePrefix + System.currentTimeMillis() + fileExtension;
+        File outputFile = new File(getFilesDir(), fileName);
 
-         // Return the file's URI using FileProvider
-         return FileProvider.getUriForFile(this, "com.example.journalapp.fileprovider", outputFile);
-     }
+        // Return the file's URI using FileProvider
+        return FileProvider.getUriForFile(this, "com.example.journalapp.fileprovider", outputFile);
+    }
 
     /**
      * Deletes media (image,video) given the URI, from internal storage
@@ -1058,9 +1058,10 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
     /**
      * Creates a string using the ISO 8601 format which is a sortable format for the database
+     *
      * @return
      */
-    private String getDateAsString(){
+    private String getDateAsString() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
         String currentDateStr = sdf.format(new Date());
         return currentDateStr;
@@ -1283,7 +1284,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      */
     public void logNoteItems(String message) {
         Log.d("NoteItemLog", message);
-        if (noteItems.size() == 0){
+        if (noteItems.size() == 0) {
             Log.d("NoteItemLog", "Note List is Empty");
         }
         for (int i = 0; i < noteItems.size(); i++) {
@@ -1293,7 +1294,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
     }
 
-    public void logFocus(){
+    public void logFocus() {
         View currentFocusedView = getCurrentFocus();
         if (currentFocusedView != null) {
             // Get the ID of the focused view

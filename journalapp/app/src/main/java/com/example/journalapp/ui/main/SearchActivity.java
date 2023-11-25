@@ -1,4 +1,4 @@
-package com.example.journalapp;
+package com.example.journalapp.ui.main;
 
 import android.app.SearchManager;
 import android.content.Context;

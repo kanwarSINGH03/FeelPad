@@ -6,6 +6,10 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -14,7 +18,7 @@ import java.util.UUID;
  * Represents an individual notes' metadata
  */
 @Entity(tableName = "note_table")
-public class  Note {
+public class Note {
 
     @PrimaryKey
     @NonNull
@@ -49,7 +53,6 @@ public class  Note {
     }
 
 
-
     /**
      * Getter for unique ID of a note
      *
@@ -73,23 +76,37 @@ public class  Note {
         this.title = title;
     }
 
-    public int getEmotion(){ return emotion;}
+    public int getEmotion() {
+        return emotion;
+    }
 
-    public void setEmotion(int emotion){ this.emotion = emotion; }
+    public void setEmotion(int emotion) {
+        this.emotion = emotion;
+    }
 
     public String getCreatedDate() {
         return createdDate;
+    }
+
+    public Date getCreatedDateByType() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        try {
+            return sdf.parse(createdDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void setCreatedDate(String createDate) {
         this.createdDate = createDate;
     }
 
-    public String getLastEditedDate(){
+    public String getLastEditedDate() {
         return lastEditedDate;
     }
 
-    public void setLastEditedDate(String lastEditedDate){
+    public void setLastEditedDate(String lastEditedDate) {
         this.lastEditedDate = lastEditedDate;
     }
 

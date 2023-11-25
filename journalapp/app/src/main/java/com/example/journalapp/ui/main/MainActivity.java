@@ -1,4 +1,4 @@
-package com.example.journalapp.ui.main;
+package com.example.journalapp;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.journalapp.R;
 import com.example.journalapp.exportpdf.SelectPdfContentsActivity;
 import com.example.journalapp.ui.note.NoteActivity;
 import com.example.journalapp.R;
@@ -86,9 +87,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         templateButton.setOnClickListener(v -> {
-                // Start the ThemeActivity
-                Intent intent = new Intent(MainActivity.this, ThemeSelectionActivity.class);
-                startActivity(intent);
+            // Start the ThemeActivity
+            Intent intent = new Intent(MainActivity.this, ThemeSelectionActivity.class);
+            startActivity(intent);
 
         });
 
@@ -116,11 +117,6 @@ public class MainActivity extends AppCompatActivity {
             allNotesLiveData.removeObservers(this);
         });
     }
-
-
-
-
-
 
     /**
      * Sets up an observer to watch for changes in the list of notes and updates the UI accordingly
