@@ -1,4 +1,4 @@
-package com.example.journalapp.exportpdf;
+package com.example.journalapp.ui.exportpdf;
 
 import android.view.ViewGroup;
 
@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.ListAdapter;
 
 import com.example.journalapp.database.entity.Note;
 
-
+/**
+ * The note list adapter for selecting notes to be combined in a pdf booklet
+ */
 public class PdfNoteListAdapter extends ListAdapter<Note, PdfNoteViewHolder> {
 
     private final SelectNoteForPdf selectNoteForPdf;

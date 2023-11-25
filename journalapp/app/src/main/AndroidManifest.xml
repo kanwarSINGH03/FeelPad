@@ -89,7 +89,7 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".ui.note.ReactionActivity" />
-        <activity android:name=".exportpdf.SelectPdfContentsActivity" />
+        <activity android:name=".ui.exportpdf.SelectPdfContentsActivity" />
     </application>
 
 </manifest>
