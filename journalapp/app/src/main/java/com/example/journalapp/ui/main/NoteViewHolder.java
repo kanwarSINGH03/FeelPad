@@ -32,7 +32,7 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
     /**
      * Binds data to the ViewHolder
      *
-     * @param title       title of the note to display
+     * @param title title of the note to display
      */
     public void bind(String title) {
         noteViewTitle.setText(title);

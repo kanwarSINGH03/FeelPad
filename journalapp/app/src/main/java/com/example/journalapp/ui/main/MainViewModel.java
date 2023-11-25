@@ -21,6 +21,7 @@ public class MainViewModel extends AndroidViewModel {
 
     /**
      * Constructor for creating a new MainViewModel
+     *
      * @param application the application context
      */
     public MainViewModel(Application application) {
@@ -35,9 +36,10 @@ public class MainViewModel extends AndroidViewModel {
     /**
      * Delete a note from the database given the Note object
      * Also deletes the associated NoteFtsEntity
+     *
      * @param note Note object to be deleted
      */
-    public void deleteNote(Note note){
+    public void deleteNote(Note note) {
         noteRepository.deleteNote(note);
     }
 
@@ -47,14 +49,16 @@ public class MainViewModel extends AndroidViewModel {
 
     /**
      * Retrieves all the notes in the note table
+     *
      * @return a LiveData object containing all notes
      */
-    public LiveData<List<Note>> getAllNotes(){
+    public LiveData<List<Note>> getAllNotes() {
         return noteRepository.getAllNotes();
     }
 
     /**
      * Retrieve all notes ordered by Last Edited Date in descending order
+     *
      * @return a LiveData object containing a list of notes
      */
     public LiveData<List<Note>> getAllNotesOrderedByLastEditedDateDesc() {
@@ -67,6 +71,7 @@ public class MainViewModel extends AndroidViewModel {
 
     /**
      * Searches notes by title/FTS Combined Content
+     *
      * @param query String query to search for in database
      * @return a LiveData object representing matching notes
      */

@@ -1,8 +1,7 @@
-package com.example.journalapp;
+package com.example.journalapp.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,9 +9,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.journalapp.R;
 import com.example.journalapp.exportpdf.SelectPdfContentsActivity;
 import com.example.journalapp.ui.note.NoteActivity;
-import com.example.journalapp.R;
 
 /**
  * Main activity starts as the entry point for the app
@@ -66,9 +65,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         templateButton.setOnClickListener(v -> {
-                // Start the ThemeActivity
-                Intent intent = new Intent(MainActivity.this, ThemeSelectionActivity.class);
-                startActivity(intent);
+            // Start the ThemeActivity
+            Intent intent = new Intent(MainActivity.this, ThemeSelectionActivity.class);
+            startActivity(intent);
 
         });
 

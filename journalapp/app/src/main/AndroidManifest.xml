@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -50,8 +50,7 @@
         <activity
             android:name=".ui.main.MapsActivity"
             android:exported="false"
-            android:label="@string/title_activity_maps"
-            />
+            android:label="@string/title_activity_maps" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -78,9 +77,6 @@
         <activity android:name=".ui.note.NoteActivity" />
         <activity
             android:name=".ui.main.SearchActivity"
-        <activity android:name=".NewNoteActivity" />
-        <activity
-            android:name=".SearchActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -91,7 +87,6 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".ui.note.ReactionActivity" />
-        <activity android:name=".exportpdf.ExportPdfDialog" />
         <activity android:name=".exportpdf.SelectPdfContentsActivity" />
     </application>
 

@@ -6,7 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
-import com.example.journalapp.note.Note;
+import com.example.journalapp.database.entity.Note;
+
 
 public class PdfNoteListAdapter extends ListAdapter<Note, PdfNoteViewHolder> {
 

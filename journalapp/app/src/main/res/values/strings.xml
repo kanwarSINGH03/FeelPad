@@ -22,4 +22,6 @@
     <string name="map_button">map button</string>
     <string name="select_a_theme">Select a theme</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="select_all">Select All</string>
+    <string name="mon_dd_yyyy">MM DD YYYY</string>
 </resources>
