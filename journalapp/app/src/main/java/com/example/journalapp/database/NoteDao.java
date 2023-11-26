@@ -12,6 +12,7 @@ import androidx.room.Update;
 import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.database.entity.NoteFtsEntity;
 import com.example.journalapp.database.entity.NoteItemEntity;
+import com.example.journalapp.database.entity.Folder;
 
 import java.util.List;
 
@@ -144,5 +145,22 @@ public interface NoteDao {
 
     @Query("DELETE FROM note_table")
     void deleteAllNotes();
+    @Query("SELECT * FROM folder_table")
+    LiveData<List<Folder>> getAllFolders();
+
+    @Insert
+    void insertFolder(Folder folder);
+
+    @Update
+    void updateFolder(Folder folder);
+
+    @Delete
+    void deleteFolder(Folder folder);
+
+    @Query("SELECT * FROM folder_table WHERE id = :folderId")
+    Folder getFolderById(String folderId);
+
+    @Query("SELECT * FROM note_table WHERE folder_id = :folderId")
+    LiveData<List<Note>> getNotesByFolderId(String folderId);
 }
 

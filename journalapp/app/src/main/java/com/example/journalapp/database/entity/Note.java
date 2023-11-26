@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
 import java.util.Objects;
@@ -13,7 +14,9 @@ import java.util.UUID;
  * An entity class used to create a Room database table called note_table
  * Represents an individual notes' metadata
  */
-@Entity(tableName = "note_table")
+@Entity(tableName = "note_table",
+        foreignKeys = @ForeignKey(entity = Folder.class, parentColumns = "id",
+                childColumns = "folder_id", onDelete = ForeignKey.CASCADE))
 public class Note {
 
     @PrimaryKey
@@ -33,6 +36,9 @@ public class Note {
     @ColumnInfo(name = "emotion")
     private int emotion; // This will hold an int value 1-5
 
+    @ColumnInfo(name = "folder_id")
+    private String folderId;
+
 
     /**
      * Constructor to create a new Note instance
@@ -40,12 +46,13 @@ public class Note {
      * @param title       String representing title of the note
      * @param createdDate String representing when the note was created
      */
-    public Note(String title, String createdDate, int emotion) {
+    public Note(String title, String createdDate, int emotion, String folderId) {
         this.id = UUID.randomUUID().toString();
         this.title = title;
         this.createdDate = createdDate;
         this.emotion = emotion;
         this.lastEditedDate = createdDate; // when creating a new Note, lastEditedDate will be same as creation, but can be updated
+        this.folderId = folderId;
     }
 
     @NonNull
@@ -98,5 +105,13 @@ public class Note {
         if (o == null || getClass() != o.getClass()) return false;
         Note note = (Note) o;
         return id.equals(note.id) && Objects.equals(title, note.title) && Objects.equals(createdDate, note.createdDate);
+    }
+
+    public String getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(String folderId) {
+        this.folderId = folderId;
     }
 }

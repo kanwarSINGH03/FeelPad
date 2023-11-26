@@ -251,9 +251,14 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             String note_id = intent.getStringExtra("note_id");
             setExistingNote(note_id);
 
-        } else {
+        } else if (intent.hasExtra("folder_id")) {
             // New Note: create note_id and create new note
-            setNewNote();
+            String folder_id = intent.getStringExtra("folder_id");
+            setNewNote(folder_id);
+        }
+        else{
+            // catch
+            Toast.makeText(this,"Illegal note insertion", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -1027,11 +1032,11 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * Initialize a new note with a date and store it
      * in the database
      */
-    private void setNewNote() {
+    private void setNewNote(String folder_id) {
 
         // Sorted by ISO 8601 format which is sortable via queries
         String currentDateStr = getDateAsString();
-        note = new Note("", currentDateStr, 0);
+        note = new Note("", currentDateStr, 0,folder_id);
         noteViewModel.insertNote(note);
 
         // Initialize the contents of noteItems as a single EditText
@@ -1195,6 +1200,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      */
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         exitNote(null);
     }
 

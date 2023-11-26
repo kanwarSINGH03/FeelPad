@@ -2,6 +2,7 @@ package com.example.journalapp.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,9 +10,16 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.journalapp.database.entity.Folder;
+import com.example.journalapp.ui.home.FolderViewModel;
 import com.example.journalapp.ui.home.LaunchActivity;
+import com.example.journalapp.ui.home.ViewAllFoldersActivity;
 import com.example.journalapp.ui.note.NoteActivity;
 import com.example.journalapp.R;
+import com.example.journalapp.ui.note.NoteViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.Objects;
 
 /**
  * Main activity starts as the entry point for the app
@@ -19,6 +27,9 @@ import com.example.journalapp.R;
 public class MainActivity extends AppCompatActivity {
 
     private NoteListAdapter noteListAdapter;
+    private FolderViewModel folderViewModel;
+    private FloatingActionButton folderButton;
+    private String folderId;
 
     /**
      * onCreate is called when any instance or activity is created
@@ -28,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        folderViewModel = new ViewModelProvider(this).get(FolderViewModel.class);
 
         setNoteRecyclerView(); // initialize RecyclerView (display notes)
         createNoteObserver(); // observer to watch for changes in list of notes
@@ -53,12 +66,20 @@ public class MainActivity extends AppCompatActivity {
         });
         combinePdfButton.setOnClickListener(v -> {
             // Handle the click for the combine PDF button here
+            Intent intent = new Intent(MainActivity.this, ViewAllFoldersActivity.class);
+            startActivity(intent);
         });
         addNoteButton.setOnClickListener(v -> {
             // Handle the click for the add note button here
             Intent intent = new Intent(MainActivity.this, NoteActivity.class);
 
-            // intent has no note_id, so it is classified as a new note
+            if (folderId == null){
+                startActivity(intent);
+            }
+            else{
+                intent.putExtra("folder_id", folderId);
+                startActivity(intent);
+            }
             startActivity(intent);
         });
         searchButton.setOnClickListener(v -> {
@@ -97,7 +118,39 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        createNoteObserver();
+        setNoteRecyclerView();
+        setNoteRecyclerView();
+        if (folderId == null){
+            createNoteObserver();
+        }
+        handleFolderId();
+        String folderId= getIntent().getStringExtra("FOLDER_ID");
+        if (Objects.nonNull(folderId)) {
+            handleFolderId();
+        }
+    }
+
+    private void handleFolderId() {
+        folderId = getIntent().getStringExtra("FOLDER_ID");
+
+
+        if (folderId != null && !folderId.isEmpty()) {
+            Log.e("FolderBug", "First if statement");
+            folderViewModel.getNotesByFolderId(folderId).observe(this, notes -> {
+                ////
+                Log.d("LiveData", "Received notes for folderId: " + folderId + ", Notes count: " + notes.size());
+                noteListAdapter.submitList(notes);
+            });
+        }
+        else {
+            Log.e("FolderBug", "Else statement");
+            folderViewModel.getAllNotes().observe(this, notes -> {
+                //////
+                Log.d("LiveData", "Received all notes, Notes count: " + notes.size());
+                noteListAdapter.submitList(notes);
+            });
+        }
+
     }
 
 }

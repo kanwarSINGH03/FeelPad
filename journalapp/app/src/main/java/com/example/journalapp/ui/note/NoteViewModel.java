@@ -140,4 +140,5 @@ public class NoteViewModel extends AndroidViewModel {
         return noteRepository.getNoteItemsForNoteSync(noteId);
     }
 
+
 }

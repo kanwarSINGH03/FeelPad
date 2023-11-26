@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
+import com.example.journalapp.database.entity.Folder;
 import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.database.entity.NoteFtsEntity;
 import com.example.journalapp.database.entity.NoteItemEntity;
@@ -284,6 +285,7 @@ public class NoteRepository {
         Log.e("CombinedText", "Combined text is:" + combinedTextBuilder.toString().trim());
         return combinedTextBuilder.toString().trim();
     }
+
 
 
 

@@ -6,6 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.example.journalapp.database.entity.Folder;
 import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.database.entity.NoteFtsEntity;
 import com.example.journalapp.database.entity.NoteItemEntity;
@@ -17,7 +18,7 @@ import java.util.concurrent.Executors;
  * A Room Database storing notes
  * Note: entities section indicates database will have 1 table (represented inside Note.class)
  */
-@Database(entities = {Note.class, NoteItemEntity.class, NoteFtsEntity.class}, version = 1, exportSchema = false)
+@Database(entities = {Note.class, NoteItemEntity.class, NoteFtsEntity.class, Folder.class}, version = 1, exportSchema = false)
 public abstract class NoteDatabase extends RoomDatabase {
     public abstract NoteDao noteDao(); // provides access to the NoteDao database operations
 

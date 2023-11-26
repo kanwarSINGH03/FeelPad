@@ -62,6 +62,13 @@
             android:exported="false"
             android:label="HomeActivity"
             />
+        <activity
+            android:name=".ui.home.ViewAllFoldersActivity"
+            android:exported="false"
+            android:label="ViewAllFoldersActivity"
+            />
+
+
 
         <provider
             android:name="androidx.core.content.FileProvider"
