@@ -4,9 +4,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.R;
@@ -56,7 +58,12 @@ public class FolderAdapter extends RecyclerView.Adapter{
 
         private ImageView icon;
         private TextView title;
+        private ProgressBar dataBar;
+        private TextView noteCount;
+        private ConstraintLayout folderHolder;
         private FolderItem currentFolderItem;
+
+
 
 
 
@@ -64,13 +71,33 @@ public class FolderAdapter extends RecyclerView.Adapter{
 
         public FolderViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.title = itemView.findViewById(R.id.folder_title);
             this.icon = itemView.findViewById(R.id.folder_icon);
+            this.title = itemView.findViewById(R.id.folder_title);
+            this.dataBar = itemView.findViewById(R.id.folder_data_bar);
+            this.noteCount = itemView.findViewById(R.id.folder_note_count);
+            this.folderHolder = itemView.findViewById(R.id.folder_holder);
+
         }
 
         public void bind(FolderItem folderItem){
             currentFolderItem = folderItem;
+
+            // set folder color
+            folderHolder.setBackgroundResource(folderItem.getFolderColor());
+
+            // set icon
+            icon.setImageResource(folderItem.getIconResourceId());
+
+            // set title
             title.setText(currentFolderItem.getTitle());
+
+            // set progress bar
+            dataBar.setProgress((int) folderItem.getEmotionPercentage());
+
+            // set noteCount
+            noteCount.setText(folderItem.getNumItemsAsString());
+
+
 
         }
     }

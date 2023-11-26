@@ -40,8 +40,12 @@ public class HomeActivity extends AppCompatActivity {
     private void initRecyclerView(){
         // initialize local data source
         folderList = new ArrayList<>();
-        folderList.add(new FolderItem("id1","Travel Journal",50,5, R.drawable.ic_folder_flag,R.color.colorAccentYellow));
-        folderList.add(new FolderItem("id2","Gym",50,5, R.drawable.ic_folder_flag,R.color.colorAccentYellow));
+        folderList.add(new FolderItem("id1","Travel Journal",50,5, R.drawable.ic_folder_flag,R.color.colorAccentLightRed));
+        folderList.add(new FolderItem("id2","Gym Journal",50,32, R.drawable.ic_folder_workout,R.color.colorAccentYellow));
+        folderList.add(new FolderItem("id3","Shopping",50,2, R.drawable.ic_folder_flag,R.color.colorAccentGreyBlue));
+        folderList.add(new FolderItem("id4","Daily",50,50, R.drawable.ic_folder_workout,R.color.colorAccentBlueGreen));
+        folderList.add(new FolderItem("id5","Shopping",50,4, R.drawable.ic_folder_flag,R.color.colorAccentRed));
+        folderList.add(new FolderItem("id6","School",50,0, R.drawable.ic_folder_workout,R.color.colorAccentGrey));
 
         // Initialize recyclerview and adapter
         folderRecyclerView = findViewById(R.id.folderRecyclerView);

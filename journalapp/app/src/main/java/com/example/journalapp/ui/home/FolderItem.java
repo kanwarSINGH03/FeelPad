@@ -54,7 +54,11 @@ public class FolderItem {
         this.emotionPercentage = emotionPercentage;
     }
 
-    public int getNumItems() {
+    public String getNumItemsAsString() {
+        return Integer.toString(numItems);
+    }
+
+    public int getNumItems(){
         return numItems;
     }
 
