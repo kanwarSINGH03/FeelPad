@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.journalapp.ui.home.LaunchActivity;
 import com.example.journalapp.ui.note.NoteActivity;
 import com.example.journalapp.R;
 

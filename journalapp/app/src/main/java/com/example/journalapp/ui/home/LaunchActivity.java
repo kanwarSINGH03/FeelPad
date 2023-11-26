@@ -1,4 +1,4 @@
-package com.example.journalapp.ui.main;
+package com.example.journalapp.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,9 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.journalapp.R;
+import com.example.journalapp.ui.home.HomeActivity;
+import com.example.journalapp.ui.main.BottomNavBarFragment;
+import com.example.journalapp.ui.main.TopNavBarFragment;
 import com.google.android.material.button.MaterialButton;
 
 public class LaunchActivity extends AppCompatActivity {

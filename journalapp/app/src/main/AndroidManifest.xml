@@ -53,12 +53,12 @@
             android:label="@string/title_activity_maps"
             />
         <activity
-            android:name=".ui.main.LaunchActivity"
+            android:name=".ui.home.LaunchActivity"
             android:exported="false"
             android:label="LaunchActivity"
             />
         <activity
-            android:name=".ui.main.HomeActivity"
+            android:name=".ui.home.HomeActivity"
             android:exported="false"
             android:label="HomeActivity"
             />
