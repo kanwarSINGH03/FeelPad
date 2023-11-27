@@ -3,11 +3,15 @@ package com.example.journalapp.ui.note;
 import static com.example.journalapp.utils.ConversionUtil.convertNoteItemEntitiesToNoteItems;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +19,8 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -26,6 +32,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -37,16 +44,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.journalapp.R;
 import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.database.entity.NoteItemEntity;
-import com.example.journalapp.ui.main.MainViewModel;
 import com.example.journalapp.ui.main.MapsActivity;
-import com.google.common.net.MediaType;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,6 +63,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
 /**
  * Activity representing a single note page
@@ -94,6 +98,13 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private static final int REQUEST_STORAGE_PERMISSION = 1;
     private static final int REQUEST_AUDIO_PERMISSION = 2;
     private static final int REQUEST_CAMERA_PERMISSION = 3;
+
+
+    // Animation Variables
+    ItemTouchHelper itemTouchHelper;
+    public static final String THEME_PREFERENCES = "theme_preferences";
+    public static final String SELECTED_THEME = "selected_theme";
+
 
     // Temporary Variables (always changing, but need access to)
     private Uri tempUri;
@@ -167,10 +178,18 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             });
 
 
-    // Special member variable for drag and dropping contents @TODO change UI to be more visible
-    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START | ItemTouchHelper.END, 0) {
+    // Special member variable for drag and dropping contents
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN , ItemTouchHelper.LEFT) {
+
+        @Override
+        public boolean isLongPressDragEnabled(){
+            return false;
+        }
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            noteAdapter.highlightItem(viewHolder.getAdapterPosition());
+            highlightedItem = viewHolder.getAdapterPosition();
+
             int fromPosition = viewHolder.getAdapterPosition();
             int toPosition = target.getAdapterPosition();
 
@@ -178,11 +197,33 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             updateNoteItemsOrderIndex();
 
             recyclerView.getAdapter().notifyItemMoved(fromPosition, toPosition);
+            highlightedItem = toPosition;
+            noteAdapter.highlightItem(toPosition);
+            noteAdapter.notifyItemChanged(fromPosition);
+            noteAdapter.notifyItemChanged(toPosition);
             return true;
         }
 
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            if (direction == ItemTouchHelper.LEFT){
+                deleteItem(viewHolder.getAdapterPosition());
+            }
+        }
+
+        @Override
+        public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+
+            new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                    .addSwipeLeftBackgroundColor(ContextCompat.getColor(NoteActivity.this,R.color.theme_red))
+                    .addSwipeLeftActionIcon(R.drawable.ic_note_delete)
+                    .addSwipeLeftCornerRadius(TypedValue.COMPLEX_UNIT_DIP,10)
+                    .create()
+                    .decorate();
+
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+
         }
     };
 
@@ -194,7 +235,21 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     @Override
     protected void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
-        setContentView(R.layout.activity_note);
+        Intent intent = getIntent();
+
+        if (intent.hasExtra("themeBackground")) {
+            int themeBackgroundId = intent.getIntExtra("themeBackground", 0);
+            setContentView(themeBackgroundId);
+            saveThemeToPreferences(String.valueOf(themeBackgroundId));
+        } else {
+            // If no theme is provided, load the default theme from SharedPreferences
+            String savedTheme = getThemeFromPreferences();
+            if (savedTheme != null && !savedTheme.isEmpty()) {
+                setContentView(Integer.parseInt(savedTheme));
+            } else {
+                setContentView(R.layout.activity_note);
+            }
+        }
 
         // Initialize UI Widgets & set current date
         initWidgets();
@@ -203,8 +258,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         initStyling();
         initLocation();
 
-        // Check if the received intent is for a new note or existing note
-        Intent intent = getIntent();
 
         if (intent.hasExtra("note_id")) {
             // Existing Note: retrieve note_id and set up existing note
@@ -215,6 +268,31 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             // New Note: create note_id and create new note
             setNewNote();
         }
+
+    }
+
+    private void saveThemeToPreferences(String themeId) {
+        SharedPreferences preferences = getSharedPreferences(THEME_PREFERENCES, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(SELECTED_THEME, themeId);
+        editor.apply();
+    }
+
+    /**
+     * Retrieve the selected theme from SharedPreferences
+     *
+     * @return The resource ID of the selected theme, or null if not found
+     */
+    private String getThemeFromPreferences() {
+        SharedPreferences preferences = getSharedPreferences(THEME_PREFERENCES, MODE_PRIVATE);
+        return preferences.getString(SELECTED_THEME, null);
+    }
+
+    private void removeThemeFromPreferences() {
+        SharedPreferences preferences = getSharedPreferences(THEME_PREFERENCES, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove(SELECTED_THEME);
+        editor.apply();
     }
 
     private void updateEmotionImage() {
@@ -350,6 +428,12 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                     Toast.makeText(getApplicationContext(), "Add Template", Toast.LENGTH_SHORT).show();
                     return true;
                 }
+                else if (menuItem.getItemId() == R.id.item6) {
+                    Toast.makeText(getApplicationContext(), "Remove Theme", Toast.LENGTH_SHORT).show();
+                    removeThemeFromPreferences();
+                    recreate();
+                    return true;
+                }
                 return true;
             });
         });
@@ -381,8 +465,9 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
 
         // For drag and dropping
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(noteContentRecyclerView);
+
     }
 
     // ==============================
@@ -400,7 +485,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             if (focusedItem >= 0){
                 RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
                 if (viewHolder instanceof NoteAdapter.TextViewHolder){
-                    ((NoteAdapter.TextViewHolder) viewHolder).applyBold();
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyBold(highlightedItem);
                 }
             }
         });
@@ -410,7 +495,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             if (focusedItem >= 0){
                 RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
                 if (viewHolder instanceof NoteAdapter.TextViewHolder){
-                    ((NoteAdapter.TextViewHolder) viewHolder).applyItalics();
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyItalics(highlightedItem);
                 }
             }
         });
@@ -420,7 +505,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             if (focusedItem >= 0){
                 RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
                 if (viewHolder instanceof NoteAdapter.TextViewHolder){
-                    ((NoteAdapter.TextViewHolder) viewHolder).applyUnderline();
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyUnderline(highlightedItem);
                 }
             }
         });
@@ -430,7 +515,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             if (focusedItem >= 0){
                 RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
                 if (viewHolder instanceof NoteAdapter.TextViewHolder){
-                    ((NoteAdapter.TextViewHolder) viewHolder).applyStrikethrough();
+                    ((NoteAdapter.TextViewHolder) viewHolder).applyStrikethrough(highlightedItem);
                 }
             }
         });
@@ -440,10 +525,10 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * Callback Interface for the adapter to implement.
      */
     public interface TextFormattingHandler{
-        void applyBold();
-        void applyItalics();
-        void applyUnderline();
-        void applyStrikethrough();
+        void applyBold(int highlightedItem);
+        void applyItalics(int highlightedItem);
+        void applyUnderline(int highlightedItem);
+        void applyStrikethrough(int highlightedItem);
     }
 
     // ==============================
@@ -481,6 +566,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * Popup menu with options: delete, @TODO: move to different index
      * @param position
      */
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onItemLongClick(int position) {
         Log.e("ItemLongClick", "Position #" + position + " has been long clicked.");
@@ -493,19 +579,84 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         // Find the view by position
         View view = Objects.requireNonNull(noteContentRecyclerView.findViewHolderForAdapterPosition(position)).itemView;
 
-        // Create a PopupMenu
-        PopupMenu popupMenu = new PopupMenu(this, view);
-        popupMenu.inflate(R.menu.delete_menu); // Inflate your menu resource
-        popupMenu.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.action_delete) {
-                // Perform deletion of the item
-                deleteItem(position);
-                return true;
-            }
-            // ... handle other menu item clicks if necessary
-            return false;
-        });
-        popupMenu.show();
+        RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(position);
+
+        // if text viewHolder
+        if (viewHolder instanceof NoteAdapter.TextViewHolder){
+
+            // convert to textViewHolder
+            NoteAdapter.TextViewHolder textViewHolder = (NoteAdapter.TextViewHolder) viewHolder;
+
+            // set listener to drag handle
+            textViewHolder.dragHandle.setOnTouchListener((v, event) -> {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    itemTouchHelper.startDrag(viewHolder);
+                }
+                return false;
+            });
+        }
+
+        // if image viewHolder
+        else if (viewHolder instanceof NoteAdapter.ImageViewHolder){
+
+            // convert to imageviewHolder
+            NoteAdapter.ImageViewHolder imageViewHolder = (NoteAdapter.ImageViewHolder) viewHolder;
+
+            // set listener to drag handle
+            imageViewHolder.dragHandle.setOnTouchListener((v, event) -> {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    itemTouchHelper.startDrag(viewHolder);
+                }
+                return false;
+            });
+        }
+
+        // if video viewholder
+        else if (viewHolder instanceof NoteAdapter.VideoViewHolder){
+
+            // convert to videoViewHolder
+            NoteAdapter.VideoViewHolder videoViewHolder = (NoteAdapter.VideoViewHolder) viewHolder;
+
+            // set listener to drag handle
+            videoViewHolder.dragHandle.setOnTouchListener((v, event) -> {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    itemTouchHelper.startDrag(viewHolder);
+                }
+                return false;
+            });
+        }
+
+        // if audio
+        else if (viewHolder instanceof NoteAdapter.VoiceViewHolder){
+
+            // convert to audioViewHolder
+            NoteAdapter.VoiceViewHolder voiceViewHolder = (NoteAdapter.VoiceViewHolder) viewHolder;
+
+            // set listener to drag handle
+            voiceViewHolder.dragHandle.setOnTouchListener((v, event) -> {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    itemTouchHelper.startDrag(viewHolder);
+                }
+                return false;
+            });
+        }
+
+        // if pdf
+        else if (viewHolder instanceof NoteAdapter.PdfViewHolder){
+
+            // convert to pdf
+            NoteAdapter.PdfViewHolder pdfViewHolder = (NoteAdapter.PdfViewHolder) viewHolder;
+
+            // set listener to drag handle
+            pdfViewHolder.dragHandle.setOnTouchListener((v, event) -> {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    itemTouchHelper.startDrag(viewHolder);
+                }
+                return false;
+            });
+        }
+
+
     }
 
 
@@ -640,6 +791,13 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         else{
             // otherwise, inform user that the don't have an installed voice recording app.
             Toast.makeText(this, "No voice recording app found. Please install your default voice recording app.", Toast.LENGTH_LONG).show();
+            // redirect to app store for a voice-recording app
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.sec.android.app.voicenote")));
+            } catch (android.content.ActivityNotFoundException anfe) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.sec.android.app.voicenote")));
+            }
+            Toast.makeText(this,"Redirecting to the Play Store for a Voice Recording app", Toast.LENGTH_SHORT).show();
 
         }
 
@@ -851,7 +1009,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * Clears all highlights based on NoteAdapter function.
      */
     public void clearHighlight() {
-        if (highlightedItem != 1) {
+        Log.e("HighlightBug", "Before clearing highlights, the highlightedItem is: " + highlightedItem);
+        if (highlightedItem >= 0) {
             Log.e("Highlights", "clearing highlights");
             noteAdapter.clearHighlights();
             highlightedItem = -1;

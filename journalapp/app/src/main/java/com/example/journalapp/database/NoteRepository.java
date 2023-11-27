@@ -255,7 +255,7 @@ public class NoteRepository {
      * Synchronizes (updates) the NoteFtsEntity with a corresponding Note (given its ID)
      * @param noteId String noteId to identify which NoteFtsEntity to update
      */
-    private void synchronizeNoteFts(String noteId){
+    public void synchronizeNoteFts(String noteId){
         NoteDatabase.databaseWriteExecutor.execute(()-> {
             List<NoteItemEntity> noteItems = noteDao.getNoteItemsForNoteSync(noteId);
 

@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
+
+    <!-- Shadow Layer -->
+    <item android:left="2dp" android:top="2dp" android:right="2dp" android:bottom="2dp">
         <shape android:shape="rectangle">
-            <solid android:color="#BDBDBD"/> <!-- Background color for highlighted state -->
-            <corners android:radius="8dp"/> <!-- Rounded corners -->
+            <solid android:color="#B0B0B0"/> <!-- Shadow color -->
+            <corners android:radius="12dp"/> <!-- Radius for rounded corners -->
         </shape>
     </item>
-    <item android:left="4dp" android:top="4dp" android:right="4dp" android:bottom="4dp">
+
+    <!-- Background Layer -->
+    <item android:left="0dp" android:top="0dp" android:right="0dp" android:bottom="4dp">
         <shape android:shape="rectangle">
-            <solid android:color="@android:color/transparent"/> <!-- Transparent inner part -->
-            <corners android:radius="4dp"/>
+            <solid android:color="@android:color/transparent"/> <!-- Background color, can be transparent -->
+            <corners android:radius="10dp"/>
         </shape>
     </item>
+
 </layer-list>

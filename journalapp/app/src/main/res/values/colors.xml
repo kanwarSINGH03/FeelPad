@@ -142,4 +142,6 @@
     <color name="black">#000000</color>
     <color name = "skin">#F8EAB4</color>
     <color name = "lightYellow">#FFC845</color>
+    <color name = "theme_red">#FFB6A3</color>
+    <color name = "defaultBackground">#FFFACD</color>
 </resources>

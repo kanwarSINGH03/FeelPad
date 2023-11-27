@@ -21,70 +21,75 @@
 
                 <ImageButton
                     android:id="@+id/backArrow"
-                    android:layout_width="41dp"
-                    android:layout_height="45dp"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
                     android:backgroundTint="@color/white"
                     android:onClick="exitNote"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/back"
+                    android:src="@drawable/ic_note_back"
+                    android:layout_marginStart="-5dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
                 <EditText
                     android:id="@+id/titleEditText"
-                    android:layout_width="144dp"
+                    android:layout_width="0dp"
                     android:layout_height="36dp"
-                    android:layout_marginStart="20dp"
+                    android:layout_marginStart="8dp"
                     android:layout_marginEnd="20dp"
                     android:background="@null"
-                    android:gravity="center"
                     android:hint="Enter Topic"
                     android:maxLength="50"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:inputType="text"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/location"
+                    app:layout_constraintEnd_toStartOf="@id/reactionMenu"
                     app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toEndOf="@+id/backArrow"
+                    app:layout_constraintStart_toEndOf="@id/backArrow"
                     app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageButton
-                    android:id="@+id/location"
-                    android:layout_width="49dp"
-                    android:layout_height="46dp"
-                    android:layout_marginEnd="15dp"
-                    android:backgroundTint="@color/white"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/location"
-                    app:layout_constraintEnd_toStartOf="@+id/optionsMenu"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-
-
-                <ImageButton
-                    android:id="@+id/optionsMenu"
-                    android:layout_width="49dp"
-                    android:layout_height="46dp"
-                    android:backgroundTint="@color/white"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/dots"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
 
                 <ImageButton
                     android:id="@+id/reactionMenu"
-                    android:layout_width="49dp"
-                    android:layout_height="46dp"
-                    android:layout_marginEnd="128dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:backgroundTint="@color/white"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/add_reaction_icon"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:src="@drawable/ic_note_emotion_select_button"
+                    android:layout_marginEnd="-10dp"
+                    app:layout_constraintEnd_toStartOf="@id/optionsMenu"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/optionsMenu"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:backgroundTint="@color/white"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_note_attachment_button"
+                    android:layout_marginEnd="-10dp"
+                    app:layout_constraintEnd_toStartOf="@id/location"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <ImageButton
+                    android:id="@+id/location"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginEnd="10dp"
+                    android:backgroundTint="@color/white"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_note_location_button"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -107,6 +112,9 @@
             android:layout_marginEnd="12sp"
             android:layout_marginBottom="15sp"
             android:background="@null"
+            android:paddingRight="16dp"
+            android:paddingLeft="8dp"
+            android:clipToPadding="false"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/bottom_toolbar"
             app:layout_constraintStart_toStartOf="parent"

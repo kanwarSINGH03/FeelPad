@@ -2,6 +2,7 @@ package com.example.journalapp.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -64,9 +65,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         templateButton.setOnClickListener(v -> {
-            // Handle the click for the template button here
+                // Start the ThemeActivity
+                Intent intent = new Intent(MainActivity.this, ThemeSelectionActivity.class);
+                startActivity(intent);
+
         });
+
     }
+
 
     /**
      * Sets up an observer to watch for changes in the list of notes and updates the UI accordingly

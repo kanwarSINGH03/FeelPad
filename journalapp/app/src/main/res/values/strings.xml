@@ -11,6 +11,16 @@
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="line">Line</string>
+    <string name="beach_button">beach button</string>
+    <string name="theme_2">Theme 2</string>
+    <string name="theme_3">idk button</string>
+    <string name="theme_4">Theme 4</string>
+    <string name="titleTheme">title</string>
+    <string name="theme_map">Theme 3</string>
+    <string name="sky_theme_button">sky theme button</string>
+    <string name="theme_1">Theme 1</string>
+    <string name="map_button">map button</string>
+    <string name="select_a_theme">Select a theme</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="maps_api_key_kanwar">AIzaSyDNsHcqT1i-kPJxXtHre4Y2j7TI4PQIwnI</string>
 </resources>
