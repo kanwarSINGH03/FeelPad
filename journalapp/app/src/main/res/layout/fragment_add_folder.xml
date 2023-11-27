@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="8dp"
+    android:backgroundTint="@android:color/transparent"
+    >
+
+    <TextView
+        android:id="@+id/folder_add_string"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create a new folder"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"/>
+    
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/folder_add_title_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toBottomOf="@id/folder_add_string"
+        app:layout_constraintStart_toStartOf="parent"
+        app:counterEnabled="true"
+        app:counterMaxLength="20"
+        app:startIconDrawable="@drawable/ic_folder_flag">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/folder_add_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:hint="Folder Name"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/folder_add_color_string"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Color"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/folder_add_title_holder"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"/>
+
+    <!-- Color Circles -->
+    <View
+        android:id="@+id/colorCircle1"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/ic_folder_circle"
+        app:layout_constraintTop_toBottomOf="@id/folder_add_color_string"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/colorCircle2"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:backgroundTint="@color/colorAccentGrey"/>
+
+    <View
+        android:id="@+id/colorCircle2"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/ic_folder_circle"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toBottomOf="@id/folder_add_color_string"
+        app:layout_constraintStart_toEndOf="@id/colorCircle1"
+        app:layout_constraintEnd_toStartOf="@id/colorCircle3"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:backgroundTint="@color/colorAccentBlueGreen"/>
+
+    <View
+        android:id="@+id/colorCircle3"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/ic_folder_circle"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toBottomOf="@id/folder_add_color_string"
+        app:layout_constraintStart_toEndOf="@id/colorCircle2"
+        app:layout_constraintEnd_toStartOf="@id/colorCircle4"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:backgroundTint="@color/colorAccentGreyBlue"/>
+
+    <View
+        android:id="@+id/colorCircle4"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/ic_folder_circle"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toBottomOf="@id/folder_add_color_string"
+        app:layout_constraintStart_toEndOf="@id/colorCircle3"
+        app:layout_constraintEnd_toStartOf="@id/colorCircle5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:backgroundTint="@color/colorAccentLightRed"/>
+
+    <View
+        android:id="@+id/colorCircle5"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/ic_folder_circle"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toBottomOf="@id/folder_add_color_string"
+        app:layout_constraintStart_toEndOf="@id/colorCircle4"
+        app:layout_constraintEnd_toStartOf="@id/colorCircle6"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:backgroundTint="@color/colorAccentRed"/>
+
+    <View
+        android:id="@+id/colorCircle6"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/ic_folder_circle"
+        android:layout_marginStart="8dp"
+        app:layout_constraintTop_toBottomOf="@id/folder_add_color_string"
+        app:layout_constraintStart_toEndOf="@id/colorCircle5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:backgroundTint="@color/colorAccentYellow"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/folder_add_cancel_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:textColor="#505050"
+        android:textSize="15sp"
+        android:backgroundTint="#E0E0E0"
+        app:layout_constraintTop_toBottomOf="@id/colorCircle6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/folder_add_create_button"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="12dp"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:cornerRadius="4dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/folder_add_create_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Create"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:backgroundTint="#4B4B4B"
+        app:layout_constraintTop_toBottomOf="@id/colorCircle6"
+        app:layout_constraintStart_toEndOf="@id/folder_add_cancel_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:cornerRadius="4dp"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.database.entity.Folder;
+import com.example.journalapp.ui.home.AddFolderFragment;
 import com.example.journalapp.ui.home.FolderViewModel;
 import com.example.journalapp.ui.home.LaunchActivity;
 import com.example.journalapp.ui.home.ViewAllFoldersActivity;
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         templateButton.setOnClickListener(v -> {
-            // Handle the click for the template button here
+
         });
     }
 

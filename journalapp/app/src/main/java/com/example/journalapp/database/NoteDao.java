@@ -148,6 +148,10 @@ public interface NoteDao {
     @Query("SELECT * FROM folder_table")
     LiveData<List<Folder>> getAllFolders();
 
+    // ==============================
+    // Folder Queries
+    // ==============================
+
     @Insert
     void insertFolder(Folder folder);
 

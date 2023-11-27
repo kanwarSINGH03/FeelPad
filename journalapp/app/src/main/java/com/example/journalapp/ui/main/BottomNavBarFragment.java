@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.journalapp.R;
+import com.example.journalapp.ui.home.AddFolderFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class BottomNavBarFragment extends Fragment {
@@ -67,7 +68,9 @@ public class BottomNavBarFragment extends Fragment {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle menu button click
+                // @TODO make a case for if in folder list or home list
+                AddFolderFragment folderFragment = new AddFolderFragment();
+                folderFragment.show(getParentFragmentManager(), "addFolder");
             }
         });
 

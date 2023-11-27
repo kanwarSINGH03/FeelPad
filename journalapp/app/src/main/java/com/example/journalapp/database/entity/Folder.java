@@ -6,16 +6,6 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.util.UUID;
-/*
-@Entity(tableName = "note_table",
-        foreignKeys = @ForeignKey(
-                entity = Folder.class,
-                parentColumns = "folder_id",
-                childColumns = "folder_id",
-                onDelete = ForeignKey.CASCADE
-        ))
- */
-
 
 
 @Entity(tableName = "folder_table")
