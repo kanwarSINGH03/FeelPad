@@ -17,6 +17,7 @@ public class MainNoteListActivity extends AppCompatActivity {
     private NoteListAdapter noteListAdapter;
     private FolderViewModel folderViewModel;
     private RecyclerView noteRecyclerView;
+    private String folder_id;
 
 
     @Override
@@ -24,14 +25,6 @@ public class MainNoteListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_note_list);
 
-        // add top navbar fragment
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.topNavBarFragmentContainer, TopNavBarFragment.newInstance(false))
-                .commit();
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.bottomNavBarFragmentContainer, BottomNavBarFragment.newInstance("add"))
-                .commit();
 
         initRecyclerView();
 
@@ -39,13 +32,22 @@ public class MainNoteListActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         if (intent.hasExtra("folder_id")){
-            String folder_id = intent.getStringExtra("folder_id");
+            folder_id = intent.getStringExtra("folder_id");
             createNoteObserverForFolder(folder_id);
         }
         else{
             // catch
             Toast.makeText(this, "Illegal folder", Toast.LENGTH_SHORT).show();
         }
+
+        // add top navbar fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.topNavBarFragmentContainer, TopNavBarFragment.newInstance(false))
+                .commit();
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.bottomNavBarFragmentContainer, BottomNavBarFragment.newInstance("add", "note", folder_id))
+                .commit();
 
     }
 

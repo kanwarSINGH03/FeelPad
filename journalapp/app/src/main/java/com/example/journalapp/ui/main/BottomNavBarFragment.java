@@ -1,5 +1,6 @@
 package com.example.journalapp.ui.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -13,15 +14,20 @@ import androidx.fragment.app.Fragment;
 
 import com.example.journalapp.R;
 import com.example.journalapp.ui.home.AddFolderFragment;
+import com.example.journalapp.ui.note.NoteActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class BottomNavBarFragment extends Fragment {
 
     private static final String ARG_FOCUSED_BTN = "focusedBtn";
-    public static BottomNavBarFragment newInstance(String focusedBtn){
+    private static final String ARG_ADD_TYPE = "addType";
+    private static final String ARG_FOLDER_ID = "folderId";
+    public static BottomNavBarFragment newInstance(String focusedBtn, String addType, String folderId){
         BottomNavBarFragment fragment = new BottomNavBarFragment();
         Bundle args = new Bundle();
         args.putString(ARG_FOCUSED_BTN, focusedBtn);
+        args.putString(ARG_ADD_TYPE,addType);
+        args.putString(ARG_FOLDER_ID,folderId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,8 +75,29 @@ public class BottomNavBarFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // @TODO make a case for if in folder list or home list
-                AddFolderFragment folderFragment = new AddFolderFragment();
-                folderFragment.show(getParentFragmentManager(), "addFolder");
+
+                if (args != null){
+                    String addType = args.getString(ARG_ADD_TYPE);
+                    if ("folder".equals(addType)){
+                        AddFolderFragment folderFragment = new AddFolderFragment();
+                        folderFragment.show(getParentFragmentManager(), "addFolder");
+                    } else if ("note".equals(addType)){
+
+                        // if note, then assume id
+                        String folder_id = args.getString(ARG_FOLDER_ID);
+                        if (!folder_id.isEmpty()){
+                            // create a note instead and pass the folderId
+                            Intent intent = new Intent(v.getContext(), NoteActivity.class);
+
+                            // include folder_id as an intent
+                            intent.putExtra("folder_id",folder_id);
+                            v.getContext().startActivity(intent);
+
+                        }
+
+                    }
+                }
+
             }
         });
 

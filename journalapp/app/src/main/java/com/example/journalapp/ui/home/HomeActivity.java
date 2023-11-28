@@ -39,7 +39,7 @@ public class HomeActivity extends AppCompatActivity{
 
         // add bottom navbar fragment
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.bottomNavBarFragmentContainer, BottomNavBarFragment.newInstance("home"))
+                .replace(R.id.bottomNavBarFragmentContainer, BottomNavBarFragment.newInstance("home", "folder", ""))
                 .commit();
 
 
