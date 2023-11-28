@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/color_light_red"
+        android:title="Blushing Tomato"
+        android:icon="@drawable/ic_folder_color_light_red" />
+    <item
+        android:id="@+id/color_red"
+        android:title="Dragon's Fury"
+        android:icon="@drawable/ic_folder_color_red" />
+    <item
+        android:id="@+id/color_blue_green"
+        android:title="Mermaid Tail"
+        android:icon="@drawable/ic_folder_color_blue_green" />
+    <item
+        android:id="@+id/color_grey"
+        android:title="Elephant in the Room"
+        android:icon="@drawable/ic_folder_color_grey" />
+    <item
+        android:id="@+id/color_grey_blue"
+        android:title="Stormy Monday"
+        android:icon="@drawable/ic_folder_color_grey_blue" />
+    <item
+        android:id="@+id/color_yellow"
+        android:title="Sunshine Sneezing"
+        android:icon="@drawable/ic_folder_color_yellow" />
+</menu>

@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +19,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -29,10 +29,10 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -44,26 +44,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.journalapp.R;
 import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.database.entity.NoteItemEntity;
-import com.example.journalapp.ui.main.MainViewModel;
 import com.example.journalapp.ui.main.MapsActivity;
-import com.google.common.net.MediaType;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
-import java.text.SimpleDateFormat;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -84,6 +80,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private ImageButton italicsButton;
     private ImageButton underlineButton;
     private ImageButton strikethroughButton;
+    private ImageButton pickColorButton;
 
     // Note Contents Variables
     private RecyclerView noteContentRecyclerView;
@@ -482,6 +479,71 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                 }
             }
         });
+
+
+
+        AtomicInteger colorChosen = new AtomicInteger();
+
+        pickColorButton = findViewById(R.id.note_color_btn);
+        pickColorButton.setOnClickListener(v -> {
+            // if pressed, then pop up window of 6 colors to choose from
+            PopupMenu popupMenu = new PopupMenu(new ContextThemeWrapper(this, com.google.android.material.R.style.Widget_MaterialComponents_PopupMenu), v);
+
+            try {
+                Field[] fields = popupMenu.getClass().getDeclaredFields();
+                for (Field field : fields) {
+                    if ("mPopup".equals(field.getName())) {
+                        field.setAccessible(true);
+                        Object menuPopupHelper = field.get(popupMenu);
+                        Class<?> classPopupHelper = Class.forName(menuPopupHelper.getClass().getName());
+                        Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon",boolean.class);
+                        setForceIcons.invoke(menuPopupHelper, true);
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            popupMenu.getMenuInflater().inflate(R.menu.note_color_menu, popupMenu.getMenu());
+
+            popupMenu.setOnMenuItemClickListener(item -> {
+                int itemId = item.getItemId();
+                int colorResourceId = 0;
+                if (itemId == R.id.color_light_red){
+                    colorResourceId = R.color.colorAccentLightRed;
+                } else if (itemId == R.id.color_red){
+                    colorResourceId = R.color.colorAccentRed;
+                } else if (itemId == R.id.color_blue_green){
+                    colorResourceId = R.color.colorAccentBlueGreen;
+                } else if (itemId == R.id.color_grey){
+                    colorResourceId = R.color.colorAccentGrey;
+                } else if (itemId == R.id.color_grey_blue){
+                    colorResourceId = R.color.colorAccentGreyBlue;
+                } else if (itemId == R.id.color_yellow){
+                    colorResourceId = R.color.colorAccentYellow;
+                }
+
+
+                if (colorResourceId != 0) {
+                    int colorValue = ContextCompat.getColor(getApplicationContext(), colorResourceId);
+                    colorChosen.set(colorValue);
+                    if (focusedItem >= 0) {
+                        RecyclerView.ViewHolder viewHolder = noteContentRecyclerView.findViewHolderForAdapterPosition(focusedItem);
+                        if (viewHolder instanceof NoteAdapter.TextViewHolder) {
+                            ((NoteAdapter.TextViewHolder) viewHolder).applyTextColor(highlightedItem, colorValue);
+                            Log.e("ColorPicker", "Color chosen was: " + Integer.toHexString(colorValue));
+                        }
+                    }
+                }
+                return true;
+            });
+
+            popupMenu.show();
+        });
+
+
+
     }
 
     /**
@@ -492,6 +554,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         void applyItalics(int highlightedItem);
         void applyUnderline(int highlightedItem);
         void applyStrikethrough(int highlightedItem);
+        void applyTextColor(int highlightedItem, @ColorInt int color);
+
     }
 
     // ==============================

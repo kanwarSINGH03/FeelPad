@@ -13,7 +13,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/white">
+            android:background="?attr/backgroundColor">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -23,10 +23,10 @@
                     android:id="@+id/backArrow"
                     android:layout_width="55dp"
                     android:layout_height="55dp"
-                    android:backgroundTint="@color/white"
                     android:onClick="exitNote"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_note_back"
+                    android:backgroundTint="@android:color/transparent"
                     android:layout_marginStart="-5dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -38,10 +38,10 @@
                     android:layout_height="36dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="20dp"
-                    android:background="@null"
+                    android:background="@android:color/transparent"
                     android:hint="Enter Topic"
                     android:maxLength="50"
-                    android:textColor="@color/black"
+                    android:textColor="?attr/colorSecondary"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:ellipsize="end"
@@ -57,7 +57,7 @@
                     android:id="@+id/reactionMenu"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@android:color/transparent"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_note_emotion_select_button"
                     android:layout_marginEnd="-10dp"
@@ -69,7 +69,7 @@
                     android:id="@+id/optionsMenu"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@android:color/transparent"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_note_attachment_button"
                     android:layout_marginEnd="-10dp"
@@ -82,7 +82,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginEnd="10dp"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@android:color/transparent"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_note_location_button"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -102,14 +102,16 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:backgroundTint="?attr/backgroundColor"
+        android:background="?attr/backgroundColor">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_notes"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="12sp"
-            android:layout_marginEnd="12sp"
+            android:layout_marginStart="6sp"
+            android:layout_marginEnd="6sp"
             android:layout_marginBottom="15sp"
             android:background="@null"
             android:paddingRight="16dp"
@@ -123,40 +125,107 @@
         <LinearLayout
             android:id="@+id/bottom_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/nav_bar_height"
             android:layout_gravity="bottom"
             android:orientation="horizontal"
             android:gravity="center"
-            android:padding="8dp"
-            android:background="@color/white"
+            android:background="?attr/backgroundColor"
             app:layout_constraintTop_toBottomOf="@id/recycler_view_notes"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <ImageButton
-                android:id="@+id/boldButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_format_bold_24" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <ImageButton
-                android:id="@+id/italicsButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_format_italic_24" />
+                <ImageButton
+                    android:id="@+id/note_color_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_note_choose_color"
+                    android:backgroundTint="@android:color/transparent"
+                    android:padding="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginStart="4dp"
+                    />
 
-            <ImageButton
-                android:id="@+id/underlineButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_format_underline_24" />
 
-            <ImageButton
-                android:id="@+id/strikethroughButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_format_strikethrough_24" />
+                <ImageButton
+                    android:id="@+id/boldButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_note_bold"
+                    android:backgroundTint="@android:color/transparent"
+                    android:padding="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/note_color_btn"
+                    app:layout_constraintEnd_toStartOf="@id/italicsButton"
+                    android:layout_marginStart="20dp"
+                    />
+
+                <ImageButton
+                    android:id="@+id/italicsButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_note_italics"
+                    android:padding="8dp"
+                    android:backgroundTint="@android:color/transparent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/boldButton"
+                    app:layout_constraintEnd_toStartOf="@id/underlineButton"
+                    />
+
+                <ImageButton
+                    android:id="@+id/underlineButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_note_underline"
+                    android:padding="8dp"
+                    android:backgroundTint="@android:color/transparent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/italicsButton"
+                    app:layout_constraintEnd_toStartOf="@id/strikethroughButton"
+                    />
+
+                <ImageButton
+                    android:id="@+id/strikethroughButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_note_strikethrough"
+                    android:backgroundTint="@android:color/transparent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/underlineButton"
+                    android:layout_marginEnd="20dp"
+                    />
+
+
+
+
+
+
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         </LinearLayout>
 

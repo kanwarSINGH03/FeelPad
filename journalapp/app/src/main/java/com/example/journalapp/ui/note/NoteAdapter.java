@@ -10,6 +10,9 @@ import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
@@ -24,6 +27,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -595,6 +599,41 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             }
         }
 
+        @Override
+        public void applyTextColor(int highlightedItem, @ColorInt int color){
+            int start = editText.getSelectionStart();
+            int end = editText.getSelectionEnd();
+
+            // If this ViewHolder is the highlighted one, change the text color of the entire text
+            if (highlightedItem == this.getAdapterPosition()) {
+                start = 0;
+                end = editText.getText().length();
+            }
+
+            if (start < end) {
+                // Make Spannable & specify span type
+                SpannableStringBuilder spannableBuilder = new SpannableStringBuilder(editText.getText());
+                ForegroundColorSpan[] spans = spannableBuilder.getSpans(start, end, ForegroundColorSpan.class);
+
+                // Check for existing span type and remove
+                boolean hasColorSpan = false;
+                for (ForegroundColorSpan span : spans) {
+                    if (spannableBuilder.getSpanStart(span) <= start && spannableBuilder.getSpanEnd(span) >= end) {
+                        spannableBuilder.removeSpan(span);
+                        hasColorSpan = true;
+                    }
+                }
+
+                // Otherwise, apply span type
+                if (!hasColorSpan) {
+                    spannableBuilder.setSpan(new ForegroundColorSpan(color), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+
+                // Set spanned text and set selection same as before
+                editText.setText(spannableBuilder);
+                editText.setSelection(start, end);
+            }
+        }
 
     }
 
