@@ -39,6 +39,10 @@ public class FolderViewModel extends AndroidViewModel {
         return folderRepository.getFolderById(folderId);
     }
 
+    public void insertFolder(Folder folder){
+        folderRepository.insertFolder(folder);
+    }
+
     public LiveData<List<Note>> getAllNotes(){
         return folderRepository.getAllNotes();
     }

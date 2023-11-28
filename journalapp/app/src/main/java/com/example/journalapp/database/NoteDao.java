@@ -145,8 +145,7 @@ public interface NoteDao {
 
     @Query("DELETE FROM note_table")
     void deleteAllNotes();
-    @Query("SELECT * FROM folder_table")
-    LiveData<List<Folder>> getAllFolders();
+
 
     // ==============================
     // Folder Queries
@@ -161,6 +160,8 @@ public interface NoteDao {
     @Delete
     void deleteFolder(Folder folder);
 
+    @Query("SELECT * FROM folder_table")
+    LiveData<List<Folder>> getAllFolders();
     @Query("SELECT * FROM folder_table WHERE id = :folderId")
     Folder getFolderById(String folderId);
 

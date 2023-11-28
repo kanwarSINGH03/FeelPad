@@ -1,5 +1,6 @@
 package com.example.journalapp.ui.home;
 
+import android.icu.text.CaseMap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,65 +10,41 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.R;
+import com.example.journalapp.database.entity.Folder;
 
 import java.util.List;
 
-public class FolderAdapter extends RecyclerView.Adapter{
+public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewHolder> {
 
-    private List<FolderItem> folderList; // folderItems passed from activity
-
-    /**
-     * Constructs the FolderAdapter with a list of FolderItems
-     * @param folderList
-     */
-    public FolderAdapter(List<FolderItem> folderList){
-        this.folderList = folderList;
+    public FolderAdapter(@NonNull DiffUtil.ItemCallback<Folder> diffCallback) {
+        super(diffCallback);
     }
 
-
-    /**
-     * Inflate the viewHolder
-     * @param parent   The ViewGroup into which the new View will be added after it is bound to
-     *                 an adapter position.
-     * @param viewType The view type of the new View.
-     * @return
-     */
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public FolderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_folder,parent,false);
+                .inflate(R.layout.item_folder, parent, false);
         return new FolderViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        FolderItem folderItem = folderList.get(position);
-        ((FolderViewHolder) holder).bind(folderItem);
+    public void onBindViewHolder(@NonNull FolderViewHolder holder, int position) {
+        Folder folder = getItem(position);
+        holder.bind(folder);
     }
 
-    @Override
-    public int getItemCount() {
-        return folderList.size();
-    }
-
-    static class FolderViewHolder extends RecyclerView.ViewHolder{
-
+    static class FolderViewHolder extends RecyclerView.ViewHolder {
         private ImageView icon;
         private TextView title;
         private ProgressBar dataBar;
         private TextView noteCount;
         private ConstraintLayout folderHolder;
-        private FolderItem currentFolderItem;
-
-
-
-
-
-
 
         public FolderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -76,29 +53,26 @@ public class FolderAdapter extends RecyclerView.Adapter{
             this.dataBar = itemView.findViewById(R.id.folder_data_bar);
             this.noteCount = itemView.findViewById(R.id.folder_note_count);
             this.folderHolder = itemView.findViewById(R.id.folder_holder);
-
         }
 
-        public void bind(FolderItem folderItem){
-            currentFolderItem = folderItem;
+        public void bind(Folder folder) {
+            folderHolder.setBackgroundColor(folder.getFolderColor());
+            icon.setImageResource(folder.getIconResourceId());
+            title.setText(folder.getFolderName());
+            dataBar.setProgress((int) folder.getEmotionPercentage());
+            noteCount.setText(String.valueOf(folder.getNumItems()));
+        }
+    }
 
-            // set folder color
-            folderHolder.setBackgroundColor(folderItem.getFolderColor());
+    static class NoteDiff extends DiffUtil.ItemCallback<Folder>{
+        @Override
+        public boolean areItemsTheSame(@NonNull Folder oldItem, @NonNull Folder newItem) {
+            return oldItem.getFolderId().equals(newItem.getFolderId());
+        }
 
-            // set icon
-            icon.setImageResource(folderItem.getIconResourceId());
-
-            // set title
-            title.setText(currentFolderItem.getTitle());
-
-            // set progress bar
-            dataBar.setProgress((int) folderItem.getEmotionPercentage());
-
-            // set noteCount
-            noteCount.setText(folderItem.getNumItemsAsString());
-
-
-
+        @Override
+        public boolean areContentsTheSame(@NonNull Folder oldItem, @NonNull Folder newItem) {
+            return oldItem.equals(newItem);
         }
     }
 }

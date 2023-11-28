@@ -1,6 +1,7 @@
 package com.example.journalapp.ui.note;
 
 import static com.example.journalapp.utils.ConversionUtil.convertNoteItemEntitiesToNoteItems;
+import static com.example.journalapp.utils.ConversionUtil.getDateAsString;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -1018,15 +1019,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     // REGION: Setting up Note Data
     // ==============================
 
-    /**
-     * Creates a string using the ISO 8601 format which is a sortable format for the database
-     * @return
-     */
-    private String getDateAsString(){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
-        String currentDateStr = sdf.format(new Date());
-        return currentDateStr;
-    }
 
     /**
      * Initialize a new note with a date and store it

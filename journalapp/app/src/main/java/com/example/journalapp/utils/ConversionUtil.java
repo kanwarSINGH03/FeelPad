@@ -9,8 +9,11 @@ import android.text.Spanned;
 import com.example.journalapp.ui.note.NoteItem;
 import com.example.journalapp.database.entity.NoteItemEntity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Utility class for converting between different UI objects
@@ -98,5 +101,15 @@ public class ConversionUtil {
             return "";
         }
         return html.replaceAll("<[^>]*>", "").trim();
+    }
+
+    /**
+     * Creates a string using the ISO 8601 format which is a sortable format for the database
+     * @return
+     */
+    public static String getDateAsString(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        String currentDateStr = sdf.format(new Date());
+        return currentDateStr;
     }
 }

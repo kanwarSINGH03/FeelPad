@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -123,5 +124,13 @@ public class Folder {
 
     public void setIfEncrypted(boolean ifEncrypted) {
         this.ifEncrypted = ifEncrypted;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Folder folder = (Folder) o;
+        return folderId.equals(folder.folderId) && Objects.equals(folderName,folder.folderName) && Objects.equals(create_date,folder.create_date);
     }
 }

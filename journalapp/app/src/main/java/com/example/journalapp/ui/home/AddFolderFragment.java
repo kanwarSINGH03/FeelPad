@@ -22,9 +22,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.journalapp.R;
 import com.example.journalapp.database.entity.Folder;
+import com.example.journalapp.utils.ConversionUtil;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
@@ -42,7 +44,7 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
 
     private int selectedColor = -1;
     private int selectedIcon;
-    private FolderHandlerListener folderHandlerListener;
+    private FolderViewModel folderViewModel;
 
     public AddFolderFragment(){
         // empty constructor
@@ -51,12 +53,9 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof FolderHandlerListener){
-            folderHandlerListener = (FolderHandlerListener) context;
-        }
-        else{
-            throw new RuntimeException(context.toString() + "must implement FolderItemListener");
-        }
+
+        // initialize viewmodel
+        folderViewModel = new ViewModelProvider(requireActivity()).get(FolderViewModel.class);
     }
 
     @Nullable
@@ -99,15 +98,23 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
                     selectedIcon = R.drawable.ic_folder_icon1;
                 }
 
-                // Create a new folder inside the
-                folderHandlerListener.onSave(new FolderItem(null,folderName,0,0,selectedIcon,selectedColor));
-
+                // Create a new folder
+                Folder newFolder = new Folder(folderName, ConversionUtil.getDateAsString(), selectedIcon, selectedColor);
+                folderViewModel.insertFolder(newFolder);
 
                 dismiss(); // close fragment
             }
             else{
-                // handle empty folderName
-                Toast.makeText(getContext(), "Cannot have empty folder name", Toast.LENGTH_SHORT).show();
+
+                if (folderName.isEmpty()) {
+                    // handle empty folderName
+                    Toast.makeText(getContext(), "Cannot have empty folder name", Toast.LENGTH_SHORT).show();
+                }
+
+                if (selectedColor == -1){
+                    // handle no color chosen
+                    Toast.makeText(getContext(), "Please choose a color", Toast.LENGTH_SHORT).show();
+                }
             }
 
         });
@@ -196,14 +203,10 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
         // Set the background color of the dialog
         Window window = dialog.getWindow();
         if (window != null) {
-            window.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getContext(), R.color.colorBackground)));
+            window.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getContext(), R.color.colorPrimary)));
         }
 
         dialog.show();
-    }
-
-    public interface FolderHandlerListener{
-        void onSave(FolderItem folderItem);
     }
 
 }

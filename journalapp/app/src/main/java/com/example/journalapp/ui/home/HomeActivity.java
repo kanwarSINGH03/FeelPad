@@ -3,22 +3,27 @@ package com.example.journalapp.ui.home;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.R;
 import com.example.journalapp.ui.main.BottomNavBarFragment;
+import com.example.journalapp.ui.main.MainViewModel;
 import com.example.journalapp.ui.main.TopNavBarFragment;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity implements AddFolderFragment.FolderHandlerListener {
+public class HomeActivity extends AppCompatActivity{
 
-    private List<FolderItem> folderList;
-    private RecyclerView folderRecyclerView;
     private FolderAdapter folderAdapter;
+    private FolderViewModel folderViewModel;
+
+
+    // will remove
+    private RecyclerView folderRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,22 +40,29 @@ public class HomeActivity extends AppCompatActivity implements AddFolderFragment
                 .replace(R.id.bottomNavBarFragmentContainer, BottomNavBarFragment.newInstance("home"))
                 .commit();
 
-        initRecyclerView();
 
+        initRecyclerView(); // init recyclerView to display notes
+        createNoteObserver(); // observer to watch for changes in list of notes
+        initButtons(); // initialize buttons
+
+    }
+
+    private void initButtons(){
         MaterialButton btn1 = findViewById(R.id.button1);
-        btn1.setOnClickListener(v ->{
-            AddFolderFragment folderFragment = new AddFolderFragment();
-            folderFragment.show(getSupportFragmentManager(), "addFolder");
-        });
+        MaterialButton btn2 = findViewById(R.id.button2);
+
+        // set on click listeners
+    }
+
+    private void createNoteObserver(){
+        FolderViewModel folderViewModel = new ViewModelProvider(this).get(FolderViewModel.class);
+        folderViewModel.getAllFolders().observe(this, folders -> folderAdapter.submitList(folders));
     }
 
     private void initRecyclerView(){
-        // initialize local data source
-        folderList = new ArrayList<>();
-
         // Initialize recyclerview and adapter
         folderRecyclerView = findViewById(R.id.folderRecyclerView);
-        folderAdapter = new FolderAdapter(folderList);
+        folderAdapter = new FolderAdapter(new FolderAdapter.NoteDiff());
 
         // set up recyclerview
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2) {
@@ -64,13 +76,4 @@ public class HomeActivity extends AppCompatActivity implements AddFolderFragment
 
     }
 
-    @Override
-    public void onSave(FolderItem folderItem) {
-
-        // add the folderitem to local variable
-        folderList.add(folderItem);
-        folderAdapter.notifyItemInserted(folderList.size() - 1);
-        // refresh recyclerview
-
-    }
 }
