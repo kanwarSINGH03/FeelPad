@@ -8,6 +8,8 @@ import com.example.journalapp.database.entity.Folder;
 import com.example.journalapp.database.entity.Note;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class FolderRepository {
 
@@ -50,8 +52,14 @@ public class FolderRepository {
         return folderDao.getNotesByFolderId(folderId);
     }
 
-    public Folder getFolderById(String folderId){
-        return folderDao.getFolderById(folderId);
+    public Folder getFolderByIdSync(String folderId) {
+        Future<Folder> future = NoteDatabase.databaseWriteExecutor.submit(() -> folderDao.getFolderById(folderId));
+        try {
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public LiveData<List<Note>> getAllNotes(){

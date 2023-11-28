@@ -52,7 +52,7 @@ public class SearchActivity extends AppCompatActivity {
      */
     private void setNoteRecyclerView() {
         RecyclerView noteRecycleView = findViewById(R.id.noteListView);
-        noteListAdapter = new NoteListAdapter(new NoteListAdapter.NoteDiff());
+        noteListAdapter = new NoteListAdapter(new NoteListAdapter.NoteDiff(), mainViewModel,this);
         noteRecycleView.setAdapter(noteListAdapter);
         noteRecycleView.setLayoutManager(new LinearLayoutManager(this));
     }

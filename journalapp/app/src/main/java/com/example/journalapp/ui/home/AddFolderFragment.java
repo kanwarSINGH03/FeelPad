@@ -203,7 +203,7 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
         // Set the background color of the dialog
         Window window = dialog.getWindow();
         if (window != null) {
-            window.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getContext(), R.color.colorPrimary)));
+            window.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getContext(), R.color.white_smoke)));
         }
 
         dialog.show();

@@ -6,7 +6,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.example.journalapp.database.FolderRepository;
-import com.example.journalapp.database.NoteRepository;
 import com.example.journalapp.database.entity.Folder;
 import com.example.journalapp.database.entity.Note;
 
@@ -16,6 +15,7 @@ public class FolderViewModel extends AndroidViewModel {
 
     private final FolderRepository folderRepository;
     private final LiveData<List<Folder>> allFolders;
+
 
     public FolderViewModel(Application application) {
         super(application);
@@ -35,8 +35,8 @@ public class FolderViewModel extends AndroidViewModel {
         return folderRepository.getNotesByFolderId(folderId);
     }
 
-    public Folder getFolderById(String folderId){
-        return folderRepository.getFolderById(folderId);
+    public Folder getFolderByIdSync(String folderId){
+        return folderRepository.getFolderByIdSync(folderId);
     }
 
     public void insertFolder(Folder folder){

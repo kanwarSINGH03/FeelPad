@@ -78,6 +78,9 @@ public interface NoteDao {
     @Delete
     void deleteNoteItem(NoteItemEntity noteItem);
 
+    @Query("SELECT * FROM note_items WHERE note_id = :noteId AND order_index = 0")
+    LiveData<NoteItemEntity> getFirstNoteItemByNoteId(String noteId);
+
     // ==============================
     // <List> NoteItem Queries
     // ==============================

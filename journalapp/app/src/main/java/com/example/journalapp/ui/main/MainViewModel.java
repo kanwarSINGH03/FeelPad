@@ -41,6 +41,10 @@ public class MainViewModel extends AndroidViewModel {
         noteRepository.deleteNote(note);
     }
 
+    public LiveData<NoteItemEntity> getFirstNoteItemByNoteId(String noteId) {
+        return noteRepository.getFirstNoteItemByNoteId(noteId);
+    }
+
     // ==============================
     // <List> Note Query Accessors
     // ==============================

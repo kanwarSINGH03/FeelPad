@@ -171,6 +171,10 @@ public class NoteRepository {
         });
     }
 
+    public LiveData<NoteItemEntity> getFirstNoteItemByNoteId(String noteId){
+        return noteDao.getFirstNoteItemByNoteId(noteId);
+    }
+
     // ==============================
     // <List> NoteItem Accessors
     // ==============================

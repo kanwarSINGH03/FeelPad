@@ -1218,7 +1218,13 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         if ((noteItems.size() == 1 && noteItems.get(0).getContent().equals("")) && title.isEmpty()) {
             Log.e("Exiting note", "Deleting note");
             noteViewModel.deleteNote(note);
-        } else {
+        }
+        else if (title.isEmpty()){
+            saveNoteTitle("Note");
+            saveNoteContent();
+        }
+
+        else {
             saveNoteContent(); // add to onExit?? method instead?
         }
 

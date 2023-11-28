@@ -2,29 +2,42 @@ package com.example.journalapp.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Database;
 
 import com.example.journalapp.R;
+import com.example.journalapp.database.NoteDatabase;
+import com.example.journalapp.database.entity.Folder;
 import com.example.journalapp.ui.home.FolderViewModel;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainNoteListActivity extends AppCompatActivity {
     private NoteListAdapter noteListAdapter;
     private FolderViewModel folderViewModel;
+    private MainViewModel mainViewModel;
     private RecyclerView noteRecyclerView;
     private String folder_id;
 
+    private TextView noteListTitleTextView;
+    private ImageButton folderFilterImageButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_note_list);
 
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         initRecyclerView();
 
@@ -53,16 +66,28 @@ public class MainNoteListActivity extends AppCompatActivity {
 
     private void initRecyclerView(){
         noteRecyclerView = findViewById(R.id.notes_list_recyclerview);
-        noteListAdapter = new NoteListAdapter(new NoteListAdapter.NoteDiff());
+        noteListAdapter = new NoteListAdapter(new NoteListAdapter.NoteDiff(),mainViewModel,this);
         noteRecyclerView.setAdapter(noteListAdapter);
         noteRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private void createNoteObserverForFolder(String folder_id){
+    private void createNoteObserverForFolder(String folderId){
         folderViewModel = new ViewModelProvider(this).get(FolderViewModel.class);
-        folderViewModel.getNotesByFolderId(folder_id).observe(this, notes -> noteListAdapter.submitList(notes));
+        folderViewModel.getNotesByFolderId(folderId).observe(this, notes -> noteListAdapter.submitList(notes));
+
+        Executors.newSingleThreadExecutor().execute(() -> {
+            Folder folder = folderViewModel.getFolderByIdSync(folderId);
+            runOnUiThread(() -> initComponents(folder));
+        });
     }
-
     // initialize components
-
+    private void initComponents(Folder folder) {
+        noteListTitleTextView = findViewById(R.id.notes_list_folder_name);
+        if (folder != null) {
+            noteListTitleTextView.setText(folder.getFolderName());
+        } else {
+            // Handle the case where the folder is null
+            Toast.makeText(this, "Folder not found", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

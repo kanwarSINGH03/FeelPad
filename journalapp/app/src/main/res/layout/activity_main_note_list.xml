@@ -24,7 +24,7 @@
         android:layout_above="@id/bottomNavBarFragmentContainer"
         android:layout_below="@id/topNavBarFragmentContainer"
         android:background="@drawable/bg_notelist"
-        android:padding="16dp">
+        android:backgroundTint="@android:color/transparent">
 
         <TextView
             android:id="@+id/notes_list_folder_name"
@@ -36,8 +36,8 @@
             android:textColor="?attr/colorSecondary"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"/>
 
         <ImageButton
             android:id="@+id/notes_list_filter_btn"
@@ -47,8 +47,8 @@
             android:backgroundTint="@android:color/transparent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="12dp"/>
 
@@ -60,7 +60,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginTop="12dp"/>
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:background="@android:color/transparent"
+            android:backgroundTint="@android:color/transparent"
+            />
+
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

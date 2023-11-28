@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private NoteListAdapter noteListAdapter;
     private FolderViewModel folderViewModel;
+    private MainViewModel mainViewModel;
     private FloatingActionButton folderButton;
     private String folderId;
 
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         folderViewModel = new ViewModelProvider(this).get(FolderViewModel.class);
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
 
         setNoteRecyclerView(); // initialize RecyclerView (display notes)
         createNoteObserver(); // observer to watch for changes in list of notes
@@ -107,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void setNoteRecyclerView() {
         RecyclerView noteRecycleView = findViewById(R.id.noteListView);
-        noteListAdapter = new NoteListAdapter(new NoteListAdapter.NoteDiff());
+        noteListAdapter = new NoteListAdapter(new NoteListAdapter.NoteDiff(), mainViewModel,this);
         noteRecycleView.setAdapter(noteListAdapter);
         noteRecycleView.setLayoutManager(new LinearLayoutManager(this));
     }

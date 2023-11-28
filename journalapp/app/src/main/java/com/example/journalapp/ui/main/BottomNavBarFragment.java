@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.journalapp.R;
 import com.example.journalapp.ui.home.AddFolderFragment;
+import com.example.journalapp.ui.home.HomeActivity;
 import com.example.journalapp.ui.note.NoteActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -68,6 +69,15 @@ public class BottomNavBarFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Handle search button click
+
+                if (args != null){
+                    String focusedButton = args.getString(ARG_FOCUSED_BTN);
+                    if (!"home".equals(focusedButton)){
+                        // if not at home, then go home
+                        Intent intent = new Intent(v.getContext(), HomeActivity.class);
+                        v.getContext().startActivity(intent);
+                    }
+                }
             }
         });
 
