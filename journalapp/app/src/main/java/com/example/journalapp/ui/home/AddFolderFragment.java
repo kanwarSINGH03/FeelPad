@@ -1,6 +1,7 @@
 package com.example.journalapp.ui.home;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.ColorDrawable;
@@ -23,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 
 import com.example.journalapp.R;
+import com.example.journalapp.database.entity.Folder;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
@@ -39,10 +41,22 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
     private TextInputEditText editTextFolderName;
 
     private int selectedColor = -1;
-    private int selectedIcon = -1;
+    private int selectedIcon;
+    private FolderHandlerListener folderHandlerListener;
 
     public AddFolderFragment(){
         // empty constructor
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof FolderHandlerListener){
+            folderHandlerListener = (FolderHandlerListener) context;
+        }
+        else{
+            throw new RuntimeException(context.toString() + "must implement FolderItemListener");
+        }
     }
 
     @Nullable
@@ -70,6 +84,8 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
         // Handle button listeners
         btnCancel.setOnClickListener(v ->{
 
+            dismiss();
+
         });
 
         btnCreate.setOnClickListener(v ->{
@@ -77,14 +93,14 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
             String folderName = Objects.requireNonNull(editTextFolderName.getText()).toString();
 
             // check if folderName is empty and check if user has not chosen color
-            if (!folderName.isEmpty() && selectedColor != -1 && selectedIcon != -1){
+            if (!folderName.isEmpty() && selectedColor != -1){
                 // pass the folder title
-                Log.e("FolderTests", "Folder name: " + folderName);
-                // pass the selected color
-                Log.e("FolderTests", "Folder color: " + Integer.toHexString(selectedColor));
-                // pass chosen icon
-                Log.e("FolderTests", "Folder Icon: " + Integer.toHexString(selectedIcon));
+                if (selectedIcon == 0){
+                    selectedIcon = R.drawable.ic_folder_icon1;
+                }
 
+                // Create a new folder inside the
+                folderHandlerListener.onSave(new FolderItem(null,folderName,0,0,selectedIcon,selectedColor));
 
 
                 dismiss(); // close fragment
@@ -129,7 +145,7 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
                 // get background tint color
                 ColorStateList tintList = ViewCompat.getBackgroundTintList(v);
                 if (tintList != null){
-                    selectedColor = tintList.getDefaultColor();
+                    selectedColor = tintList.getDefaultColor(); // returns as a color value in ARGB format
                 }
             });
         }
@@ -185,4 +201,9 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
 
         dialog.show();
     }
+
+    public interface FolderHandlerListener{
+        void onSave(FolderItem folderItem);
+    }
+
 }

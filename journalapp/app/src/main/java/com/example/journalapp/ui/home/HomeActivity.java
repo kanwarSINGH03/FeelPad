@@ -14,7 +14,7 @@ import com.google.android.material.button.MaterialButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements AddFolderFragment.FolderHandlerListener {
 
     private List<FolderItem> folderList;
     private RecyclerView folderRecyclerView;
@@ -47,12 +47,6 @@ public class HomeActivity extends AppCompatActivity {
     private void initRecyclerView(){
         // initialize local data source
         folderList = new ArrayList<>();
-        folderList.add(new FolderItem("id1","Travel Journal",25,5, R.drawable.ic_folder_icon1,R.color.colorAccentLightRed));
-        folderList.add(new FolderItem("id2","Gym Journal",75,32, R.drawable.ic_folder_icon2,R.color.colorAccentYellow));
-        folderList.add(new FolderItem("id3","Shopping",50,2, R.drawable.ic_folder_icon1,R.color.colorAccentGreyBlue));
-        folderList.add(new FolderItem("id4","Daily",50,50, R.drawable.ic_folder_icon2,R.color.colorAccentBlueGreen));
-        folderList.add(new FolderItem("id5","Shopping",0,4, R.drawable.ic_folder_icon1,R.color.colorAccentRed));
-        folderList.add(new FolderItem("id6","School",100,0, R.drawable.ic_folder_icon2,R.color.colorAccentGrey));
 
         // Initialize recyclerview and adapter
         folderRecyclerView = findViewById(R.id.folderRecyclerView);
@@ -68,8 +62,15 @@ public class HomeActivity extends AppCompatActivity {
         folderRecyclerView.setLayoutManager(layoutManager);
         folderRecyclerView.setAdapter(folderAdapter);
 
+    }
 
+    @Override
+    public void onSave(FolderItem folderItem) {
 
+        // add the folderitem to local variable
+        folderList.add(folderItem);
+        folderAdapter.notifyItemInserted(folderList.size() - 1);
+        // refresh recyclerview
 
     }
 }

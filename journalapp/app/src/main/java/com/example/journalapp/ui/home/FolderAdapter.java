@@ -83,7 +83,7 @@ public class FolderAdapter extends RecyclerView.Adapter{
             currentFolderItem = folderItem;
 
             // set folder color
-            folderHolder.setBackgroundResource(folderItem.getFolderColor());
+            folderHolder.setBackgroundColor(folderItem.getFolderColor());
 
             // set icon
             icon.setImageResource(folderItem.getIconResourceId());
