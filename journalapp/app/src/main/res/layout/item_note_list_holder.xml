@@ -31,7 +31,7 @@
             android:layout_marginTop="8dp"/>
 
         <TextView
-            android:id="@+id/item_note_list_subheader"
+            android:id="@+id/item_note_list_subheader_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="WTF WHERE THE HOES AT??"
@@ -43,7 +43,20 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintWidth_percent="0.5"/>
+            app:layout_constraintWidth_percent="0.5"
+            android:visibility="visible"/>
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/item_note_list_subheader_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/image_menu_icon"
+            app:layout_constraintTop_toBottomOf="@id/item_note_list_title"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/item_note_list_last_edited"
@@ -52,7 +65,7 @@
             android:text="Last Edited: 09/24/02"
             android:textSize="8dp"
             android:textColor="@color/theme_black"
-            app:layout_constraintTop_toBottomOf="@id/item_note_list_subheader"
+            app:layout_constraintTop_toBottomOf="@id/item_note_list_subheader_text"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"/>

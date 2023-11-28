@@ -1,5 +1,6 @@
 package com.example.journalapp.ui.home;
 
+import android.content.Intent;
 import android.icu.text.CaseMap;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.R;
 import com.example.journalapp.database.entity.Folder;
+import com.example.journalapp.ui.main.MainNoteListActivity;
+import com.example.journalapp.ui.note.NoteActivity;
 
 import java.util.List;
 
@@ -37,6 +40,14 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
     public void onBindViewHolder(@NonNull FolderViewHolder holder, int position) {
         Folder folder = getItem(position);
         holder.bind(folder);
+
+        holder.itemView.setOnClickListener(v ->{
+
+            // need to pass the folder_id to main note list activity
+            Intent intent = new Intent(v.getContext(), MainNoteListActivity.class);
+            intent.putExtra("folder_id", folder.getFolderId());
+            v.getContext().startActivity(intent);
+        });
     }
 
     static class FolderViewHolder extends RecyclerView.ViewHolder {

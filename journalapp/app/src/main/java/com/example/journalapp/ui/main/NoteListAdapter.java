@@ -3,21 +3,26 @@ package com.example.journalapp.ui.main;
 
 import android.content.Intent;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.journalapp.R;
 import com.example.journalapp.ui.note.NoteActivity;
 import com.example.journalapp.database.entity.Note;
+import com.google.android.material.imageview.ShapeableImageView;
 
 /**
  * Custom adapter for managing a Recyclerviews' list of notes
  * ListAdapter automatically executes our custom onCreateViewHolder(), onBindViewHolder(), and NoteDiff methods when needed
  */
-public class NoteListAdapter extends ListAdapter<Note, NoteViewHolder> {
+public class NoteListAdapter extends ListAdapter<Note, NoteListAdapter.NoteViewHolder> {
 
     /**
      * Constructor for a new NoteListAdapter
@@ -40,7 +45,9 @@ public class NoteListAdapter extends ListAdapter<Note, NoteViewHolder> {
     @NonNull
     @Override
     public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return NoteViewHolder.create(parent);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_note_list_holder, parent, false);
+        return new NoteViewHolder(view);
     }
 
     /**
@@ -52,34 +59,58 @@ public class NoteListAdapter extends ListAdapter<Note, NoteViewHolder> {
      */
     @Override
     public void onBindViewHolder(NoteViewHolder holder, int position) {
-        Note current = getItem(position);
-        String title = current.getTitle();
+        Note note = getItem(position);
+        String title = note.getTitle();
 
-        // @TODO ViewHolder needs to be able to hold contents of RecyclerView. Maybe like a snapshot of the first few contents of Recyclerview?
-        // Based on first item. If text, show text. If Media, show media (bigger viewHolder)
-        // String desc = current.getDescription();
         Log.d("NoteListAdapter", "onBindViewHolder title: " + title);
-        holder.bind(title);
+        holder.bind(note);
 
 
         /**
          * Click listener for each entry inside RecyclerView to link to a note
          */
-        holder.itemView.setOnClickListener(new View.OnClickListener(){
+        holder.itemView.setOnClickListener(v -> {
 
-            @Override
-            public void onClick(View v){
+            // Intent to go to the note editing page
+            Intent intent = new Intent(v.getContext(), NoteActivity.class);
 
-                // Intent to go to the note editing page
-                Intent intent = new Intent(v.getContext(), NoteActivity.class);
-
-                // If note has an ID, its existing, otherwise, it is a new note
-                intent.putExtra("note_id", current.getId());
-                v.getContext().startActivity(intent);
-
-            }
+            // If note has an ID, its existing, otherwise, it is a new note
+            intent.putExtra("note_id", note.getId());
+            v.getContext().startActivity(intent);
 
         });
+    }
+
+    static class NoteViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView titleTextView;
+
+        // depends on what the first item of the note is
+        private TextView subheaderTextView;
+        private ShapeableImageView subheaderImageView;
+        private TextView dateTextView;
+
+        // private TextView location
+        // private ImageView emotion
+
+
+        public NoteViewHolder(@NonNull View itemView){
+            super(itemView);
+
+            // find parts
+            titleTextView = itemView.findViewById(R.id.item_note_list_title);
+            subheaderTextView = itemView.findViewById(R.id.item_note_list_subheader_text);
+            subheaderImageView = itemView.findViewById(R.id.item_note_list_subheader_image);
+            dateTextView = itemView.findViewById(R.id.item_note_list_last_edited);
+        }
+
+        public void bind(Note note){
+            titleTextView.setText(note.getTitle());
+            
+            // check if first notes noteitem is image or text
+                // if text, just set subheader text view
+                // if image, set textview to GONE, set imageView to VISIBLE, and set image source
+        }
     }
 
     /**
