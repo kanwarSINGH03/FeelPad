@@ -67,6 +67,11 @@
             android:exported="false"
             android:label="ViewAllFoldersActivity"
             />
+        <activity
+            android:name=".ui.main.MainNoteListActivity"
+            android:exported="false"
+            android:label="MainNoteListActivity"
+            />
 
 
 

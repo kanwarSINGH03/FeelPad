@@ -1,5 +1,6 @@
 package com.example.journalapp.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.R;
 import com.example.journalapp.ui.main.BottomNavBarFragment;
+import com.example.journalapp.ui.main.MainNoteListActivity;
 import com.example.journalapp.ui.main.MainViewModel;
 import com.example.journalapp.ui.main.TopNavBarFragment;
 import com.google.android.material.button.MaterialButton;
@@ -50,6 +52,12 @@ public class HomeActivity extends AppCompatActivity{
     private void initButtons(){
         MaterialButton btn1 = findViewById(R.id.button1);
         MaterialButton btn2 = findViewById(R.id.button2);
+
+        btn1.setOnClickListener(v ->{
+            Intent intent = new Intent(this, MainNoteListActivity.class);
+            startActivity(intent);
+
+        });
 
         // set on click listeners
     }
