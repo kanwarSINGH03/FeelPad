@@ -68,7 +68,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Overview"
-                android:textColor="?attr/colorPrimary"
                 android:textStyle="bold"
                 android:textSize="13sp"
                 android:backgroundTint="?attr/colorAccent"

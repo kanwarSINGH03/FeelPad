@@ -29,14 +29,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:counterEnabled="true"
         app:counterMaxLength="20"
-        app:startIconDrawable="@drawable/ic_folder_flag">
+        app:startIconDrawable="@drawable/ic_folder_flag"
+        app:boxStrokeColor="@color/text_input_colors"
+        >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/folder_add_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:hint="Folder Name"/>
+            android:hint="Folder Name"
+            />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -58,19 +61,19 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="14dp"
-        android:background="@drawable/ic_folder_circle"
+        android:background="@drawable/ic_folder_circle_selector"
         app:layout_constraintTop_toBottomOf="@id/folder_add_color_string"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/colorCircle2"
         app:layout_constraintHorizontal_chainStyle="packed"
-        android:backgroundTint="@color/colorAccentGrey"/>
+        android:backgroundTint="@color/colorAccentGrey" />
 
     <View
         android:id="@+id/colorCircle2"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="14dp"
-        android:background="@drawable/ic_folder_circle"
+        android:background="@drawable/ic_folder_circle_selector"
         android:layout_marginStart="8dp"
         app:layout_constraintTop_toBottomOf="@id/folder_add_color_string"
         app:layout_constraintStart_toEndOf="@id/colorCircle1"
@@ -83,7 +86,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="14dp"
-        android:background="@drawable/ic_folder_circle"
+        android:background="@drawable/ic_folder_circle_selector"
         android:layout_marginStart="8dp"
         app:layout_constraintTop_toBottomOf="@id/folder_add_color_string"
         app:layout_constraintStart_toEndOf="@id/colorCircle2"
@@ -96,7 +99,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="14dp"
-        android:background="@drawable/ic_folder_circle"
+        android:background="@drawable/ic_folder_circle_selector"
         android:layout_marginStart="8dp"
         app:layout_constraintTop_toBottomOf="@id/folder_add_color_string"
         app:layout_constraintStart_toEndOf="@id/colorCircle3"
@@ -109,7 +112,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="14dp"
-        android:background="@drawable/ic_folder_circle"
+        android:background="@drawable/ic_folder_circle_selector"
         android:layout_marginStart="8dp"
         app:layout_constraintTop_toBottomOf="@id/folder_add_color_string"
         app:layout_constraintStart_toEndOf="@id/colorCircle4"
@@ -122,7 +125,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="14dp"
-        android:background="@drawable/ic_folder_circle"
+        android:background="@drawable/ic_folder_circle_selector"
         android:layout_marginStart="8dp"
         app:layout_constraintTop_toBottomOf="@id/folder_add_color_string"
         app:layout_constraintStart_toEndOf="@id/colorCircle5"

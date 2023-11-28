@@ -22,10 +22,10 @@ public class Folder {
     @ColumnInfo(name = "create_date")
     private String create_date;
     @ColumnInfo(name = "emotion_percentage")
-    private float emotionPercentage;
+    private float emotionPercentage; // should be calculated as a sum of all note emotions
 
     @ColumnInfo(name = "num_items")
-    private int numItems;
+    private int numItems; // should be calculate as a sum of all note items
     @ColumnInfo(name = "icon_resource_id")
     private int iconResourceId;
     @ColumnInfo(name = "folder_color")
@@ -37,12 +37,10 @@ public class Folder {
     @ColumnInfo(name = "encryption_password_hash")
     private String encryptionPasswordHash; // 存储密码的哈希值，而非明文密码
 
-    public Folder(String folderName, String create_date,float emotionPercentage,int numItems,int iconResourceId, int folderColor) {
+    public Folder(String folderName, String create_date,int iconResourceId, int folderColor) {
         this.folderId = UUID.randomUUID().toString();
         this.folderName = folderName;
         this.create_date = create_date;
-        this.emotionPercentage = emotionPercentage;
-        this.numItems = numItems;
         this.iconResourceId = iconResourceId;
         this.folderColor = folderColor;
     }

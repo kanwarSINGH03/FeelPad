@@ -5,7 +5,8 @@
     <color name="theme_black">#1B1B1B</color>
 
     <!-- Primary Theme Colors -->
-    <color name="colorPrimary">#1B1B1B</color>
+    <color name="colorBackground">#1B1B1B</color>
+    <color name="colorPrimary">#EDEDED</color>
     <color name="colorContrast">#FFFFFF</color>
 
     <!-- Theme 1: Light red -->

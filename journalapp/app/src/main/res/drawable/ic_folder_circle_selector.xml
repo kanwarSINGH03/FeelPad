@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Selected State -->
+    <item android:state_selected="true">
+        <layer-list>
+            <item android:drawable="@drawable/ic_folder_circle" />
+            <item android:drawable="@drawable/ic_folder_circle_highlight" />
+        </layer-list>
+    </item>
+
+    <!-- Default State -->
+    <item>
+        <shape>
+            <solid android:color="#FF0000"/> <!-- Replace with the default color -->
+            <corners android:radius="50dp" />
+        </shape>
+    </item>
+</selector>

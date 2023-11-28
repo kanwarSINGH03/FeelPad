@@ -1,0 +1,4 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/theme_light_grey" android:state_focused="true"/> <!-- Color when focused in light mode -->
+    <item android:color="@color/theme_light_grey"/> <!-- Default color in light mode -->
+</selector>

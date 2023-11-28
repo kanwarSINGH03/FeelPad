@@ -39,7 +39,7 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
         });
 
         itemView.setOnLongClickListener(v -> {
-            Folder folder = new Folder(folderName,folderDate, 50, 1,R.drawable.ic_folder_flag,R.color.colorAccentGrey); // 假设 Folder 类有相应的构造函数或者方法来设置属性
+            Folder folder = new Folder(folderName,folderDate,R.drawable.ic_folder_flag,R.color.colorAccentGrey); // 假设 Folder 类有相应的构造函数或者方法来设置属性
             folder.setFolderId(folderId);
             // 设置其他必要的 folder 属性
 

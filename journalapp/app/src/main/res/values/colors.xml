@@ -150,7 +150,8 @@
     <color name="theme_black">#1B1B1B</color>
 
     <!-- Primary Theme Colors -->
-    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorBackground">#FFFFFF</color>
+    <color name="colorPrimary">#1B1B1B</color>
     <color name="colorContrast">#030303</color>
 
     <!-- Theme 1: Light red -->
