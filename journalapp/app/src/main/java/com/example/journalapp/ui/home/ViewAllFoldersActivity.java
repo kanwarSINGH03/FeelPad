@@ -83,7 +83,7 @@ public class ViewAllFoldersActivity extends AppCompatActivity {
         String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
         // 创建新的 Folder 对象
-        Folder newFolder = new Folder(folderName, currentDate, R.drawable.ic_folder_flag, R.color.colorAccentGrey);
+        Folder newFolder = new Folder(folderName, currentDate, R.drawable.ic_folder_icon1, R.color.colorAccentGrey);
         // ...
         // 将新文件夹保存到数据库
         folderViewModel.CreateFolder(newFolder);

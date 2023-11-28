@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="icon_array">
+        <item>@drawable/ic_folder_icon1</item>
+        <item>@drawable/ic_folder_icon2</item>
+        <item>@drawable/ic_folder_icon3</item>
+        <item>@drawable/ic_folder_icon4</item>
+        <item>@drawable/ic_folder_icon5</item>
+        <item>@drawable/ic_folder_icon6</item>
+        <item>@drawable/ic_folder_icon7</item>
+        <item>@drawable/ic_folder_icon8</item>
+        <item>@drawable/ic_folder_icon9</item>
+        <item>@drawable/ic_folder_icon10</item>
+        <item>@drawable/ic_folder_icon11</item>
+        <item>@drawable/ic_folder_icon12</item>
+        <item>@drawable/ic_folder_icon13</item>
+        <item>@drawable/ic_folder_icon14</item>
+        <item>@drawable/ic_folder_icon15</item>
+        <item>@drawable/ic_folder_icon16</item>
+        <item>@drawable/ic_folder_icon17</item>
+        <item>@drawable/ic_folder_icon18</item>
+        <item>@drawable/ic_folder_icon19</item>
+        <item>@drawable/ic_folder_icon20</item>
+        <item>@drawable/ic_folder_icon21</item>
+        <item>@drawable/ic_folder_icon22</item>
+        <item>@drawable/ic_folder_icon23</item>
+        <item>@drawable/ic_folder_icon24</item>
+        <item>@drawable/ic_folder_icon25</item>
+        <item>@drawable/ic_folder_icon26</item>
+        <item>@drawable/ic_folder_icon27</item>
+        <item>@drawable/ic_folder_icon28</item>
+        <item>@drawable/ic_folder_icon29</item>
+        <item>@drawable/ic_folder_icon30</item>
+        <item>@drawable/ic_folder_icon31</item>
+        <item>@drawable/ic_folder_icon32</item>
+        <item>@drawable/ic_folder_icon33</item>
+        <item>@drawable/ic_folder_icon34</item>
+        <item>@drawable/ic_folder_icon35</item>
+        <item>@drawable/ic_folder_icon36</item>
+        <item>@drawable/ic_folder_icon37</item>
+        <item>@drawable/ic_folder_icon38</item>
+        <item>@drawable/ic_folder_icon39</item>
+        <item>@drawable/ic_folder_icon40</item>
+        <item>@drawable/ic_folder_icon41</item>
+        <item>@drawable/ic_folder_icon42</item>
+        <item>@drawable/ic_folder_icon43</item>
+        <item>@drawable/ic_folder_icon44</item>
+        <item>@drawable/ic_folder_icon45</item>
+        <item>@drawable/ic_folder_icon46</item>
+        <item>@drawable/ic_folder_icon47</item>
+        <item>@drawable/ic_folder_icon48</item>
+        <item>@drawable/ic_folder_icon49</item>
+        <item>@drawable/ic_folder_icon50</item>
+        <item>@drawable/ic_folder_icon51</item>
+        <item>@drawable/ic_folder_icon52</item>
+    </integer-array>
+</resources>
