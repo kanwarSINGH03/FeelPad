@@ -92,6 +92,66 @@
                 app:shapeAppearanceOverlay="@style/roundedImageView"
                 android:visibility="gone" />
 
+            <FrameLayout
+                android:id="@+id/item_note_list_subheader_video"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:background="#F3F3F3"
+                    app:shapeAppearanceOverlay="@style/roundedImageView"
+                    />
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_item_video_play" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:elevation="10dp"
+                    android:visibility="gone"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/item_note_list_subheader_audio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp"
+                    android:src="@drawable/ic_item_equalizer"
+                    android:background="#F3F3F3"
+                    app:shapeAppearanceOverlay="@style/roundedImageView"/>
+
+                <ImageButton android:id="@+id/voice_play_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@android:drawable/ic_media_play" />
+
+                <ImageView
+                    android:id="@+id/voice_view_drag_handle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_note_drag_handle"
+                    android:padding="8dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:visibility="invisible"
+                    android:elevation="10dp"/>
+
+                </FrameLayout>
+
 
 
         </FrameLayout>

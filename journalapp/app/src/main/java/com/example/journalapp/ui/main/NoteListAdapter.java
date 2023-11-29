@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -136,6 +137,8 @@ public class NoteListAdapter extends ListAdapter<Note, NoteListAdapter.NoteViewH
         private TextView titleTextView;
         private TextView subheaderTextView;
         private ShapeableImageView subheaderImageView;
+        private FrameLayout subheaderVideoView;
+        private FrameLayout subheaderAudioView;
         private TextView dateTextView;
         private ImageView emotionImageView;
 
@@ -150,6 +153,9 @@ public class NoteListAdapter extends ListAdapter<Note, NoteListAdapter.NoteViewH
             titleTextView = itemView.findViewById(R.id.item_note_list_title);
             subheaderTextView = itemView.findViewById(R.id.item_note_list_subheader_text);
             subheaderImageView = itemView.findViewById(R.id.item_note_list_subheader_image);
+            subheaderVideoView = itemView.findViewById(R.id.item_note_list_subheader_video);
+            subheaderAudioView = itemView.findViewById(R.id.item_note_list_subheader_audio);
+
             dateTextView = itemView.findViewById(R.id.item_note_list_last_edited);
             emotionImageView = itemView.findViewById(R.id.item_note_list_emotion);
         }
@@ -160,22 +166,29 @@ public class NoteListAdapter extends ListAdapter<Note, NoteListAdapter.NoteViewH
 
             // for subheader (depends on whether first item is a text or image)
             if (firstNoteItem != null) {
-                if (firstNoteItem.getType() == NoteItem.ItemType.TEXT.ordinal()) {
+                if (firstNoteItem.getType() == NoteItem.ItemType.TEXT.ordinal() && !ConversionUtil.stripHtmlTags(firstNoteItem.getContent()).isEmpty()) {
+                    setAllGone();
                     subheaderTextView.setVisibility(View.VISIBLE);
-                    subheaderImageView.setVisibility(View.GONE);
                     subheaderTextView.setText(ConversionUtil.htmlToSpannable(firstNoteItem.getContent()));
                 } else if (firstNoteItem.getType() == NoteItem.ItemType.IMAGE.ordinal()) {
-                    subheaderTextView.setVisibility(View.GONE);
+                    setAllGone();
                     subheaderImageView.setVisibility(View.VISIBLE);
                     Uri imageUri = Uri.parse(firstNoteItem.getContent());
                     Glide.with(subheaderImageView.getContext())
                             .load(imageUri)
                             .into(subheaderImageView);
+                } else if (firstNoteItem.getType() == NoteItem.ItemType.VIDEO.ordinal()) {
+                    setAllGone();
+                    subheaderVideoView.setVisibility(View.VISIBLE);
+                } else if (firstNoteItem.getType() == NoteItem.ItemType.VOICE.ordinal()){
+                    setAllGone();
+                    subheaderTextView.setVisibility(View.GONE);
                 }
-            } else {
-                subheaderTextView.setVisibility(View.VISIBLE);
-                subheaderImageView.setVisibility(View.GONE);
-                subheaderTextView.setText("Empty Note :(");
+                else {
+                    setAllGone();
+                    subheaderTextView.setVisibility(View.VISIBLE);
+                    subheaderTextView.setText("First item is empty :(");
+                }
             }
 
             // take the date and reformat for setting
@@ -222,6 +235,13 @@ public class NoteListAdapter extends ListAdapter<Note, NoteListAdapter.NoteViewH
                     break;
             }
 
+        }
+
+        private void setAllGone(){
+            subheaderTextView.setVisibility(View.GONE);
+            subheaderImageView.setVisibility(View.GONE);
+            subheaderVideoView.setVisibility(View.GONE);
+            subheaderAudioView.setVisibility(View.GONE);
         }
 
         private void setBackgroundConstraintLayout(ConstraintLayout constraintLayout, @ColorRes int resId){

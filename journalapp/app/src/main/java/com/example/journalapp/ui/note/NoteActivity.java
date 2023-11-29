@@ -1332,11 +1332,15 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      */
     public void exitNote(View view) {
         String title = note.getTitle();
+
+        /*
         if ((noteItems.size() == 1 && noteItems.get(0).getContent().equals("")) && title.isEmpty()) {
             Log.e("Exiting note", "Deleting note");
             noteViewModel.deleteNote(note);
         }
-        else if (title.isEmpty()){
+        
+         */
+        if (title.isEmpty()){
             saveNoteTitle("Note");
             saveNoteContent();
         }
