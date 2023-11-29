@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -25,9 +26,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.R;
 import com.example.journalapp.database.entity.Folder;
+import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.ui.main.MainNoteListActivity;
 import com.example.journalapp.ui.note.NoteActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewHolder> {
@@ -60,6 +63,20 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
             intent.putExtra("folder_id", folder.getFolderId());
             v.getContext().startActivity(intent);
         });
+
+    }
+
+    public Folder getFolderAt(int position){
+        return getItem(position);
+    }
+
+    public void removeFolderAt(int position) {
+        // Create a new list that excludes the item at the specified position
+        List<Folder> currentList = new ArrayList<>(getCurrentList());
+        if (position >= 0 && position < currentList.size()) {
+            currentList.remove(position);
+            submitList(currentList);
+        }
     }
 
     public interface FolderClickListener {

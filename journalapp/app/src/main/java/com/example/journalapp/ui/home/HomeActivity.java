@@ -2,16 +2,23 @@ package com.example.journalapp.ui.home;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.R;
+import com.example.journalapp.database.entity.Folder;
+import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.ui.main.BottomNavBarFragment;
 import com.example.journalapp.ui.main.MainNoteListActivity;
 import com.example.journalapp.ui.main.MainViewModel;
@@ -21,6 +28,8 @@ import com.google.android.material.button.MaterialButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
+
 public class HomeActivity extends AppCompatActivity implements FolderAdapter.FolderClickListener {
 
     private FolderAdapter folderAdapter;
@@ -28,6 +37,35 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
     private int selectedFolderPosition = -1;
 
     private RecyclerView folderRecyclerView;
+
+    // for deleting folders
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            // Since you only want swipe functionality, no need to handle movement here
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            if (direction == ItemTouchHelper.LEFT) {
+                deleteItem(viewHolder.getAdapterPosition());
+            }
+        }
+
+        @Override
+        public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                    .addSwipeLeftBackgroundColor(ContextCompat.getColor(HomeActivity.this, R.color.theme_red))
+                    .addSwipeLeftActionIcon(R.drawable.ic_note_delete)
+                    .addSwipeLeftCornerRadius(TypedValue.COMPLEX_UNIT_DIP, 10)
+                    .create()
+                    .decorate();
+
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +113,7 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
     }
 
     private void createNoteObserver(){
-        FolderViewModel folderViewModel = new ViewModelProvider(this).get(FolderViewModel.class);
+        folderViewModel = new ViewModelProvider(this).get(FolderViewModel.class);
         folderViewModel.getAllFolders().observe(this, folders -> folderAdapter.submitList(folders));
     }
 
@@ -95,6 +133,10 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
         folderRecyclerView.setAdapter(folderAdapter);
 
         folderAdapter.setFolderClickListener(this);
+
+        // callback
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(folderRecyclerView);
 
     }
 
@@ -131,4 +173,18 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
                 return R.style.Base_Theme;
         }
     }
+
+    private void deleteItem(int position){
+        Folder folderToDelete = folderAdapter.getFolderAt(position);
+        folderAdapter.removeFolderAt(position);
+        folderAdapter.notifyItemRemoved(position);
+        if (folderToDelete == null){
+            Log.e("folderToDelete", "Folder is null");
+        }
+        else{
+            folderViewModel.deleteFolder(folderToDelete);
+        }
+    }
+
+
 }

@@ -43,6 +43,10 @@ public class FolderViewModel extends AndroidViewModel {
         folderRepository.insertFolder(folder);
     }
 
+    public void deleteFolder(Folder folder){
+        folderRepository.deleteFolder(folder);
+    }
+
     public LiveData<List<Note>> getAllNotes(){
         return folderRepository.getAllNotes();
     }
