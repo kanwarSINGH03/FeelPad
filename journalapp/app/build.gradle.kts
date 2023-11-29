@@ -40,7 +40,15 @@ android {
             isIncludeAndroidResources = true
         }
     }
+
+    android {
+        defaultConfig {
+            multiDexEnabled = true
+        }
+
+    }
 }
+
 
 dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
