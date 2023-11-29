@@ -5,16 +5,22 @@ import static com.example.journalapp.ui.exportpdf.PdfNoteConstants.REQUEST_CODE;
 import static com.example.journalapp.ui.exportpdf.PdfNoteConstants.SELECT_ALL;
 
 import android.Manifest;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.Html;
+import android.text.Layout;
 import android.text.Spanned;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -40,10 +46,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -56,7 +62,7 @@ public class SelectPdfContentsActivity extends AppCompatActivity implements Sele
     private PdfNoteListAdapter pdfNoteListAdapter;
     private NoteRepository noteRepository;
     private Button selectAll;
-    private final List<Note> selectedNotes = new ArrayList<>();
+    private final PdfNoteList<Note> selectedNotes = new PdfNoteList<>();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
 
@@ -112,8 +118,7 @@ public class SelectPdfContentsActivity extends AppCompatActivity implements Sele
      * Request permission for saving pdf to external storage
      */
     private void getPermissions() {
-        ActivityCompat.requestPermissions(this, new String[]{(Manifest.permission.WRITE_EXTERNAL_STORAGE)},
-                REQUEST_CODE);
+        ActivityCompat.requestPermissions(this, new String[]{(Manifest.permission.WRITE_EXTERNAL_STORAGE)}, REQUEST_CODE);
     }
 
     /**
@@ -135,7 +140,10 @@ public class SelectPdfContentsActivity extends AppCompatActivity implements Sele
         organizeSelectedNotesByDate();
         executorService.execute(() -> {
             Uri bookletPdfUri = generatePdf();
-            openPdf(bookletPdfUri);
+            if (Objects.nonNull(bookletPdfUri)) {
+                assert bookletPdfUri != null; // Redundant check for compiler
+                openPdf(bookletPdfUri);
+            }
         });
     }
 
@@ -154,71 +162,184 @@ public class SelectPdfContentsActivity extends AppCompatActivity implements Sele
      * Generate a combine pdf of selected notes, and save the booklet to external storage
      */
     private Uri generatePdf() {
-        PdfDocument noteBooklet = new PdfDocument();
+        if (Build.VERSION.SDK_INT >= 34) {
+            PdfDocument noteBooklet = new PdfDocument();
+            final int PAGE_HEIGHT = 595;
+            final int PAGE_WIDTH = 420;
+            final int PAGE_MARGIN = 14;
 
-        // TODO: Properly style the generated pdf, add page number and title page
-        for (Note note : selectedNotes) {
-            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(420, 595, 826)
-                    .create();
-            PdfDocument.Page page = noteBooklet.startPage(pageInfo);
+            final int TITLE_TEXT_SIZE = 24;
+            final int TITLE_START_X = 10;
+            final int TITLE_START_Y = 34;
+            final int TITLE_TEXT_COLOR = Color.GRAY;
 
-            Canvas pageCanvas = page.getCanvas();
-            Paint pagePaint = new Paint();
-            pagePaint.setColor(Color.GRAY);
-            pagePaint.setTextSize(24);
-            pagePaint.setTypeface(Typeface.create("", Typeface.ITALIC));
-            pageCanvas.drawText(note.getTitle(), 10, 34, pagePaint);
+            final int DATE_START_X = 10;
+            final int DATE_START_Y = 44;
+            final int DATE_TEXT_SIZE = 8;
+            final int DATE_TEXT_COLOR = Color.GRAY;
 
-            pagePaint.setColor(Color.BLACK);
-            pagePaint.setTextSize(14);
-            pageCanvas.drawText(note.getCreatedDate(), 10, 55, pagePaint);
+            final int CONTENT_TEXT_SIZE = 12;
+            final int CONTENT_START_X = 14;
+            final int CONTENT_MARGIN = 14;
+            final int CONTENT_START_Y = DATE_START_Y + CONTENT_MARGIN + 10;
+            final int CONTENT_WIDTH = PAGE_WIDTH - (CONTENT_MARGIN * 2);
+            final int CONTENT_TEXT_COLOR = Color.BLACK;
 
-            List<NoteItemEntity> noteItems =
-                    noteRepository.getNoteItemsForNoteSync(note.getId());
+            int PAGE_BOTTOM = PAGE_HEIGHT - PAGE_MARGIN;
 
-            //TODO: Need to draw the items content onto the pdfs pages
-            for (NoteItemEntity item : noteItems) {
-                int typeValue = item.getType();
-                NoteItem.ItemType itemType = ItemTypeConverter.toItemType(typeValue);
-                switch (itemType) {
-                    case PDF:
-                        break;
-                    case TEXT:
-                        pagePaint.setTextSize(12);
-                        String htmlContent = item.getContent();
-                        Spanned spannedText = Html.fromHtml(htmlContent);
-                        pageCanvas.drawText(spannedText.toString(), 10, 75, pagePaint);
-                        break;
-                    case IMAGE:
-                        break;
-                    case VIDEO:
-                        break;
-                    case VOICE:
-                    default:
-                        break;
+            int pageNumber = 0;
+            // TODO: Properly style the generated pdf, add page number and title page
+            for (Note note : selectedNotes) {
+                PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, pageNumber).create();
+                PdfDocument.Page page = noteBooklet.startPage(pageInfo);
+                Canvas pageCanvas = page.getCanvas();
+
+                Paint titlePaint = new Paint();
+                titlePaint.setColor(TITLE_TEXT_COLOR);
+                titlePaint.setTextSize(TITLE_TEXT_SIZE);
+                titlePaint.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.ITALIC));
+                pageCanvas.drawText(note.getTitle(), TITLE_START_X, TITLE_START_Y, titlePaint);
+
+                Paint contentPaint = new Paint();
+                contentPaint.setColor(DATE_TEXT_COLOR);
+                contentPaint.setTextSize(DATE_TEXT_SIZE);
+                pageCanvas.drawText(note.getCreatedDate(), DATE_START_X, DATE_START_Y, contentPaint);
+
+                List<NoteItemEntity> noteItems = noteRepository.getNoteItemsForNoteSync(note.getId());
+
+                int y_cursor = CONTENT_START_Y;
+                for (NoteItemEntity item : noteItems) {
+                    int typeValue = item.getType();
+
+                    NoteItem.ItemType itemType = ItemTypeConverter.toItemType(typeValue);
+                    switch (itemType) {
+                        case TEXT:
+                            titlePaint.setTextSize(12);
+                            TextPaint textPaint = new TextPaint(titlePaint);
+                            textPaint.setTextSize(CONTENT_TEXT_SIZE);
+                            textPaint.setColor(CONTENT_TEXT_COLOR);
+                            String htmlContent = item.getContent();
+                            Spanned spannedText = Html.fromHtml(htmlContent, Html.FROM_HTML_MODE_LEGACY);
+                            StaticLayout layout = StaticLayout.Builder.obtain(spannedText, 0, spannedText.length(), textPaint, CONTENT_WIDTH)
+                                    .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                                    .build();
+                            String[] lines = layout.getText().toString().split(System.lineSeparator());
+                            for (String line : lines) {
+                                String[] words = line.split(" ");
+
+                                StringBuilder stringBuilder = new StringBuilder();
+                                int i = 0;
+                                for (String word : words) {
+                                    i = i + 1;
+                                    if (y_cursor > PAGE_BOTTOM) {
+                                        if (item.getOrderIndex() != noteItems.size()) {
+                                            noteBooklet.finishPage(page);
+                                            pageNumber = pageNumber + 1;
+                                            pageInfo = new PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, pageNumber).create();
+                                            page = noteBooklet.startPage(pageInfo);
+                                            pageCanvas = page.getCanvas();
+                                            y_cursor = PAGE_MARGIN;
+                                        }
+                                    }
+
+                                    stringBuilder.append(word).append(" ");
+                                    if ((stringBuilder.length() > (CONTENT_WIDTH / 10)) | (i == words.length)) {
+                                        pageCanvas.drawText(stringBuilder.toString(), CONTENT_START_X, y_cursor, textPaint);
+                                        y_cursor = y_cursor + CONTENT_MARGIN;
+                                        stringBuilder = new StringBuilder();
+                                    }
+                                }
+                            }
+                            break;
+                        case PDF:
+                            /* No support for pdf documents */
+                            break;
+                        case IMAGE:
+                            Uri imageUri = Uri.parse(item.getContent());
+                            Bitmap imageBitmap = null;
+
+                            try {
+                                imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                            } catch (FileNotFoundException e) {
+                                Log.d("SelectPdfContents", "Image not found for note element with id " + item.getItemId() + " in note with id " + note.getId());
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+
+                            if (Objects.nonNull(imageBitmap)) {
+                                assert imageBitmap != null;
+                                boolean needsAdjustment = false;
+                                int imageBitmapTempWidth = imageBitmap.getWidth();
+                                int imageBitmapTempHeight = imageBitmap.getHeight();
+
+                                // Adjust the image to fit on page width wise
+                                if (imageBitmapTempWidth > CONTENT_WIDTH) {
+                                    needsAdjustment = true;
+                                    float bitmapWidthAdjustmentRation = (float) CONTENT_WIDTH / (float) imageBitmapTempWidth;
+                                    imageBitmapTempWidth = (int) (imageBitmapTempWidth * bitmapWidthAdjustmentRation);
+                                    imageBitmapTempHeight = (int) (imageBitmapTempHeight * bitmapWidthAdjustmentRation);
+                                }
+
+                                // Adjust the newly adjust image to fit on the page height wise
+                                int heightAvailable = PAGE_BOTTOM - y_cursor;
+                                if (imageBitmapTempHeight > heightAvailable) {
+                                    float bitmapHeightAdjustmentMaximum = 0.75f;
+
+                                    needsAdjustment = true;
+                                    float bitmapHeightAdjustmentRation = (float) heightAvailable / (float) imageBitmapTempHeight;
+
+                                    // Images that exceed a limit can be placed on a new page
+                                    if (bitmapHeightAdjustmentRation < bitmapHeightAdjustmentMaximum) {
+                                        noteBooklet.finishPage(page);
+                                        pageNumber = pageNumber + 1;
+                                        pageInfo = new PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, pageNumber).create();
+                                        page = noteBooklet.startPage(pageInfo);
+                                        pageCanvas = page.getCanvas();
+                                        y_cursor = PAGE_MARGIN;
+                                        heightAvailable = PAGE_BOTTOM - y_cursor;
+                                        bitmapHeightAdjustmentRation = (float) heightAvailable / (float) imageBitmapTempHeight;
+                                    }
+
+                                    // Adjust the height and width to fit on rest of page or new page
+                                    imageBitmapTempWidth = (int) (imageBitmapTempWidth * bitmapHeightAdjustmentRation);
+                                    imageBitmapTempHeight = (int) (imageBitmapTempHeight * bitmapHeightAdjustmentRation);
+                                }
+
+                                if (needsAdjustment) {
+                                    imageBitmap = Bitmap.createScaledBitmap(imageBitmap, imageBitmapTempWidth, imageBitmapTempHeight, true);
+                                }
+
+                                pageCanvas.drawBitmap(imageBitmap, CONTENT_START_X, y_cursor, new Paint());
+                                y_cursor = y_cursor + imageBitmap.getHeight() + CONTENT_MARGIN;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
+
+                noteBooklet.finishPage(page);
             }
 
-            noteBooklet.finishPage(page);
+            File downloadFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            String fileName = "notebook.pdf";
+            File file = new File(downloadFolder, fileName);
+
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                noteBooklet.writeTo(fileOutputStream);
+                noteBooklet.close();
+                fileOutputStream.close();
+            } catch (FileNotFoundException e) {
+                Log.d("ExportPdfDialog", "Error finding file " + e);
+            } catch (IOException e) {
+                Log.d("ExportPdfDialog", "I/O Exception");
+                throw new RuntimeException(e);
+            }
+
+            return Uri.fromFile(file);
         }
-
-        File downloadFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        String fileName = "notebook.pdf";
-        File file = new File(downloadFolder, fileName);
-
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            noteBooklet.writeTo(fileOutputStream);
-            noteBooklet.close();
-            fileOutputStream.close();
-        } catch (FileNotFoundException e) {
-            Log.d("ExportPdfDialog", "Error finding file " + e);
-        } catch (IOException e) {
-            Log.d("ExportPdfDialog", "I/O Exception");
-            throw new RuntimeException(e);
-        }
-
-        return Uri.fromFile(file);
+        return null;
     }
 
     /**
