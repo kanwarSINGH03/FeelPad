@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Utility class for converting between different UI objects
@@ -111,5 +112,14 @@ public class ConversionUtil {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
         String currentDateStr = sdf.format(new Date());
         return currentDateStr;
+    }
+
+    public static String convertLongToIso8601(Long timestamp) {
+        if (timestamp == null) {
+            return null;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return sdf.format(new Date(timestamp));
     }
 }

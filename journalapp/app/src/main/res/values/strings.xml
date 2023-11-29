@@ -13,4 +13,13 @@
     <string name="line">Line</string>
     <string name="title_activity_maps">MapsActivity</string><string name="addfolder">add folder button</string>
     <string name="folder_button">folder button</string>
+
+    <string-array name="emotion_array">
+        <item>N/A</item>
+        <item>Horrible</item>
+        <item>Disappointed</item>
+        <item>Neutral</item>
+        <item>Happy</item>
+        <item>Very Happy</item>
+    </string-array>
 </resources>

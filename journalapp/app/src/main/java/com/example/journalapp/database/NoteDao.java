@@ -142,13 +142,18 @@ public interface NoteDao {
     @Query("SELECT * FROM note_table WHERE title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)")
     LiveData<List<Note>> searchNotes(String query);
 
-    @Query("SELECT * FROM note_table WHERE folder_id = :folderId AND title LIKE '%' || :query || '%' ORDER BY last_edited_date DESC")
-    LiveData<List<Note>> searchNotesInFolder(String folderId, String query);
-
-    /*
     @Query("SELECT * FROM note_table WHERE folder_id = :folderId AND (title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)) ORDER BY last_edited_date DESC")
     LiveData<List<Note>> searchNotesInFolder(String folderId, String query);
-     */
+
+    @Query("SELECT * FROM note_table WHERE folder_id = :folderId AND emotion = :emotion AND (title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)) ORDER BY last_edited_date DESC")
+    LiveData<List<Note>> searchNotesAndFilterEmotion(String folderId, String query, int emotion);
+
+    @Query("SELECT * FROM note_table WHERE folder_id = :folderId AND create_date BETWEEN :startDate AND :endDate AND (title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)) ORDER BY last_edited_date DESC")
+    LiveData<List<Note>> searchNotesAndFilterDate(String folderId, String query, String startDate, String endDate);
+
+    @Query("SELECT * FROM note_table WHERE folder_id = :folderId AND emotion = :emotion AND create_date BETWEEN :startDate AND :endDate AND (title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)) ORDER BY last_edited_date DESC")
+    LiveData<List<Note>> searchNotesAndFilterEmotionDate(String folderId, String query, int emotion, String startDate, String endDate);
+
 
     // Retrieves all notes with selected title
     @Query("SELECT * FROM note_table WHERE title = :providedTitle")

@@ -28,7 +28,7 @@ public class Note {
     private String title;
 
     @ColumnInfo(name = "create_date")
-    private String createdDate;
+    private String createdDate; // iso8601 format
 
     @ColumnInfo(name = "last_edited_date")
     private String lastEditedDate;

@@ -3,6 +3,7 @@ package com.example.journalapp.ui.main;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Filter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,11 +20,13 @@ import com.example.journalapp.R;
 import com.example.journalapp.database.NoteDatabase;
 import com.example.journalapp.database.entity.Folder;
 import com.example.journalapp.ui.home.FolderViewModel;
+import com.example.journalapp.utils.ConversionUtil;
 
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainNoteListActivity extends AppCompatActivity implements TopNavBarFragment.OnSearchQueryChangeListener {
+public class MainNoteListActivity extends AppCompatActivity implements TopNavBarFragment.OnSearchQueryChangeListener, FilterFragment.PopupDialogListener {
     private NoteListAdapter noteListAdapter;
     private FolderViewModel folderViewModel;
     private MainViewModel mainViewModel;
@@ -32,6 +35,12 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
 
     private TextView noteListTitleTextView;
     private ImageButton folderFilterImageButton;
+
+    // For Searching
+    private String currentSearchQuery = "";
+    private Long filterStartDate = null;
+    private Long filterEndDate = null;
+    private String filterEmotion = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,18 +102,103 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
 
         folderFilterImageButton = findViewById(R.id.notes_list_filter_btn);
         folderFilterImageButton.setOnClickListener(v ->{
-
+            FilterFragment filterFragment = new FilterFragment();
+            filterFragment.show(getSupportFragmentManager(), "PopupDialogFragment");
         });
 
     }
 
     @Override
     public void onSearchQueryChanged(String query){
-        searchNotes(query);
+        currentSearchQuery = query;
+        updateNotesList();
+
+
+    }
+    @Override
+    public void onConfirmButtonClick(Long startDate, Long endDate, String emotion) {
+        // Reset filters
+        filterStartDate = null;
+        filterEndDate = null;
+        filterEmotion = null;
+
+        // Check if valid dates are selected
+        boolean validDatesSelected = startDate != null && endDate != null && startDate <= endDate;
+
+        // Check if a valid emotion is selected
+        boolean validEmotionSelected = emotion != null && !emotion.equals("N/A");
+
+        // Update filters based on user selection
+        if (validDatesSelected) {
+            filterStartDate = startDate;
+            filterEndDate = endDate;
+        }
+
+        if (validEmotionSelected) {
+            filterEmotion = emotion;
+        }
+
+        updateNotesList();
     }
 
-    private void searchNotes(String query){
-        Log.e("FolderId", "Folder id is" + folder_id + " and query is: " + query);
-        folderViewModel.searchNotesInFolder(folder_id,query).observe(this, notes -> noteListAdapter.submitList(notes));
+    private void updateNotesList() {
+        if (filterStartDate != null && filterEndDate != null && filterEmotion != null) {
+            // Filter by both dates and emotion
+            int emotionNum = emotionStringToInt(filterEmotion);
+
+            if (emotionNum != 0){
+                mainViewModel.searchNotesAndFilterEmotionDate(folder_id, currentSearchQuery, emotionNum, ConversionUtil.convertLongToIso8601(filterStartDate), ConversionUtil.convertLongToIso8601(filterEndDate))
+                        .observe(this, notes -> noteListAdapter.submitList(notes));
+            }
+
+
+        } else if (filterStartDate != null && filterEndDate != null) {
+
+            mainViewModel.searchNotesAndFilterDate(folder_id, currentSearchQuery, ConversionUtil.convertLongToIso8601(filterStartDate), ConversionUtil.convertLongToIso8601(filterEndDate))
+                    .observe(this, notes -> noteListAdapter.submitList(notes));
+
+
+        } else if (filterEmotion != null) {
+            // Filter only by emotion
+
+            int emotionNum = emotionStringToInt(filterEmotion);
+
+            if (emotionNum != 0){
+                mainViewModel.searchNotesAndFilterEmotion(folder_id, currentSearchQuery, emotionNum)
+                        .observe(this, notes -> noteListAdapter.submitList(notes));
+            }
+
+        } else {
+            // Search without filters
+            mainViewModel.searchNotesInFolder(folder_id, currentSearchQuery)
+                    .observe(this, notes -> noteListAdapter.submitList(notes));
+        }
     }
+
+    private int emotionStringToInt(String emotion){
+        switch (emotion){
+            case "Horrible":
+                return 1;
+
+            case "Disappointed":
+                return 2;
+
+            case "Neutral":
+                return 3;
+
+            case "Happy":
+                return 4;
+
+            case "Very Happy":
+                return 5;
+
+            default:
+                return 0;
+
+        }
+
+    }
+
+
+
 }

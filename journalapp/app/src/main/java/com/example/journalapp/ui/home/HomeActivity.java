@@ -34,7 +34,7 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
 
         // add top navbar fragment
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.topNavBarFragmentContainer, TopNavBarFragment.newInstance(false, false)) // @TODO true to search for folders
+                .replace(R.id.topNavBarFragmentContainer, TopNavBarFragment.newInstance(true, false))
                 .commit();
 
         // add bottom navbar fragment

@@ -294,6 +294,18 @@ public class NoteRepository {
         return noteDao.searchNotesInFolder(folderId, query);
     }
 
+    public LiveData<List<Note>> searchNotesAndFilterEmotion(String folderId, String query, int emotion){
+        return noteDao.searchNotesAndFilterEmotion(folderId, query, emotion);
+    }
+
+    public LiveData<List<Note>> searchNotesAndFilterDate(String folderId, String query, String startDate, String endDate){
+        return noteDao.searchNotesAndFilterDate(folderId, query, startDate, endDate);
+    }
+
+    public LiveData<List<Note>> searchNotesAndFilterEmotionDate(String folderId, String query, int emotion, String startDate, String endDate){
+        return noteDao.searchNotesAndFilterEmotionDate(folderId, query, emotion, startDate, endDate);
+    }
+
     // ==============================
     // Internal Methods
     // ==============================
