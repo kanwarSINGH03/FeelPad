@@ -55,7 +55,7 @@
         <activity
             android:name=".ui.home.LaunchActivity"
             android:exported="true"
-            android:label="LaunchActivity">
+            android:label="FeelPad">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER"/>

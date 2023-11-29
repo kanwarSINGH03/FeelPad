@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">journalapp</string>
+    <string name="app_name">FeelPad</string>
     <string name="search_button">search button</string>
     <string name="template_button">template button</string>
     <string name="add_note_button">Add note button</string>
