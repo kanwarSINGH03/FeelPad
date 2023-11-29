@@ -62,6 +62,9 @@ public interface NoteDao {
     @Query("SELECT * FROM note_table ORDER BY last_edited_date DESC")
     LiveData<List<Note>> getAllNotesOrderByLastEditedDateDesc();
 
+    @Query("SELECT * FROM note_table WHERE folder_id = :folderId ORDER BY last_edited_date DESC")
+    LiveData<List<Note>> getAllNotesFromFolderOrderByLastEditedDateDesc(String folderId);
+
     // ==============================
     // Single NoteItem Queries
     // ==============================

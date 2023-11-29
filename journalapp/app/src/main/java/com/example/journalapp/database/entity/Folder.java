@@ -22,8 +22,12 @@ public class Folder {
 
     @ColumnInfo(name = "create_date")
     private String create_date;
-    @ColumnInfo(name = "emotion_percentage")
-    private float emotionPercentage; // should be calculated as a sum of all note emotions
+
+    //@ColumnInfo(name = "emotion_percentage")
+    // private float emotionPercentage; // should be calculated as a sum of all note emotions
+
+    @ColumnInfo(name ="total_emotion_value")
+    private int totalEmotionValue; // sum of all notes emotionValue
 
     @ColumnInfo(name = "num_items")
     private int numItems; // should be calculate as a sum of all note items
@@ -44,6 +48,8 @@ public class Folder {
         this.create_date = create_date;
         this.iconResourceId = iconResourceId;
         this.folderColor = folderColor;
+        this.numItems = 0;
+        this.totalEmotionValue = 0;
     }
 
     public String getFolderId() {
@@ -87,11 +93,22 @@ public class Folder {
     }
 
     public float getEmotionPercentage() {
-        return emotionPercentage;
+        if (totalEmotionValue == 0 && numItems == 0){
+            return 0;
+        }
+        else{
+            float averageEmotion = (float) totalEmotionValue / numItems;
+
+            return (averageEmotion/5) * 100;
+        }
     }
 
-    public void setEmotionPercentage(float emotionPercentage) {
-        this.emotionPercentage = emotionPercentage;
+    public int getTotalEmotionValue(){
+        return this.totalEmotionValue;
+    }
+
+    public void setTotalEmotionValue(int totalEmotionValue){
+        this.totalEmotionValue = totalEmotionValue;
     }
 
     public int getNumItems() {

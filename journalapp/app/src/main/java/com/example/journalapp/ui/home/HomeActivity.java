@@ -2,6 +2,7 @@ package com.example.journalapp.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -18,13 +19,12 @@ import com.google.android.material.button.MaterialButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity{
+public class HomeActivity extends AppCompatActivity implements FolderAdapter.FolderClickListener {
 
     private FolderAdapter folderAdapter;
     private FolderViewModel folderViewModel;
+    private int selectedFolderPosition = -1;
 
-
-    // will remove
     private RecyclerView folderRecyclerView;
 
     @Override
@@ -82,6 +82,21 @@ public class HomeActivity extends AppCompatActivity{
         folderRecyclerView.setLayoutManager(layoutManager);
         folderRecyclerView.setAdapter(folderAdapter);
 
+        folderAdapter.setFolderClickListener(this);
+
     }
 
+    @Override
+    public void onFolderClicked(int position){
+        this.selectedFolderPosition = position;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (selectedFolderPosition != -1){
+            Log.e("ItemChange", "Notifying item changed at position " + selectedFolderPosition);
+            folderAdapter.notifyItemChanged(selectedFolderPosition);
+        }
+    }
 }

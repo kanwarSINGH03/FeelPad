@@ -7,6 +7,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.icu.text.CaseMap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,8 @@ import java.util.List;
 
 public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewHolder> {
 
+    FolderClickListener folderClickListener;
+
     public FolderAdapter(@NonNull DiffUtil.ItemCallback<Folder> diffCallback) {
         super(diffCallback);
     }
@@ -50,6 +53,8 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
 
         holder.itemView.setOnClickListener(v ->{
 
+            folderClickListener.onFolderClicked(position);
+
             // need to pass the folder_id to main note list activity
             Intent intent = new Intent(v.getContext(), MainNoteListActivity.class);
             intent.putExtra("folder_id", folder.getFolderId());
@@ -57,6 +62,13 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
         });
     }
 
+    public interface FolderClickListener {
+        void onFolderClicked(int position);
+    }
+
+    public void setFolderClickListener(FolderClickListener listener){
+        this.folderClickListener = listener;
+    }
     static class FolderViewHolder extends RecyclerView.ViewHolder {
         private ImageView icon;
         private TextView title;
@@ -89,8 +101,28 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
             }
             icon.setImageResource(folder.getIconResourceId());
             title.setText(folder.getFolderName());
-            dataBar.setProgress((int) folder.getEmotionPercentage());
+
+            // dataBar.setProgress((int) folder.getEmotionPercentage());
+            updateProgressBar(folder.getEmotionPercentage());
             noteCount.setText(String.valueOf(folder.getNumItems()));
+        }
+
+        private void updateProgressBar(float emotionPercentage){
+            Log.e("EmotionPercentage", "emotion percentage is: " + emotionPercentage);
+            int color;
+            if (emotionPercentage <= 25){
+                color = R.color.colorAccentRed;
+            } else if (emotionPercentage <= 50){
+                color = R.color.colorAccentLightRed;
+            } else if (emotionPercentage <= 75){
+                color = R.color.colorAccentBlueGreen;
+            } else {
+                color = R.color.colorAccentYellow;
+            }
+
+            dataBar.setProgress((int) emotionPercentage);
+            dataBar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(itemView.getContext(), color)));
+
         }
     }
 

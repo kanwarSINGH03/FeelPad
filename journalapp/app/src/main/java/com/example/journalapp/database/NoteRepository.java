@@ -69,6 +69,15 @@ public class NoteRepository {
         NoteDatabase.databaseWriteExecutor.execute(() -> {
             noteDao.insertNote(note);
             noteDao.insertNoteFts(new NoteFtsEntity(note.getId(), ""));
+
+            // update folder vars
+            Folder folder = noteDao.getFolderById(note.getFolderId());
+            if (folder != null){
+                folder.setNumItems(folder.getNumItems() + 1);
+                folder.setTotalEmotionValue(folder.getTotalEmotionValue() + note.getEmotion());
+
+                noteDao.updateFolder(folder);
+            }
         });
     }
 
@@ -85,7 +94,27 @@ public class NoteRepository {
      * @param note Note object to be updated
      */
     public void updateNoteEmotion(Note note) {
-        NoteDatabase.databaseWriteExecutor.execute(() -> noteDao.updateNoteEmotion(note.getEmotion(), note.getId()));
+        NoteDatabase.databaseWriteExecutor.execute(() -> {
+            // First, get the current state of the note to obtain the old emotion value
+            Note currentNote = noteDao.getNoteById(note.getId());
+            if (currentNote != null) {
+                int oldEmotionValue = currentNote.getEmotion();
+
+                // Update the note's emotion in the database
+                noteDao.updateNoteEmotion(note.getEmotion(), note.getId());
+
+                // Retrieve the folder associated with this note
+                Folder folder = noteDao.getFolderById(currentNote.getFolderId());
+                if (folder != null) {
+                    // Adjust the folder's total emotion value
+                    int newTotalEmotion = folder.getTotalEmotionValue() - oldEmotionValue + note.getEmotion();
+                    folder.setTotalEmotionValue(newTotalEmotion);
+
+                    // Update the folder in the database
+                    noteDao.updateFolder(folder);
+                }
+            }
+        });
     }
 
     /**
@@ -108,6 +137,15 @@ public class NoteRepository {
         NoteDatabase.databaseWriteExecutor.execute(() -> {
             noteDao.deleteNote(note);
             noteDao.deleteNoteFts(note.getId());
+
+            // update folder vars
+            Folder folder = noteDao.getFolderById(note.getFolderId());
+            if (folder != null){
+                folder.setNumItems(folder.getNumItems() - 1);
+                folder.setTotalEmotionValue(folder.getTotalEmotionValue() - note.getEmotion());
+
+                noteDao.updateFolder(folder);
+            }
         });
     }
 

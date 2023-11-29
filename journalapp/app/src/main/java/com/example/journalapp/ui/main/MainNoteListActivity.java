@@ -73,7 +73,7 @@ public class MainNoteListActivity extends AppCompatActivity {
 
     private void createNoteObserverForFolder(String folderId){
         folderViewModel = new ViewModelProvider(this).get(FolderViewModel.class);
-        folderViewModel.getNotesByFolderId(folderId).observe(this, notes -> noteListAdapter.submitList(notes));
+        folderViewModel.getAllNotesFromFolderOrderByLastEditedDateDesc(folderId).observe(this, notes -> noteListAdapter.submitList(notes));
 
         Executors.newSingleThreadExecutor().execute(() -> {
             Folder folder = folderViewModel.getFolderByIdSync(folderId);
