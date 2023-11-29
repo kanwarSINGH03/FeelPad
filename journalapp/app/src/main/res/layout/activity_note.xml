@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white">
+    android:background="?attr/backgroundColor">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -112,7 +112,6 @@
             android:layout_height="0dp"
             android:layout_marginStart="6sp"
             android:layout_marginEnd="6sp"
-            android:layout_marginBottom="15sp"
             android:background="@null"
             android:paddingRight="16dp"
             android:paddingLeft="8dp"
@@ -213,6 +212,21 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@id/underlineButton"
+                    android:layout_marginEnd="20dp"
+                    />
+
+                <ImageButton
+                    android:id="@+id/addTextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_note_menu_add"
+                    android:backgroundTint="@android:color/transparent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginEnd="20dp"
                     />
 

@@ -16,20 +16,20 @@
         <ImageView android:id="@+id/video_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:src="@drawable/video_camera_icon"
-            android:background="@color/black"/>
+
+            android:background="#F3F3F3"/>
 
         <ImageButton android:id="@+id/video_play_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@android:drawable/ic_media_play" /> <!-- Play button -->
+            android:background="@drawable/ic_item_video_play" />
 
         <ImageView
             android:id="@+id/video_view_drag_handle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_note_drag_handle_white"
+            android:src="@drawable/ic_note_drag_handle"
             android:padding="8dp"
             android:layout_gravity="end|center_vertical"
             android:visibility="invisible"

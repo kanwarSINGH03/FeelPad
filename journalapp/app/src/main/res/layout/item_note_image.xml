@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/image_menu_icon" />
+            android:src="@drawable/ic_note_menu_image" />
 
         <ImageView
             android:id="@+id/image_view_drag_handle"

@@ -85,7 +85,7 @@
                 android:id="@+id/item_note_list_subheader_image"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:src="@drawable/image_menu_icon"
+                android:src="@drawable/ic_note_menu_image"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 app:layout_constraintWidth_percent="0.6"

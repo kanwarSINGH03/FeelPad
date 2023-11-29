@@ -4,19 +4,19 @@
 
 
     <item
-        android:icon="@drawable/image_menu_icon"
+        android:icon="@drawable/ic_note_menu_image"
         android:title="Add Photo/Video"
         app:showAsAction="never">
         <menu>
             <item
                 android:id="@+id/item1a"
-                android:icon="@drawable/camera_menu_icon"
+                android:icon="@drawable/ic_note_menu_camera"
                 android:title="Take photo/video"
                 app:showAsAction="never" />
 
             <item
                 android:id="@+id/item1b"
-                android:icon="@drawable/folder_menu_icon"
+                android:icon="@drawable/ic_note_menu_folder"
                 android:title="Add Photo/video From Library"
                 app:showAsAction="never" />
         </menu>
@@ -24,20 +24,14 @@
 
     <item
         android:id="@+id/item2"
-        android:icon="@drawable/voice_menu_icon"
+        android:icon="@drawable/ic_note_menu_voice"
         android:title="Add Voice Note"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/item3"
-        android:icon="@drawable/add_menu_icon"
+        android:icon="@drawable/ic_note_menu_add"
         android:title="Insert PDF"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/item4"
-        android:icon="@drawable/save_menu_icon"
-        android:title="Save Note"
         app:showAsAction="never" />
 
     <item

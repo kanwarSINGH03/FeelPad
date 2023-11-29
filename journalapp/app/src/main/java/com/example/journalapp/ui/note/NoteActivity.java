@@ -81,6 +81,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private ImageButton underlineButton;
     private ImageButton strikethroughButton;
     private ImageButton pickColorButton;
+    private ImageButton addTextBoxButton;
 
     // Note Contents Variables
     private RecyclerView noteContentRecyclerView;
@@ -425,9 +426,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                     Toast.makeText(getApplicationContext(), "Insert PDF", Toast.LENGTH_SHORT).show();
                     selectPdf();
                     return true;
-                } else if (menuItem.getItemId() == R.id.item4) {
-                    Toast.makeText(getApplicationContext(), "Save Note", Toast.LENGTH_SHORT).show();
-                    return true;
                 } else if (menuItem.getItemId() == R.id.item5) {
                     Toast.makeText(getApplicationContext(), "Add Template", Toast.LENGTH_SHORT).show();
                     return true;
@@ -580,7 +578,17 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             popupMenu.show();
         });
 
+        addTextBoxButton = findViewById(R.id.addTextButton);
 
+        addTextBoxButton.setOnClickListener(v ->{
+            // add text box to bottom of the list
+            noteItems.add(new NoteItem(NoteItem.ItemType.TEXT, null, "", noteItems.size()));
+            noteAdapter.notifyItemInserted(noteItems.size() - 1);
+
+            saveNoteContent();
+
+            Toast.makeText(this,"Added a new text box to the end of the items list", Toast.LENGTH_SHORT).show();
+        });
 
     }
 
