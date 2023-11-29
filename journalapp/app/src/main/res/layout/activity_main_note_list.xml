@@ -23,8 +23,7 @@
         android:layout_height="match_parent"
         android:layout_above="@id/bottomNavBarFragmentContainer"
         android:layout_below="@id/topNavBarFragmentContainer"
-        android:background="@drawable/bg_notelist"
-        android:backgroundTint="@android:color/transparent">
+        android:background="@drawable/bg_notelist">
 
         <TextView
             android:id="@+id/notes_list_folder_name"
@@ -63,8 +62,8 @@
             android:layout_marginTop="12dp"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
-            android:background="@android:color/transparent"
-            android:backgroundTint="@android:color/transparent"
+            android:background="?attr/backgroundColor"
+            android:backgroundTint="?attr/backgroundColor"
             />
 
 

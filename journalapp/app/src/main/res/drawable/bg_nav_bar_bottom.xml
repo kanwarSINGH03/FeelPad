@@ -3,7 +3,7 @@
     <!-- Bottom nav background -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@android:color/transparent"/> <!-- Set your desired background color -->
+            <solid android:color="?attr/backgroundColor"/> <!-- Set your desired background color -->
         </shape>
     </item>
 

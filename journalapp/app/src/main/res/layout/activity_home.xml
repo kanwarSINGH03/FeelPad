@@ -26,8 +26,8 @@
         android:layout_below="@id/topNavBarFragmentContainer"
         android:orientation="vertical"
         android:gravity="center"
-        android:backgroundTint="@android:color/transparent"
-        android:background="@android:color/transparent">
+        android:backgroundTint="?attr/backgroundColor"
+        android:background="?attr/backgroundColor">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -70,6 +70,7 @@
                 android:text="Overview"
                 android:textStyle="bold"
                 android:textSize="13sp"
+                android:textColor="?attr/backgroundColor"
                 android:backgroundTint="?attr/colorAccent"
                 app:layout_constraintTop_toBottomOf="@id/userNameTextView"
                 app:layout_constraintStart_toStartOf="parent"
@@ -94,7 +95,8 @@
                 app:layout_constraintWidth_percent="0.4"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="10dp"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="12dp"
+                android:visibility="visible"/>
 
             <!-- Card View -->
             <androidx.cardview.widget.CardView
@@ -108,14 +110,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintWidth_percent="1"
                 app:cardCornerRadius="10dp"
-                app:cardElevation="0dp">
+                app:cardElevation="0dp"
+                android:backgroundTint="?attr/backgroundColor">
 
                 <!-- Content inside the card -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:backgroundTint="?attr/colorTertiary">
+                    android:padding="16dp">
 
                     <!-- First TextView -->
                     <TextView
@@ -126,7 +128,7 @@
                         android:textSize="21dp"
                         android:textStyle="bold"
                         android:backgroundTint="@android:color/transparent"
-                        android:textColor="@color/theme_black"
+                        android:textColor="?attr/colorSecondary"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"/>
@@ -139,7 +141,7 @@
                         android:text="According to your notes, this is how you've been feeling this month!"
                         android:textSize="14dp"
                         android:backgroundTint="@android:color/transparent"
-                        android:textColor="@color/theme_black"
+                        android:textColor="?attr/colorSecondary"
                         app:layout_constraintTop_toBottomOf="@id/textView1"
                         app:layout_constraintStart_toStartOf="@id/textView1"
                         app:layout_constraintEnd_toEndOf="@id/textView1"

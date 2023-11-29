@@ -72,7 +72,7 @@ public class SettingsActivity extends AppCompatActivity {
             String selectedColor = colorNames[position];
             saveThemeChoice(selectedColor);
             applyTheme(selectedColor);
-            Toast.makeText(this,"Please restart app to load changes",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Loading Theme Changes",Toast.LENGTH_SHORT).show();
         });
     }
 
