@@ -7,6 +7,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -44,7 +45,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.journalapp.R;
 import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.database.entity.NoteItemEntity;
-import com.example.journalapp.ui.main.MapsActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -220,6 +220,13 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     @Override
     protected void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
+
+        // Apply the theme
+        SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        String themeName = preferences.getString("SelectedTheme", "DefaultTheme");
+        int themeId = getThemeId(themeName);
+        setTheme(themeId);
+
         setContentView(R.layout.activity_note);
 
         // Initialize UI Widgets & set current date
@@ -1372,6 +1379,26 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             // Find the resource entry name of the ID
             String resourceName = getResources().getResourceEntryName(focusedViewId);
             Log.d("Focused View", "Current focused view is: " + resourceName);
+        }
+    }
+
+    private int getThemeId(String themeName) {
+        switch (themeName) {
+            case "Blushing Tomato":
+                return R.style.Theme_LightRed;
+            case "Dragon's Fury":
+                return R.style.Theme_Red;
+            case "Mermaid Tail":
+                return R.style.Theme_BlueGreen;
+            case "Elephant in the Room":
+                return R.style.Theme_Grey;
+            case "Stormy Monday":
+                return R.style.Theme_GreyBlue;
+            case "Sunshine Sneezing":
+                return R.style.Theme_Yellow;
+
+            default:
+                return R.style.Base_Theme;
         }
     }
 }

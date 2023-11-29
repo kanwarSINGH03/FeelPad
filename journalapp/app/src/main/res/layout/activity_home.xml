@@ -53,7 +53,7 @@
                 android:id="@+id/userNameTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="John L."
+                android:text="Esteemed Guest"
                 android:textSize="35sp"
                 android:textStyle="bold"
                 android:textColor="?attr/colorSecondary"

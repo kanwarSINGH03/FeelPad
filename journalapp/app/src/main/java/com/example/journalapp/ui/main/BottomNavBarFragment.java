@@ -115,6 +115,8 @@ public class BottomNavBarFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Handle menu button click
+                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(intent);
             }
         });
     }

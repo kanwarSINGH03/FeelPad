@@ -1,6 +1,7 @@
 package com.example.journalapp.ui.main;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Filter;
@@ -45,6 +46,13 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Apply the theme
+        SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        String themeName = preferences.getString("SelectedTheme", "DefaultTheme");
+        int themeId = getThemeId(themeName);
+        setTheme(themeId);
+
         setContentView(R.layout.activity_main_note_list);
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -197,6 +205,26 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
 
         }
 
+    }
+
+    private int getThemeId(String themeName) {
+        switch (themeName) {
+            case "Blushing Tomato":
+                return R.style.Theme_LightRed;
+            case "Dragon's Fury":
+                return R.style.Theme_Red;
+            case "Mermaid Tail":
+                return R.style.Theme_BlueGreen;
+            case "Elephant in the Room":
+                return R.style.Theme_Grey;
+            case "Stormy Monday":
+                return R.style.Theme_GreyBlue;
+            case "Sunshine Sneezing":
+                return R.style.Theme_Yellow;
+
+            default:
+                return R.style.Base_Theme;
+        }
     }
 
 

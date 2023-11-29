@@ -1,8 +1,10 @@
 package com.example.journalapp.ui.home;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -30,6 +32,13 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Apply the theme
+        SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        String themeName = preferences.getString("SelectedTheme", "DefaultTheme");
+        int themeId = getThemeId(themeName);
+        setTheme(themeId);
+
         setContentView(R.layout.activity_home);
 
         // add top navbar fragment
@@ -50,9 +59,12 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
     }
 
     private void initButtons(){
+        TextView userNameTextView = findViewById(R.id.userNameTextView);
         MaterialButton btn1 = findViewById(R.id.button1);
         MaterialButton btn2 = findViewById(R.id.button2);
 
+        SharedPreferences preferences = getSharedPreferences("MyPreferences", MODE_PRIVATE);
+        userNameTextView.setText(preferences.getString("PreferredName","Esteemed Guest"));
         btn1.setOnClickListener(v ->{
             Intent intent = new Intent(this, MainNoteListActivity.class);
             startActivity(intent);
@@ -97,6 +109,26 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
         if (selectedFolderPosition != -1){
             Log.e("ItemChange", "Notifying item changed at position " + selectedFolderPosition);
             folderAdapter.notifyItemChanged(selectedFolderPosition);
+        }
+    }
+
+    private int getThemeId(String themeName) {
+        switch (themeName) {
+            case "Blushing Tomato":
+                return R.style.Theme_LightRed;
+            case "Dragon's Fury":
+                return R.style.Theme_Red;
+            case "Mermaid Tail":
+                return R.style.Theme_BlueGreen;
+            case "Elephant in the Room":
+                return R.style.Theme_Grey;
+            case "Stormy Monday":
+                return R.style.Theme_GreyBlue;
+            case "Sunshine Sneezing":
+                return R.style.Theme_Yellow;
+
+            default:
+                return R.style.Base_Theme;
         }
     }
 }
