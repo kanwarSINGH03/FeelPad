@@ -2,26 +2,35 @@ package com.example.journalapp.ui.main;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.util.TypedValue;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.R;
 import com.example.journalapp.database.entity.Folder;
+import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.ui.home.FolderViewModel;
 import com.example.journalapp.utils.ConversionUtil;
 
 import java.util.concurrent.Executors;
+
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
 public class MainNoteListActivity extends AppCompatActivity implements TopNavBarFragment.OnSearchQueryChangeListener, FilterFragment.PopupDialogListener {
     private NoteListAdapter noteListAdapter;
@@ -38,6 +47,35 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
     private Long filterStartDate = null;
     private Long filterEndDate = null;
     private String filterEmotion = null;
+
+    // swipe watcher for deleting notes
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            // Since you only want swipe functionality, no need to handle movement here
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            if (direction == ItemTouchHelper.LEFT) {
+                deleteItem(viewHolder.getAdapterPosition());
+            }
+        }
+
+        @Override
+        public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                    .addSwipeLeftBackgroundColor(ContextCompat.getColor(MainNoteListActivity.this, R.color.theme_red))
+                    .addSwipeLeftActionIcon(R.drawable.ic_note_delete)
+                    .addSwipeLeftCornerRadius(TypedValue.COMPLEX_UNIT_DIP, 10)
+                    .create()
+                    .decorate();
+
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +121,10 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
         noteListAdapter = new NoteListAdapter(new NoteListAdapter.NoteDiff(),mainViewModel,this);
         noteRecyclerView.setAdapter(noteListAdapter);
         noteRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // attach item touch helper
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(noteRecyclerView);
     }
 
     private void createNoteObserverForFolder(String folderId){
@@ -238,6 +280,15 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
                 return R.style.Base_Theme;
         }
     }
+
+    private void deleteItem(int position){
+        Note noteToDelete = noteListAdapter.getNoteAt(position);
+        noteListAdapter.removeNoteAt(position);
+        noteListAdapter.notifyItemRemoved(position);
+
+        mainViewModel.deleteNote(noteToDelete);
+    }
+
 
 
 

@@ -38,7 +38,9 @@ import com.google.android.material.imageview.ShapeableImageView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -113,6 +115,19 @@ public class NoteListAdapter extends ListAdapter<Note, NoteListAdapter.NoteViewH
             v.getContext().startActivity(intent);
 
         });
+    }
+
+    public Note getNoteAt(int position){
+        return getItem(position);
+    }
+
+    public void removeNoteAt(int position) {
+        // Create a new list that excludes the item at the specified position
+        List<Note> currentList = new ArrayList<>(getCurrentList());
+        if (position >= 0 && position < currentList.size()) {
+            currentList.remove(position);
+            submitList(currentList);
+        }
     }
 
     static class NoteViewHolder extends RecyclerView.ViewHolder {
