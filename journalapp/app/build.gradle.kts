@@ -40,7 +40,15 @@ android {
             isIncludeAndroidResources = true
         }
     }
+
+    android {
+        defaultConfig {
+            multiDexEnabled = true
+        }
+
+    }
 }
+
 
 dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
@@ -59,6 +67,7 @@ dependencies {
     implementation("com.github.chrisbanes:PhotoView:2.0.0")
     implementation("it.xabaras.android:recyclerview-swipedecorator:1.4");
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+    implementation("com.karumi:dexter:6.2.2")
     testImplementation("junit:junit:4.13.2")
     testImplementation("androidx.test:core:1.5.0")
     testImplementation("org.mockito:mockito-core:5.7.0")
