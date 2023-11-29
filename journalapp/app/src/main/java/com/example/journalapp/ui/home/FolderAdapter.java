@@ -1,6 +1,11 @@
 package com.example.journalapp.ui.home;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.icu.text.CaseMap;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +16,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,7 +74,19 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
         }
 
         public void bind(Folder folder) {
-            folderHolder.setBackgroundColor(folder.getFolderColor());
+
+            // sets the color of the ripple drawable (combines ripple and color of folder)
+            Drawable background = ContextCompat.getDrawable(itemView.getContext(), R.drawable.ripple_folder);
+            if (background instanceof RippleDrawable) {
+                RippleDrawable rippleDrawable = (RippleDrawable) background;
+                Drawable colorDrawable = rippleDrawable.getDrawable(0);
+                if (colorDrawable instanceof ShapeDrawable) {
+                    ((ShapeDrawable) colorDrawable).getPaint().setColor(folder.getFolderColor());
+                } else if (colorDrawable instanceof GradientDrawable) {
+                    ((GradientDrawable) colorDrawable).setColor(folder.getFolderColor());
+                }
+                folderHolder.setBackground(rippleDrawable);
+            }
             icon.setImageResource(folder.getIconResourceId());
             title.setText(folder.getFolderName());
             dataBar.setProgress((int) folder.getEmotionPercentage());

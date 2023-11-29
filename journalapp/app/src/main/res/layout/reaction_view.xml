@@ -30,7 +30,7 @@
             android:id="@+id/current_emotion"
             android:layout_width="83dp"
             android:layout_height="74dp"
-            android:src="@drawable/add_reaction_icon"
+            android:src="@drawable/ic_note_add_emotion"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:ignore="MissingConstraints"
@@ -65,7 +65,7 @@
                 android:background="@null"
                 android:onClick="angryReaction"
                 android:scaleType="fitCenter"
-                android:src="@drawable/angry_face"
+                android:src="@drawable/ic_note_emotion_horrible"
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteX="7dp"
                 tools:layout_editor_absoluteY="87dp" />
@@ -78,7 +78,7 @@
                 android:background="@null"
                 android:onClick="mediumAngryReaction"
                 android:scaleType="fitCenter"
-                android:src="@drawable/medium_angry_face"
+                android:src="@drawable/ic_note_emotion_disappointed"
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteX="89dp"
                 tools:layout_editor_absoluteY="85dp" />
@@ -91,7 +91,7 @@
                 android:background="@null"
                 android:onClick="neutralReaction"
                 android:scaleType="fitCenter"
-                android:src="@drawable/neutral_face"
+                android:src="@drawable/ic_note_emotion_neutral"
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteX="173dp"
                 tools:layout_editor_absoluteY="87dp" />
@@ -104,7 +104,7 @@
                 android:background="@null"
                 android:onClick="mediumHappyReaction"
                 android:scaleType="fitCenter"
-                android:src="@drawable/slightly_smiling_face"
+                android:src="@drawable/ic_note_emotion_happy"
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteX="255dp"
                 tools:layout_editor_absoluteY="87dp" />
@@ -117,7 +117,7 @@
                 android:background="@null"
                 android:onClick="happyReaction"
                 android:scaleType="fitCenter"
-                android:src="@drawable/big_smile_face"
+                android:src="@drawable/ic_note_emotion_very_happy"
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteX="330dp"
                 tools:layout_editor_absoluteY="87dp" />

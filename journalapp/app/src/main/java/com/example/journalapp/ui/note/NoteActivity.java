@@ -162,19 +162,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
             });
 
-    // Special member variable used to launch an activity to select emotion
-    private final ActivityResultLauncher<Intent> mEmotionReturn =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                    Intent intent = result.getData();
-                    int emotion = intent.getIntExtra("emotion", 0);
-                    note.setEmotion(emotion);
-                    noteViewModel.updateNoteEmotion(note);
-                    updateEmotionImage();
-                }
-            });
-
-
     // Special member variable for drag and dropping contents
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN , ItemTouchHelper.LEFT) {
 
@@ -266,22 +253,22 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         Log.i("Emotion", value + "");
         switch (value) {
             case 1:
-                openReactionMenu.setImageResource(R.drawable.angry_face);
+                openReactionMenu.setImageResource(R.drawable.ic_note_emotion_horrible);
                 break;
             case 2:
-                openReactionMenu.setImageResource(R.drawable.medium_angry_face);
+                openReactionMenu.setImageResource(R.drawable.ic_note_emotion_disappointed);
                 break;
             case 3:
-                openReactionMenu.setImageResource(R.drawable.neutral_face);
+                openReactionMenu.setImageResource(R.drawable.ic_note_emotion_neutral);
                 break;
             case 4:
-                openReactionMenu.setImageResource(R.drawable.slightly_smiling_face);
+                openReactionMenu.setImageResource(R.drawable.ic_note_emotion_happy);
                 break;
             case 5:
-                openReactionMenu.setImageResource(R.drawable.big_smile_face);
+                openReactionMenu.setImageResource(R.drawable.ic_note_emotion_very_happy);
                 break;
             default:
-                openReactionMenu.setImageResource(R.drawable.add_reaction_icon);
+                openReactionMenu.setImageResource(R.drawable.ic_note_add_emotion);
                 break;
         }
     }
@@ -332,12 +319,63 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         compositeDisposable.addAll(
                 titleObservable.subscribe(this::saveNoteTitle));
 
+
+        /* Set up Reaction Menu */
         openReactionMenu = findViewById(R.id.reactionMenu);
 
         openReactionMenu.setOnClickListener(v -> {
-            Intent intent = new Intent(NoteActivity.this, ReactionActivity.class);
             saveNoteContent();
-            mEmotionReturn.launch(intent);
+
+            // if pressed, pop up window of the emotions
+            PopupMenu popupMenu = new PopupMenu(this,v);
+
+            // to force popup of icons
+            try {
+                Field[] fields = popupMenu.getClass().getDeclaredFields();
+                for (Field field : fields) {
+                    if ("mPopup".equals(field.getName())) {
+                        field.setAccessible(true);
+                        Object menuPopupHelper = field.get(popupMenu);
+                        Class<?> classPopupHelper = Class.forName(menuPopupHelper.getClass().getName());
+                        Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon",boolean.class);
+                        setForceIcons.invoke(menuPopupHelper, true);
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            popupMenu.getMenuInflater().inflate(R.menu.emotion_menu, popupMenu.getMenu());
+
+
+
+            popupMenu.setOnMenuItemClickListener(item ->{
+                int emotionPicked = item.getItemId();
+                int emotionLevel;
+
+                if (emotionPicked == R.id.emotion_horrible){
+                    emotionLevel = 1;
+                } else if (emotionPicked == R.id.emotion_disappointed){
+                    emotionLevel = 2;
+                } else if (emotionPicked == R.id.emotion_neutral){
+                    emotionLevel = 3;
+                } else if (emotionPicked == R.id.emotion_happy){
+                    emotionLevel = 4;
+                } else if (emotionPicked == R.id.emotion_very_happy){
+                    emotionLevel = 5;
+                }
+                else{
+                    emotionLevel = 0;
+                }
+
+                note.setEmotion(emotionLevel);
+                noteViewModel.updateNoteEmotion(note);
+                updateEmotionImage();
+
+                return true;
+            });
+            popupMenu.show();
         });
     }
 
@@ -1092,7 +1130,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
         // Sorted by ISO 8601 format which is sortable via queries
         String currentDateStr = getDateAsString();
-        note = new Note("", currentDateStr, 0,folder_id);
+        note = new Note("", currentDateStr, 3,folder_id);
         noteViewModel.insertNote(note);
 
         // Initialize the contents of noteItems as a single EditText

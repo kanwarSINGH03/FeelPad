@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/emotion_horrible"
+        android:title="Horrible"
+        android:icon="@drawable/ic_note_emotion_horrible" />
+    <item
+        android:id="@+id/emotion_disappointed"
+        android:title="Disappointed"
+        android:icon="@drawable/ic_note_emotion_disappointed" />
+    <item
+        android:id="@+id/emotion_neutral"
+        android:title="Meh"
+        android:icon="@drawable/ic_note_emotion_neutral" />
+    <item
+        android:id="@+id/emotion_happy"
+        android:title="Satisfied"
+        android:icon="@drawable/ic_note_emotion_happy" />
+    <item
+        android:id="@+id/emotion_very_happy"
+        android:title="Very Happy"
+        android:icon="@drawable/ic_note_emotion_very_happy" />
+
+</menu>

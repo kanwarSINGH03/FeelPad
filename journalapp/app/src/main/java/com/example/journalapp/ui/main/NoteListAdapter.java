@@ -2,14 +2,24 @@ package com.example.journalapp.ui.main;
 
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DiffUtil;
@@ -25,6 +35,11 @@ import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.ui.note.NoteItem;
 import com.example.journalapp.utils.ConversionUtil;
 import com.google.android.material.imageview.ShapeableImageView;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Custom adapter for managing a Recyclerviews' list of notes
@@ -102,30 +117,33 @@ public class NoteListAdapter extends ListAdapter<Note, NoteListAdapter.NoteViewH
 
     static class NoteViewHolder extends RecyclerView.ViewHolder {
 
+        private ConstraintLayout noteHolder;
         private TextView titleTextView;
-
-        // depends on what the first item of the note is
         private TextView subheaderTextView;
         private ShapeableImageView subheaderImageView;
         private TextView dateTextView;
+        private ImageView emotionImageView;
 
         // private TextView location
-        // private ImageView emotion
 
 
         public NoteViewHolder(@NonNull View itemView){
             super(itemView);
 
             // find parts
+            noteHolder = itemView.findViewById(R.id.item_note_list_holder);
             titleTextView = itemView.findViewById(R.id.item_note_list_title);
             subheaderTextView = itemView.findViewById(R.id.item_note_list_subheader_text);
             subheaderImageView = itemView.findViewById(R.id.item_note_list_subheader_image);
             dateTextView = itemView.findViewById(R.id.item_note_list_last_edited);
+            emotionImageView = itemView.findViewById(R.id.item_note_list_emotion);
         }
 
         public void bind(Note note, NoteItemEntity firstNoteItem){
+            // set the title
             titleTextView.setText(note.getTitle());
 
+            // for subheader (depends on whether first item is a text or image)
             if (firstNoteItem != null) {
                 if (firstNoteItem.getType() == NoteItem.ItemType.TEXT.ordinal()) {
                     subheaderTextView.setVisibility(View.VISIBLE);
@@ -143,6 +161,66 @@ public class NoteListAdapter extends ListAdapter<Note, NoteListAdapter.NoteViewH
                 subheaderTextView.setVisibility(View.VISIBLE);
                 subheaderImageView.setVisibility(View.GONE);
                 subheaderTextView.setText("Empty Note :(");
+            }
+
+            // take the date and reformat for setting
+            String originalDateString = note.getLastEditedDate();
+
+            SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
+            SimpleDateFormat newFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH);
+
+            // transform the date string
+            try {
+                Date date = originalFormat.parse(originalDateString);
+                String formattedDateString = "Last Edited: " + newFormat.format(date);
+                dateTextView.setText(formattedDateString);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            // set the emotion
+            switch (note.getEmotion()){
+                case 1:
+                    emotionImageView.setImageResource(R.drawable.ic_note_emotion_horrible);
+                    // noteHolder.setBackgroundResource(R.color.colorAccentRed);
+                    setBackgroundConstraintLayout(noteHolder,R.color.colorAccentRed);
+                    break;
+                case 2:
+                    emotionImageView.setImageResource(R.drawable.ic_note_emotion_disappointed);
+                    // noteHolder.setBackgroundResource(R.color.colorAccentLightRed);
+                    setBackgroundConstraintLayout(noteHolder,R.color.colorAccentLightRed);
+                    break;
+                case 3:
+                    emotionImageView.setImageResource(R.drawable.ic_note_emotion_neutral);
+                    // noteHolder.setBackgroundResource(R.color.colorAccentGreyBlue);
+                    setBackgroundConstraintLayout(noteHolder,R.color.colorAccentGreyBlue);
+                    break;
+                case 4:
+                    emotionImageView.setImageResource(R.drawable.ic_note_emotion_happy);
+                    // noteHolder.setBackgroundResource(R.color.colorAccentBlueGreen);
+                    setBackgroundConstraintLayout(noteHolder,R.color.colorAccentBlueGreen);
+                    break;
+                case 5:
+                    emotionImageView.setImageResource(R.drawable.ic_note_emotion_very_happy);
+                    // noteHolder.setBackgroundResource(R.color.colorAccentYellow);
+                    setBackgroundConstraintLayout(noteHolder,R.color.colorAccentYellow);
+                    break;
+            }
+
+        }
+
+        private void setBackgroundConstraintLayout(ConstraintLayout constraintLayout, @ColorRes int resId){
+            int color = ContextCompat.getColor(itemView.getContext(), resId);
+            Drawable background = ContextCompat.getDrawable(itemView.getContext(), R.drawable.ripple_note);
+            if (background instanceof RippleDrawable) {
+                RippleDrawable rippleDrawable = (RippleDrawable) background;
+                Drawable colorDrawable = rippleDrawable.getDrawable(0); // Assuming the color is the first layer
+                if (colorDrawable instanceof ShapeDrawable) {
+                    ((ShapeDrawable) colorDrawable).getPaint().setColor(color);
+                } else if (colorDrawable instanceof GradientDrawable) {
+                    ((GradientDrawable) colorDrawable).setColor(color);
+                }
+                constraintLayout.setBackground(rippleDrawable);
             }
         }
 

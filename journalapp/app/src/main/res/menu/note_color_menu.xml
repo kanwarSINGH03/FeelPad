@@ -3,7 +3,8 @@
     <item
         android:id="@+id/color_light_red"
         android:title="Blushing Tomato"
-        android:icon="@drawable/ic_folder_color_light_red" />
+        android:icon="@drawable/ic_folder_color_light_red"
+        />
     <item
         android:id="@+id/color_red"
         android:title="Dragon's Fury"

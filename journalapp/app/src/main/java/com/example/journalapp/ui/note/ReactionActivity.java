@@ -6,17 +6,9 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.R;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class ReactionActivity extends AppCompatActivity {
 
@@ -37,24 +29,24 @@ public class ReactionActivity extends AppCompatActivity {
 
         angryButton.setOnClickListener(v -> {
             emotionValue = 1;
-            onEmotionButtonClick(R.drawable.angry_face);
+            onEmotionButtonClick(R.drawable.ic_note_emotion_horrible);
         });
         mediumAngryButton.setOnClickListener(v -> {
             emotionValue = 2;
-            onEmotionButtonClick(R.drawable.medium_angry_face);
+            onEmotionButtonClick(R.drawable.ic_note_emotion_disappointed);
         });
         neutralButton.setOnClickListener(v -> {
             emotionValue = 3;
-            onEmotionButtonClick(R.drawable.neutral_face);
+            onEmotionButtonClick(R.drawable.ic_note_emotion_neutral);
         });
 
         mediumHappyButton.setOnClickListener(v -> {
             emotionValue = 4;
-            onEmotionButtonClick(R.drawable.slightly_smiling_face);
+            onEmotionButtonClick(R.drawable.ic_note_emotion_happy);
         });
         happyButton.setOnClickListener(v -> {
             emotionValue = 5;
-            onEmotionButtonClick(R.drawable.big_smile_face);
+            onEmotionButtonClick(R.drawable.ic_note_emotion_very_happy);
         });
 
     }
