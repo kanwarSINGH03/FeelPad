@@ -13,7 +13,7 @@ android {
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
-
+        multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -66,6 +66,7 @@ dependencies {
     implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
     implementation("com.github.chrisbanes:PhotoView:2.0.0")
     implementation("it.xabaras.android:recyclerview-swipedecorator:1.4");
+    implementation("com.android.support:multidex:1.0.3")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
     implementation("com.karumi:dexter:6.2.2")
     testImplementation("junit:junit:4.13.2")
