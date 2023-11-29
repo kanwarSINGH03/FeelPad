@@ -78,4 +78,8 @@ public class MainViewModel extends AndroidViewModel {
         return noteRepository.searchNotes(query);
     }
 
+    public LiveData<List<Note>> searchNotesInFolder(String folderId, String query){
+        return noteRepository.searchNotesInFolder(folderId, query);
+    }
+
 }

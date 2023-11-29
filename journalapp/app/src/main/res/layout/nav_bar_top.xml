@@ -1,39 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/nav_bar_top"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_bar_height"
     android:background="?attr/backgroundColor"
-    android:gravity="center"
-    android:orientation="horizontal"
     android:padding="8dp">
 
     <ImageButton
-        android:id="@+id/btnSearch"
+        android:id="@+id/btnSearchExpand"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:src="@drawable/ic_top_nav_bar_expand_search"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_nav_bar_search"
-        android:contentDescription="search"
         android:padding="16dp" />
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="FeelPad"
-        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-        android:textColor="?attr/colorAccent"
-        android:background="@android:color/transparent"
-        android:gravity="center" />
-
-    <ImageButton
-        android:id="@+id/btnMenu"
-        android:layout_width="wrap_content"
+    <!-- Container for Title and Menu Button -->
+    <LinearLayout
+        android:id="@+id/titleMenuContainer"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_menu"
-        android:contentDescription="menu"
-        android:padding="16dp" />
-</LinearLayout>
+        android:layout_toRightOf="@id/btnSearchExpand"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="FeelPad"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+            android:textColor="?attr/colorAccent"
+            android:background="@android:color/transparent"
+            android:gravity="center" />
+
+        <ImageButton
+            android:id="@+id/btnMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_menu"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="16dp" />
+    </LinearLayout>
+
+    <!-- SearchView -->
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/noteSearchView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/btnSearchExpand"
+        android:backgroundTint="?attr/backgroundColor"
+        android:background="?attr/backgroundColor"
+        android:elevation="6dp"
+        android:visibility="gone"/>
+</RelativeLayout>

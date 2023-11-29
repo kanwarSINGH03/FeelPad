@@ -290,6 +290,10 @@ public class NoteRepository {
         return noteDao.searchNotes(query);
     }
 
+    public LiveData<List<Note>> searchNotesInFolder(String folderId, String query){
+        return noteDao.searchNotesInFolder(folderId, query);
+    }
+
     // ==============================
     // Internal Methods
     // ==============================

@@ -51,5 +51,9 @@ public class FolderViewModel extends AndroidViewModel {
         return folderRepository.getAllNotesFromFolderOrderByLastEditedDateDesc(folderId);
     }
 
+    public LiveData<List<Note>> searchNotesInFolder(String folderId, String query){
+        return folderRepository.SearchNotesInFolder(folderId, query);
+    }
+
 
 }

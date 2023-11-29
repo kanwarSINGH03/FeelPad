@@ -96,6 +96,6 @@ public class SearchActivity extends AppCompatActivity {
      */
     public void performQuery(String query) {
         Log.d("SearchActivity", "Query String: " + query);
-        mainViewModel.searchNotes(query).observe(this, notes -> noteListAdapter.submitList(notes));
+        // mainViewModel.searchNotes(query).observe(this, notes -> noteListAdapter.submitList(notes));
     }
 }

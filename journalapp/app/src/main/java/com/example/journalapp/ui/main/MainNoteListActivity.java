@@ -2,6 +2,7 @@ package com.example.journalapp.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +23,7 @@ import com.example.journalapp.ui.home.FolderViewModel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainNoteListActivity extends AppCompatActivity {
+public class MainNoteListActivity extends AppCompatActivity implements TopNavBarFragment.OnSearchQueryChangeListener {
     private NoteListAdapter noteListAdapter;
     private FolderViewModel folderViewModel;
     private MainViewModel mainViewModel;
@@ -55,7 +56,7 @@ public class MainNoteListActivity extends AppCompatActivity {
 
         // add top navbar fragment
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.topNavBarFragmentContainer, TopNavBarFragment.newInstance(false))
+                .replace(R.id.topNavBarFragmentContainer, TopNavBarFragment.newInstance(false, true))
                 .commit();
 
         getSupportFragmentManager().beginTransaction()
@@ -89,5 +90,21 @@ public class MainNoteListActivity extends AppCompatActivity {
             // Handle the case where the folder is null
             Toast.makeText(this, "Folder not found", Toast.LENGTH_SHORT).show();
         }
+
+        folderFilterImageButton = findViewById(R.id.notes_list_filter_btn);
+        folderFilterImageButton.setOnClickListener(v ->{
+
+        });
+
+    }
+
+    @Override
+    public void onSearchQueryChanged(String query){
+        searchNotes(query);
+    }
+
+    private void searchNotes(String query){
+        Log.e("FolderId", "Folder id is" + folder_id + " and query is: " + query);
+        folderViewModel.searchNotesInFolder(folder_id,query).observe(this, notes -> noteListAdapter.submitList(notes));
     }
 }
