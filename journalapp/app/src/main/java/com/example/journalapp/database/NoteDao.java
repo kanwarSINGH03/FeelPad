@@ -190,5 +190,8 @@ public interface NoteDao {
 
     @Query("SELECT * FROM note_table WHERE folder_id = :folderId")
     LiveData<List<Note>> getNotesByFolderId(String folderId);
+
+    @Query("SELECT * FROM note_table WHERE folder_id = :folderId")
+    List<Note> getNotesByFolderIdSync(String folderId);
 }
 

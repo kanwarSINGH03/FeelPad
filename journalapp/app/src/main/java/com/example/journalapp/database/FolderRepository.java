@@ -42,9 +42,26 @@ public class FolderRepository {
     }
 
     // Delete a folder from the database
+    /*
     public void deleteFolder(Folder folder) {
         NoteDatabase.databaseWriteExecutor.execute(() -> {
             folderDao.deleteFolder(folder);
+        });
+    }
+
+     */
+
+    public void deleteFolder(Folder folder){
+        NoteDatabase.databaseWriteExecutor.execute(() ->{
+            // Fetch notes synchronously
+            List<Note> notesInFolder = folderDao.getNotesByFolderIdSync(folder.getFolderId());
+
+            folderDao.deleteFolder(folder);
+
+            for (Note note : notesInFolder) {
+                folderDao.deleteNoteFts(note.getId());
+            }
+
         });
     }
 
