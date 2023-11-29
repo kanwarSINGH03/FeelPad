@@ -1,4 +1,4 @@
-package com.example.journalapp;
+package com.example.journalapp.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
