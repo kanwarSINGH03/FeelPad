@@ -283,8 +283,7 @@ public class NoteRepository {
         }
         Log.e("CombinedText", "Combined text is:" + combinedTextBuilder.toString().trim());
         return combinedTextBuilder.toString().trim();
+
     }
-
-
 
 }

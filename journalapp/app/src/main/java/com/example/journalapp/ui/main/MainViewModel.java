@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData;
 
 import com.example.journalapp.database.NoteRepository;
 import com.example.journalapp.database.entity.Note;
-import com.example.journalapp.database.entity.NoteItemEntity;
 
 import java.util.List;
 
@@ -19,6 +18,7 @@ public class MainViewModel extends AndroidViewModel {
 
     private final NoteRepository noteRepository;
 
+
     /**
      * Constructor for creating a new MainViewModel
      * @param application the application context
@@ -26,6 +26,7 @@ public class MainViewModel extends AndroidViewModel {
     public MainViewModel(Application application) {
         super(application);
         noteRepository = NoteRepository.getInstance(application);
+
     }
 
     // ==============================
@@ -73,5 +74,6 @@ public class MainViewModel extends AndroidViewModel {
     public LiveData<List<Note>> searchNotes(String query) {
         return noteRepository.searchNotes(query);
     }
+
 
 }

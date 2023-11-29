@@ -12,6 +12,7 @@
 
 
 
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
@@ -20,6 +21,13 @@
         android:layout_marginTop="16dp"
         android:contentDescription="@string/title_image_view"
         app:srcCompat="@drawable/img"
+        tools:ignore="MissingConstraints" />
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/barChart"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/defaultBackground"
         tools:ignore="MissingConstraints" />
 
     <androidx.recyclerview.widget.RecyclerView

@@ -6,17 +6,9 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.R;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class ReactionActivity extends AppCompatActivity {
 

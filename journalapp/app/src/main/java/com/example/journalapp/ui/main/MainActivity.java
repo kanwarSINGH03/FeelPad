@@ -2,16 +2,21 @@ package com.example.journalapp.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.journalapp.ui.note.NoteActivity;
 import com.example.journalapp.R;
+import com.example.journalapp.database.NoteRepository;
+import com.example.journalapp.database.entity.Note;
+import com.example.journalapp.ui.note.NoteActivity;
+import com.github.mikephil.charting.charts.BarChart;
+
+import java.util.List;
 
 /**
  * Main activity starts as the entry point for the app
@@ -19,6 +24,7 @@ import com.example.journalapp.R;
 public class MainActivity extends AppCompatActivity {
 
     private NoteListAdapter noteListAdapter;
+    private GraphViewModel graphViewModel;
 
     /**
      * onCreate is called when any instance or activity is created
@@ -29,9 +35,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         setNoteRecyclerView(); // initialize RecyclerView (display notes)
         createNoteObserver(); // observer to watch for changes in list of notes
         initMainMenu(); // initialize main menu buttons
+        // Create an instance of GraphViewModel
+        graphViewModel = new ViewModelProvider(this).get(GraphViewModel.class);
+
+        // Observe the LiveData from GraphViewModel to update the graph
+        graphViewModel.getAllNotesLiveData().observe(this, notes -> {
+            if (notes != null && !notes.isEmpty()) {
+                BarChart barChart = findViewById(R.id.barChart);
+                GraphHelper.setupBarChart(barChart, notes);
+            }
+        });
+        displayEmotionalStateGraph();
     }
 
     /**
@@ -70,6 +89,33 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    private void displayEmotionalStateGraph() {
+        // Get the NoteRepository instance
+        NoteRepository noteRepository = NoteRepository.getInstance(getApplication());
+
+        LiveData<List<Note>> allNotesLiveData = noteRepository.getAllNotesOrderedByLastEditedDateDesc();
+
+        allNotesLiveData.observe(this, notes -> {
+            // The list of notes has been updated, now you can use it to display the graph
+            List<Note> allNotes = notes;
+
+            // check if the list is not empty before displaying the graph
+            if (allNotes != null && !allNotes.isEmpty()) {
+                BarChart barChart = findViewById(R.id.barChart);
+
+                // Call the setupBarChart method from GraphHelper to display the graph
+                GraphHelper.setupBarChart(barChart, allNotes);
+            }
+
+            // Remove the observer after the initial update to prevent unnecessary updates
+            allNotesLiveData.removeObservers(this);
+        });
+    }
+
+
+
+
 
 
     /**
