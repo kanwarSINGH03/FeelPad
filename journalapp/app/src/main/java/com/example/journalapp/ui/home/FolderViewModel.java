@@ -55,5 +55,9 @@ public class FolderViewModel extends AndroidViewModel {
         return folderRepository.SearchNotesInFolder(folderId, query);
     }
 
+    public void updateFolderTitle(String providedTitle, String folderId){
+        folderRepository.updateFolderTitle(providedTitle, folderId);
+    }
+
 
 }

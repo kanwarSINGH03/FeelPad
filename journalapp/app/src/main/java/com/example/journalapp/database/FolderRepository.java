@@ -72,4 +72,10 @@ public class FolderRepository {
     public LiveData<List<Note>> SearchNotesInFolder(String folderId, String query){
         return folderDao.searchNotesInFolder(folderId, query);
     }
+
+    public void updateFolderTitle(String providedTitle, String folderId){
+        NoteDatabase.databaseWriteExecutor.execute(() -> {
+            folderDao.updateFolderTitle(providedTitle, folderId);
+        });
+    }
 }

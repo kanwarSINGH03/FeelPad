@@ -3,28 +3,24 @@ package com.example.journalapp.ui.main;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Filter;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Database;
 
 import com.example.journalapp.R;
-import com.example.journalapp.database.NoteDatabase;
 import com.example.journalapp.database.entity.Folder;
 import com.example.journalapp.ui.home.FolderViewModel;
 import com.example.journalapp.utils.ConversionUtil;
 
-import java.util.Date;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainNoteListActivity extends AppCompatActivity implements TopNavBarFragment.OnSearchQueryChangeListener, FilterFragment.PopupDialogListener {
@@ -34,7 +30,7 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
     private RecyclerView noteRecyclerView;
     private String folder_id;
 
-    private TextView noteListTitleTextView;
+    private EditText noteListTitleEditText;
     private ImageButton folderFilterImageButton;
 
     // For Searching
@@ -100,11 +96,27 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
     }
     // initialize components
     private void initComponents(Folder folder) {
-        noteListTitleTextView = findViewById(R.id.notes_list_folder_name);
+        noteListTitleEditText = findViewById(R.id.notes_list_folder_name);
         if (folder != null) {
-            noteListTitleTextView.setText(folder.getFolderName());
+            noteListTitleEditText.setText(folder.getFolderName());
+
+            // Add Text Change Listener
+            noteListTitleEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    folder.setFolderName(s.toString()); // Update the folder title
+                    folderViewModel.updateFolderTitle(s.toString(), folder.getFolderId()); // Save the updated title to database
+                }
+            });
         } else {
-            // Handle the case where the folder is null
             Toast.makeText(this, "Folder not found", Toast.LENGTH_SHORT).show();
         }
 
