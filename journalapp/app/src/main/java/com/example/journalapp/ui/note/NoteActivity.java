@@ -1338,7 +1338,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             Log.e("Exiting note", "Deleting note");
             noteViewModel.deleteNote(note);
         }
-        
+
          */
         if (title.isEmpty()){
             saveNoteTitle("Note");
