@@ -28,11 +28,8 @@ public class LaunchActivity extends AppCompatActivity implements NameDialogFragm
 
         setContentView(R.layout.activity_launch);
 
-        if (isFirstTime()) {
-            // First time logic
-            setFirstTimeFlag(false);
-        } else {
-
+        // if not first time, then go straight to next activity
+        if (!isFirstTime()){
             startActivity(new Intent(this, HomeActivity.class));
             finish();
         }
@@ -63,6 +60,7 @@ public class LaunchActivity extends AppCompatActivity implements NameDialogFragm
     private void showNameDialog() {
         NameDialogFragment dialog = new NameDialogFragment();
         dialog.show(getSupportFragmentManager(), "NameDialogFragment");
+
     }
 
     private void setFirstTimeFlag(boolean isFirstTime) {
@@ -75,11 +73,15 @@ public class LaunchActivity extends AppCompatActivity implements NameDialogFragm
     @Override
     public void onNameEntered(String name) {
         // Save the name in SharedPreferences or handle it as needed
-        // Example:
         SharedPreferences preferences = getSharedPreferences("MyPreferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("PreferredName", name);
         editor.apply();
+
+        // set the firstTimeflag after user enters their name
+        if (isFirstTime()) {
+            setFirstTimeFlag(false);
+        }
 
         // after this, start Activity
         Intent intent = new Intent(this, HomeActivity.class);
