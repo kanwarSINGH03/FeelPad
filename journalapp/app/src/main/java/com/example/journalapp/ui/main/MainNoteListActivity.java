@@ -26,6 +26,7 @@ import com.example.journalapp.R;
 import com.example.journalapp.database.entity.Folder;
 import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.ui.home.FolderViewModel;
+import com.example.journalapp.ui.home.HomeActivity;
 import com.example.journalapp.utils.ConversionUtil;
 
 import java.util.concurrent.Executors;
@@ -287,6 +288,14 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
         noteListAdapter.notifyItemRemoved(position);
 
         mainViewModel.deleteNote(noteToDelete);
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        // so dataset updates when going back
+        Intent goBack = new Intent(this, HomeActivity.class);
+        startActivity(goBack);
     }
 
 

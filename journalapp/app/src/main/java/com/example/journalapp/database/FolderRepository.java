@@ -14,17 +14,15 @@ import java.util.concurrent.Future;
 public class FolderRepository {
 
     private final NoteDao folderDao;
-    private final LiveData<List<Folder>> allFolders;
 
     public FolderRepository(Application application) {
         NoteDatabase noteDatabase = NoteDatabase.getNoteDatabase(application);
         folderDao = noteDatabase.noteDao();
-        allFolders = folderDao.getAllFolders();
     }
 
     // Retrieve all folders from the database
     public LiveData<List<Folder>> getAllFolders() {
-        return allFolders;
+        return folderDao.getAllFolders();
     }
 
     // Insert a new folder into the database
@@ -40,16 +38,6 @@ public class FolderRepository {
             folderDao.updateFolder(folder);
         });
     }
-
-    // Delete a folder from the database
-    /*
-    public void deleteFolder(Folder folder) {
-        NoteDatabase.databaseWriteExecutor.execute(() -> {
-            folderDao.deleteFolder(folder);
-        });
-    }
-
-     */
 
     public void deleteFolder(Folder folder){
         NoteDatabase.databaseWriteExecutor.execute(() ->{
@@ -93,6 +81,12 @@ public class FolderRepository {
     public void updateFolderTitle(String providedTitle, String folderId){
         NoteDatabase.databaseWriteExecutor.execute(() -> {
             folderDao.updateFolderTitle(providedTitle, folderId);
+        });
+    }
+
+    public void updateFolderTimestamp(String folderId, String timestamp){
+        NoteDatabase.databaseWriteExecutor.execute(() -> {
+           folderDao.updateFolderTimestamp(folderId, timestamp);
         });
     }
 }

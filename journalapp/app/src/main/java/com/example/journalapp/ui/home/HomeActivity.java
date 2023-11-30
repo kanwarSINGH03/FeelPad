@@ -23,6 +23,7 @@ import com.example.journalapp.ui.main.BottomNavBarFragment;
 import com.example.journalapp.ui.main.MainNoteListActivity;
 import com.example.journalapp.ui.main.MainViewModel;
 import com.example.journalapp.ui.main.TopNavBarFragment;
+import com.example.journalapp.utils.ConversionUtil;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -149,6 +150,7 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
     protected void onResume() {
         super.onResume();
         if (selectedFolderPosition != -1){
+            folderViewModel.updateFolderTimestamp(folderAdapter.getFolderAt(selectedFolderPosition).getFolderId(), ConversionUtil.getDateAsString());
             Log.e("ItemChange", "Notifying item changed at position " + selectedFolderPosition);
             folderAdapter.notifyItemChanged(selectedFolderPosition);
         }

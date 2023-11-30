@@ -176,12 +176,14 @@ public interface NoteDao {
 
     @Update
     void updateFolder(Folder folder);
-
     @Delete
     void deleteFolder(Folder folder);
 
     @Query("UPDATE folder_table SET folder_name = :providedTitle WHERE id = :folderId")
     void updateFolderTitle(String providedTitle, String folderId);
+
+    @Query("UPDATE folder_table SET last_modified = :lastModified WHERE id = :folderId")
+    void updateFolderTimestamp(String folderId, String lastModified);
 
     @Query("SELECT * FROM folder_table")
     LiveData<List<Folder>> getAllFolders();

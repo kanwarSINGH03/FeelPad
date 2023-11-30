@@ -23,9 +23,6 @@ public class Folder {
     @ColumnInfo(name = "create_date")
     private String create_date;
 
-    //@ColumnInfo(name = "emotion_percentage")
-    // private float emotionPercentage; // should be calculated as a sum of all note emotions
-
     @ColumnInfo(name ="total_emotion_value")
     private int totalEmotionValue; // sum of all notes emotionValue
 
@@ -35,6 +32,8 @@ public class Folder {
     private int iconResourceId;
     @ColumnInfo(name = "folder_color")
     private int folderColor;
+    @ColumnInfo(name = "last_modified")
+    private String lastModified;
 
     @ColumnInfo(name = "is_encrypted")
     private boolean ifEncrypted;
@@ -50,6 +49,7 @@ public class Folder {
         this.folderColor = folderColor;
         this.numItems = 0;
         this.totalEmotionValue = 0;
+        this.lastModified = getCreate_date();
     }
 
     public String getFolderId() {
@@ -141,6 +141,14 @@ public class Folder {
 
     public void setIfEncrypted(boolean ifEncrypted) {
         this.ifEncrypted = ifEncrypted;
+    }
+
+    public String getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(String lastModified) {
+        this.lastModified = lastModified;
     }
 
     @Override

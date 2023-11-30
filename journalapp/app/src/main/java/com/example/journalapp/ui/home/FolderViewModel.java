@@ -14,17 +14,15 @@ import java.util.List;
 public class FolderViewModel extends AndroidViewModel {
 
     private final FolderRepository folderRepository;
-    private final LiveData<List<Folder>> allFolders;
 
 
     public FolderViewModel(Application application) {
         super(application);
         folderRepository = new FolderRepository(application);
-        allFolders = folderRepository.getAllFolders();
     }
 
     public LiveData<List<Folder>> getAllFolders() {
-        return allFolders;
+        return folderRepository.getAllFolders();
     }
 
     public void CreateFolder(Folder folder) {
@@ -61,6 +59,10 @@ public class FolderViewModel extends AndroidViewModel {
 
     public void updateFolderTitle(String providedTitle, String folderId){
         folderRepository.updateFolderTitle(providedTitle, folderId);
+    }
+
+    public void updateFolderTimestamp(String folderId, String timestamp){
+        folderRepository.updateFolderTimestamp(folderId, timestamp);
     }
 
 
