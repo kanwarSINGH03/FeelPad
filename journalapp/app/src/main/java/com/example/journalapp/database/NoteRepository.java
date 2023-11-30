@@ -306,6 +306,12 @@ public class NoteRepository {
         return noteDao.searchNotesAndFilterEmotionDate(folderId, query, emotion, startDate, endDate);
     }
 
+    public void updateNoteLocation(String noteId, String markerLocation){
+        NoteDatabase.databaseWriteExecutor.execute(() ->{
+            noteDao.updateNoteLocation(noteId, markerLocation);
+        });
+    }
+
     // ==============================
     // Internal Methods
     // ==============================
@@ -343,6 +349,8 @@ public class NoteRepository {
         Log.e("CombinedText", "Combined text is:" + combinedTextBuilder.toString().trim());
         return combinedTextBuilder.toString().trim();
     }
+
+
 
 
 

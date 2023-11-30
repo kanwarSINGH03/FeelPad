@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -24,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.journalapp.R;
+import com.example.journalapp.database.entity.Note;
+import com.example.journalapp.ui.home.FolderViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,6 +43,8 @@ import com.google.android.gms.tasks.Task;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -60,10 +66,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //marker on create
     private MarkerOptions marker;
+    private String markerTitle;
 
     // current latlng
     private LatLng cur_latlng;
     private String cur_title;
+
+    // note
+    private Note note;
+    private NoteViewModel noteViewModel;
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
 
 
@@ -75,6 +88,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
+
+        if (intent.hasExtra("note_id")){
+            String note_id = intent.getStringExtra("note_id");
+
+            executorService.execute(() ->{
+                note = noteViewModel.getNoteById(note_id);
+            });
+
+        }
+        else{
+            Log.e("MapsActivity", "note_id has not been passed to MapsActivity");
+        }
 
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -121,6 +149,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 marker = new MarkerOptions()
                         .position(cur_latlng)
                         .title(cur_title);
+
+                // change the market title
+                markerTitle = marker.getTitle();
+
+                // after this, save to database
+                noteViewModel.updateNoteLocation(note.getId(), markerTitle);
+
             }
 
         });
@@ -142,7 +177,35 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     private void geoLocate(){
         Log.d(TAG,"geoLocate: geoLocating");
-        String searchString = mSearchText.getText().toString();
+        String searchString;
+
+        searchString = mSearchText.getText().toString();
+
+        Geocoder geocoder = new Geocoder(MapsActivity.this);
+        List<Address> list = new ArrayList<>();
+        try {
+            list = geocoder.getFromLocationName(searchString,1);
+        }catch (IOException e)
+        {
+            Log.d(TAG, "geoLocate: IOException: " + e.getMessage());
+        }
+
+        if(list.size()>0){
+            Address address =list.get(0);
+
+            Log.d(TAG, "geoLocate: found a location" + address.toString());
+
+            moveCamera(new LatLng(address.getLatitude(),address.getLongitude()),DEFAULT_ZOOM,
+                    address.getAddressLine(0));
+
+        }
+    }
+
+    private void initialGeoLocate(){
+        Log.d(TAG,"geoLocate: geoLocating");
+        String searchString;
+
+        searchString = markerTitle;
 
         Geocoder geocoder = new Geocoder(MapsActivity.this);
         List<Address> list = new ArrayList<>();
@@ -224,9 +287,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Log.d(TAG, "onMapReady: map is ready");
         mMap = googleMap;
 
+        markerTitle = note.getMarkerTitle();
+
         if(mLocationPermissionsGranted){
 
-            if(marker == null)
+            // if marker title empty (e.g no set location), then go to device location
+            if(markerTitle.isEmpty())
             {
                 getDeviceLocation();
 
@@ -240,6 +306,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
             }
+
+            // otherwise, we go to saved location
             else
 
             {
@@ -251,7 +319,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
-                mMap.addMarker(marker);
+                // mMap.addMarker(marker);
+                initialGeoLocate();// goes to location
                 moveCamera(cur_latlng,DEFAULT_ZOOM,cur_title);
 
 

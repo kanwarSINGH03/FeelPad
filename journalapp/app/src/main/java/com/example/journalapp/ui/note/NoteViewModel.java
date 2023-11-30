@@ -140,5 +140,9 @@ public class NoteViewModel extends AndroidViewModel {
         return noteRepository.getNoteItemsForNoteSync(noteId);
     }
 
+    public void updateNoteLocation(String noteId, String markerLocation){
+        noteRepository.updateNoteLocation(noteId, markerLocation);
+    }
+
 
 }

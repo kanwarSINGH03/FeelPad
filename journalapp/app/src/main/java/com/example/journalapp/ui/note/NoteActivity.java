@@ -390,7 +390,11 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private void initLocation(){
         ImageButton location = (ImageButton) findViewById(R.id.location);
         location.setOnClickListener(v -> {
+
             Intent intent = new Intent(NoteActivity.this, MapsActivity.class);
+
+            // give the noteid
+            intent.putExtra("note_id", note.getId());
             startActivity(intent);
         });
     }

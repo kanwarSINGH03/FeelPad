@@ -195,5 +195,8 @@ public interface NoteDao {
 
     @Query("SELECT * FROM note_table WHERE folder_id = :folderId")
     List<Note> getNotesByFolderIdSync(String folderId);
+
+    @Query("UPDATE note_table SET marker_title = :markerLocation WHERE id = :noteId ")
+    void updateNoteLocation(String noteId, String markerLocation);
 }
 

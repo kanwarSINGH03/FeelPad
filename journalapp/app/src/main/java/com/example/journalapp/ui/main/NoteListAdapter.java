@@ -141,6 +141,7 @@ public class NoteListAdapter extends ListAdapter<Note, NoteListAdapter.NoteViewH
         private FrameLayout subheaderAudioView;
         private TextView dateTextView;
         private ImageView emotionImageView;
+        private TextView locationTextView;
 
         // private TextView location
 
@@ -158,11 +159,16 @@ public class NoteListAdapter extends ListAdapter<Note, NoteListAdapter.NoteViewH
 
             dateTextView = itemView.findViewById(R.id.item_note_list_last_edited);
             emotionImageView = itemView.findViewById(R.id.item_note_list_emotion);
+            locationTextView = itemView.findViewById(R.id.item_note_list_location);
+
         }
 
         public void bind(Note note, NoteItemEntity firstNoteItem){
             // set the title
             titleTextView.setText(note.getTitle());
+
+            // set the location
+            locationTextView.setText(note.getMarkerTitle());
 
             // for subheader (depends on whether first item is a text or image)
             if (firstNoteItem != null) {
@@ -234,6 +240,8 @@ public class NoteListAdapter extends ListAdapter<Note, NoteListAdapter.NoteViewH
                     setBackgroundConstraintLayout(noteHolder,R.color.colorAccentYellow);
                     break;
             }
+
+
 
         }
 

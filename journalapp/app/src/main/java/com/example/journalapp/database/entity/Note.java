@@ -39,6 +39,9 @@ public class Note {
     @ColumnInfo(name = "folder_id")
     private String folderId;
 
+    @ColumnInfo(name = "marker_title")
+    private String markerTitle;
+
 
     /**
      * Constructor to create a new Note instance
@@ -53,6 +56,7 @@ public class Note {
         this.emotion = emotion;
         this.lastEditedDate = createdDate; // when creating a new Note, lastEditedDate will be same as creation, but can be updated
         this.folderId = folderId;
+        this.markerTitle = "";
     }
 
     @NonNull
@@ -113,5 +117,13 @@ public class Note {
 
     public void setFolderId(String folderId) {
         this.folderId = folderId;
+    }
+
+    public String getMarkerTitle() {
+        return markerTitle;
+    }
+
+    public void setMarkerTitle(String markerTitle) {
+        this.markerTitle = markerTitle;
     }
 }
