@@ -11,11 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.R;
-import com.example.journalapp.ui.exportpdf.SelectPdfContentsActivity;
-import com.example.journalapp.ui.note.NoteActivity;
-import com.example.journalapp.R;
 import com.example.journalapp.database.NoteRepository;
 import com.example.journalapp.database.entity.Note;
+import com.example.journalapp.ui.exportpdf.SelectPdfContentsActivity;
 import com.example.journalapp.ui.note.NoteActivity;
 import com.github.mikephil.charting.charts.BarChart;
 
@@ -66,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         arrowButton.setOnClickListener(v -> {
             // Handle the click for the arrow button here
-            Intent intent = new Intent(MainActivity.this,PdfActivity.class);
+            Intent intent = new Intent(MainActivity.this, PdfActivity.class);
             startActivity(intent);
         });
         combinePdfButton.setOnClickListener(v -> {
