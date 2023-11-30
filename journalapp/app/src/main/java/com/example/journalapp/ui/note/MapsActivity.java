@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -15,7 +16,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +55,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private EditText mSearchText;
     private ImageView mGps;
 
+    private Button save_button;
+    private ImageView saved_location;
+
+    //marker on create
+    private MarkerOptions marker;
+
+    // current latlng
+    private LatLng cur_latlng;
+    private String cur_title;
+
 
 
     private GoogleMap mMap;
@@ -67,6 +80,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(binding.getRoot());
         mSearchText = (EditText) findViewById(R.id.input_search);
         mGps =(ImageView) findViewById(R.id.ic_gps );
+        save_button = (Button) findViewById(R.id.save_button);
+        saved_location = (ImageView) findViewById(R.id.saved_location);
 
         getLocationPermission();
 
@@ -95,6 +110,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onClick(View v) {
                 Log.d(TAG, "onClick: clicked gps icon");
                 getDeviceLocation();
+            }
+        });
+
+        save_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Toast.makeText(MapsActivity.this,"Location saved",Toast.LENGTH_SHORT).show();
+                marker = new MarkerOptions()
+                        .position(cur_latlng)
+                        .title(cur_title);
+            }
+
+        });
+
+        saved_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(marker != null)
+                {
+                    mMap.addMarker(marker);
+                    moveCamera(marker.getPosition(),DEFAULT_ZOOM,marker.getTitle());
+                }
+                else
+                {
+                    Toast.makeText(MapsActivity.this,"No saved location yet",Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -158,10 +200,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
 
         if(!title.equals("My Location")){
-        MarkerOptions options = new MarkerOptions()
-                .position(latLng)
-                .title(title);
-        mMap.addMarker(options);
+            MarkerOptions options = new MarkerOptions()
+                    .position(latLng)
+                    .title(title);
+            mMap.addMarker(options);
+            cur_latlng = latLng;
+            cur_title = title;
         }
     }
 
@@ -181,15 +225,37 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         if(mLocationPermissionsGranted){
-            getDeviceLocation();
 
-            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    !=PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION)
-                    !=PackageManager.PERMISSION_GRANTED)
-            {return;}
-            mMap.setMyLocationEnabled(true);
-            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            if(marker == null)
+            {
+                getDeviceLocation();
+
+                if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        !=PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION)
+                        !=PackageManager.PERMISSION_GRANTED)
+                {return;}
+                mMap.setMyLocationEnabled(true);
+                mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+
+            }
+            else
+
+            {
+                if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        !=PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION)
+                        !=PackageManager.PERMISSION_GRANTED)
+                {return;}
+                mMap.setMyLocationEnabled(true);
+                mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+                mMap.addMarker(marker);
+                moveCamera(cur_latlng,DEFAULT_ZOOM,cur_title);
+
+
+            }
 
             init();
 

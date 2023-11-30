@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+
     <fragment
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
@@ -72,6 +73,24 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         app:srcCompat="@drawable/ic_gps" />
+
+    <Button
+        android:id="@+id/save_button"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/ic_gps"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="591dp"
+        android:text="Save" />
+
+    <ImageView
+        android:id="@+id/saved_location"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/backButton"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        app:srcCompat="@drawable/ic_note_location_button" />
 
 
 </RelativeLayout>
