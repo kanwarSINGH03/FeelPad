@@ -75,6 +75,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     private EditText titleEditText;
     private ImageButton openReactionMenu;
 
+    private ImageButton location;
+
     // Styling Variables
     private ImageButton boldButton;
     private ImageButton italicsButton;
@@ -256,7 +258,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         initOptionsMenu();
         initRecyclerView();
         initStyling();
-        initLocation();
+//        initLocation();
 
 
         if (intent.hasExtra("note_id")) {
@@ -368,20 +370,28 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
         openReactionMenu = findViewById(R.id.reactionMenu);
 
+
         openReactionMenu.setOnClickListener(v -> {
             Intent intent = new Intent(NoteActivity.this, ReactionActivity.class);
             saveNoteContent();
             mEmotionReturn.launch(intent);
         });
-    }
 
-    private void initLocation(){
-        ImageButton location = (ImageButton) findViewById(R.id.location);
+        location = (ImageButton) findViewById(R.id.location);
+
         location.setOnClickListener(v -> {
             Intent intent = new Intent(NoteActivity.this, MapsActivity.class);
             startActivity(intent);
         });
     }
+
+//    private void initLocation(){
+//        ImageButton location = (ImageButton) findViewById(R.id.location);
+//        location.setOnClickListener(v -> {
+//            Intent intent = new Intent(NoteActivity.this, MapsActivity.class);
+//            startActivity(intent);
+//        });
+//    }
 
     /**
      * Initialize the options menu in the notes page for additional actions
