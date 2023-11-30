@@ -84,7 +84,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Start Writing"
-                android:textColor="@color/theme_black"
+                android:textColor="?attr/backgroundColor"
                 android:textSize="17dp"
                 android:textStyle="bold"
                 android:backgroundTint="@color/theme_light_grey"
