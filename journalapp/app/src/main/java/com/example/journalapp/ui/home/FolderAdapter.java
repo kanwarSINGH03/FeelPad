@@ -36,6 +36,7 @@ import java.util.List;
 public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewHolder> {
 
     FolderClickListener folderClickListener;
+    FolderLongClickListener folderLongClickListener;
 
     public FolderAdapter(@NonNull DiffUtil.ItemCallback<Folder> diffCallback) {
         super(diffCallback);
@@ -63,6 +64,13 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
             intent.putExtra("folder_id", folder.getFolderId());
             v.getContext().startActivity(intent);
         });
+        //set long click listener for password
+        holder.itemView.setOnLongClickListener(v -> {
+            if (folderLongClickListener != null) {
+                folderLongClickListener.onFolderLongClicked(position);
+            }
+            return true;
+        });
 
     }
 
@@ -85,6 +93,14 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
 
     public void setFolderClickListener(FolderClickListener listener){
         this.folderClickListener = listener;
+    }
+
+    public interface FolderLongClickListener {
+        void onFolderLongClicked(int position);
+    }
+
+    public void setFolderLongClickListener(FolderLongClickListener listener) {
+        this.folderLongClickListener = listener;
     }
     static class FolderViewHolder extends RecyclerView.ViewHolder {
         private ImageView icon;
@@ -154,4 +170,6 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
             return oldItem.equals(newItem);
         }
     }
+
+
 }

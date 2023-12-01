@@ -38,8 +38,8 @@ public class Folder {
     @ColumnInfo(name = "is_encrypted")
     private boolean ifEncrypted;
 
-    @ColumnInfo(name = "encryption_password_hash")
-    private String encryptionPasswordHash; // 存储密码的哈希值，而非明文密码
+    @ColumnInfo(name = "password")
+    private String Password;
 
     public Folder(String folderName, String create_date,int iconResourceId, int folderColor) {
         this.folderId = UUID.randomUUID().toString();
@@ -84,12 +84,12 @@ public class Folder {
         this.ifEncrypted = isEncrypted;
     }
 
-    public String getEncryptionPasswordHash() {
-        return encryptionPasswordHash;
+    public String getPassword() {
+        return Password;
     }
 
-    public void setEncryptionPasswordHash(String encryptionPasswordHash) {
-        this.encryptionPasswordHash = encryptionPasswordHash;
+    public void setPassword(String Password) {
+        this.Password = Password;
     }
 
     public float getEmotionPercentage() {

@@ -135,6 +135,13 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
 
         folderAdapter.setFolderClickListener(this);
 
+        //set long click listener for password
+        folderAdapter.setFolderLongClickListener(position -> {
+            Folder folder = folderAdapter.getFolderAt(position);
+            PasswordActivity passwordActivity = new PasswordActivity();
+            passwordActivity.showPasswordDialog(folder);
+        });
+
         // callback
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(folderRecyclerView);
