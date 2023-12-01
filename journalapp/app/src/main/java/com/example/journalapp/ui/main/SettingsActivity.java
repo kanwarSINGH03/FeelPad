@@ -6,21 +6,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatToggleButton;
 
 import com.example.journalapp.R;
 import com.google.android.material.imageview.ShapeableImageView;
-import com.google.android.material.shape.Shapeable;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class SettingsActivity extends AppCompatActivity {
+
+    private ShapeableImageView b1;
+    private ShapeableImageView b2;
+    private ShapeableImageView b3;
+    private AppCompatToggleButton togglebtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,26 +83,62 @@ public class SettingsActivity extends AppCompatActivity {
             Toast.makeText(this,"Loading Theme Changes",Toast.LENGTH_SHORT).show();
         });
 
+        // check toggle button from shared preferences
+        togglebtn = findViewById(R.id.settings_background_toggle);
+
+        boolean savedToggleState = preferences.getBoolean("ToggleBackgroundState", false); // Default value is false
+        togglebtn.setChecked(savedToggleState);
+
+        togglebtn.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            saveButtonChecked(isChecked);
+
+            if (isChecked){
+                Toast.makeText(this, "You have enabled Note Editor Image Background", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Toast.makeText(this, "You have disabled Note Editor Image Background", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         // set up background
-        ShapeableImageView b1 = findViewById(R.id.settings_bg1);
-        ShapeableImageView b2 = findViewById(R.id.settings_bg2);
-        ShapeableImageView b3 = findViewById(R.id.settings_bg3);
+        b1 = findViewById(R.id.settings_bg1);
+        b2 = findViewById(R.id.settings_bg2);
+        b3 = findViewById(R.id.settings_bg3);
+
+
 
         b1.setOnClickListener(v ->{
-
+            saveThemeBackground(R.drawable.background1);
+            Toast.makeText(this, "Changed Note Editor Background", Toast.LENGTH_SHORT).show();
         });
         b2.setOnClickListener(v ->{
-
+            saveThemeBackground(R.drawable.background2);
+            Toast.makeText(this, "Changed Note Editor Background", Toast.LENGTH_SHORT).show();
         });
         b3.setOnClickListener(v ->{
-
+            saveThemeBackground(R.drawable.background3);
+            Toast.makeText(this, "Changed Note Editor Background", Toast.LENGTH_SHORT).show();
         });
+    }
+
+    private void saveThemeBackground(@DrawableRes int backgroundDrawable){
+        SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("NoteBackgroundDrawable", backgroundDrawable);
+        editor.apply();
     }
 
     private void saveThemeChoice(String themeName) {
         SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("SelectedTheme", themeName);
+        editor.apply();
+    }
+
+    private void saveButtonChecked(boolean isChecked){
+        SharedPreferences sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("ToggleBackgroundState", isChecked);
         editor.apply();
     }
 

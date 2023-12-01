@@ -234,6 +234,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         initOptionsMenu();
         initRecyclerView();
         initStyling();
+        initBackground();
         initLocation();
 
         // Check if the received intent is for a new note or existing note
@@ -476,6 +477,38 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(noteContentRecyclerView);
 
+    }
+
+    private void initBackground(){
+        // @TODO first check if button is toggled;
+        SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        boolean savedToggleState = preferences.getBoolean("ToggleBackgroundState", false);
+
+        if (savedToggleState){
+
+            Log.e("ToggleBug", "Background Image is toggled");
+
+            // if button is toggled: (use drawable)
+            int background = preferences.getInt("NoteBackgroundDrawable", 0);
+
+            if (background == 0){
+                // this means returned background was empty
+                // do nothing (keep background)
+            }
+            else{
+                // otherwise, switch background
+                noteContentRecyclerView.setBackgroundResource(background);
+            }
+
+        }
+        else{
+            // otherwise, if button is not toggled, keep the same thing
+        }
+
+
+
+
+        // if button is not toggled: dont change anything
     }
 
     // ==============================
