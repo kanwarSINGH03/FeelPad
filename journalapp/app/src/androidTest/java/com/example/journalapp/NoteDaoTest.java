@@ -95,7 +95,7 @@ public class NoteDaoTest {
     @Test
     public void searchNotes() throws Exception {
         // insert a test note
-        Note note = new Note("Test Title", "Test Date", 0);
+        Note note = new Note("Test Title", "Test Date", 0, "FolderID");
         noteDao.insertNote(note);
 
         // Search for notes containing "Test" in the title or content

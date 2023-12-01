@@ -2,9 +2,7 @@ package com.example.journalapp.utils;
 
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.util.Log;
 
-import com.example.journalapp.database.entity.Folder;
 import com.example.journalapp.database.entity.Note;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -91,7 +89,7 @@ public class GraphHelperUtil {
 
 
     }
-    private static float findAverageOfEachEmotion(List<Note> allNotes) {
+    public static float findAverageOfEachEmotion(List<Note> allNotes) {
         if (allNotes.isEmpty()) {
             return 0f;
         }
