@@ -185,7 +185,7 @@ public interface NoteDao {
      * @param startDate String date in ISO 8601 format
      * @param endDate String date in ISO 8601 format
      */
-    @Query("SELECT * FROM note_table WHERE folder_id = :folderId AND create_date BETWEEN :startDate AND :endDate AND (title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)) ORDER BY last_edited_date DESC")
+    @Query("SELECT * FROM note_table WHERE folder_id = :folderId AND create_date >= :startDate AND create_date < strftime('%Y-%m-%dT%H:%M:%S', :endDate, '+1 day') AND (title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)) ORDER BY last_edited_date DESC")
     LiveData<List<Note>> searchNotesAndFilterDate(String folderId, String query, String startDate, String endDate);
 
     /**
@@ -194,7 +194,7 @@ public interface NoteDao {
      * @param startDate String date in ISO 8601 format
      * @param endDate String date in ISO 8601 format
      */
-    @Query("SELECT * FROM note_table WHERE folder_id = :folderId AND emotion = :emotion AND create_date BETWEEN :startDate AND :endDate AND (title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)) ORDER BY last_edited_date DESC")
+    @Query("SELECT * FROM note_table WHERE folder_id = :folderId AND emotion = :emotion AND create_date >= :startDate AND create_date < strftime('%Y-%m-%dT%H:%M:%S', :endDate, '+1 day') AND (title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)) ORDER BY last_edited_date DESC")
     LiveData<List<Note>> searchNotesAndFilterEmotionDate(String folderId, String query, int emotion, String startDate, String endDate);
 
     // ==============================

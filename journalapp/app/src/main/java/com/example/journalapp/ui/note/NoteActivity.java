@@ -252,7 +252,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         }
         else{
             // catch
-            Toast.makeText(this,"Illegal note insertion", Toast.LENGTH_SHORT).show();
+            throw new RuntimeException("Illegal note insertion");
         }
 
     }
@@ -427,15 +427,12 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                     checkPermissionAndOpenCamera();
                     return true;
                 } else if (menuItem.getItemId() == R.id.item1b) {
-                    Toast.makeText(getApplicationContext(), "Add Photo/Video From Library", Toast.LENGTH_SHORT).show();
                     checkPermissionAndOpenGallery();
                     return true;
                 } else if (menuItem.getItemId() == R.id.item2) {
-                    Toast.makeText(getApplicationContext(), "Add Voice Note", Toast.LENGTH_SHORT).show();
                     checkPermissionAndVoiceRecord();
                     return true;
                 } else if (menuItem.getItemId() == R.id.item3) {
-                    Toast.makeText(getApplicationContext(), "Insert PDF", Toast.LENGTH_SHORT).show();
                     selectPdf();
                     return true;
                 } else if (menuItem.getItemId() == R.id.item5) {
@@ -470,9 +467,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         noteAdapter.setOnNoteItemChangeListener(this); // notified to save if changes are made to noteItems
         noteAdapter.setOnItemFocusChangeListener(this); // notified if focus is shifted
 
-        // @TODO set up to remove from highlights if outside of a recyclerView is pressed
-
-
         // For drag and dropping
         itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(noteContentRecyclerView);
@@ -480,7 +474,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     }
 
     private void initBackground(){
-        // @TODO first check if button is toggled;
         SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
         boolean savedToggleState = preferences.getBoolean("ToggleBackgroundState", false);
 
@@ -632,7 +625,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
             saveNoteContent();
 
-            Toast.makeText(this,"Added a new text box to the end of the items list", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Added a new text box to the Note", Toast.LENGTH_SHORT).show();
         });
 
     }
@@ -714,7 +707,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
     /**
      * Called when user long clicks a view
-     * Popup menu with options: delete, @TODO: move to different index
+     * Popup menu with options: delete,
      * @param position
      */
     @SuppressLint("ClickableViewAccessibility")
@@ -1096,7 +1089,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      * Case 2: Focused Item: EditText && !(isEmpty) -> Put image underneath EditText and create new EditText under image
      * Case 3: Focused Item: Image -> Put image underneath Image
      *
-     * @TODO missed case... more testing
      */
     public void insertMedia(Uri mediaUri, NoteItem.ItemType mediaType) {
         int focusedIndex = focusedItem;
@@ -1139,7 +1131,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             }
         } else {
             // If no item is focused, add the media at the end
-            // @TODO insert a text after?? (new case)
             noteItems.add(new NoteItem(mediaType, null, mediaUri.toString(), noteItems.size()));
             noteAdapter.notifyItemInserted(noteItems.size() - 1);
         }
@@ -1292,7 +1283,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         note.setTitle(title);
         noteViewModel.updateNoteTitle(note);
 
-        runOnUiThread(() -> Toast.makeText(NoteActivity.this, "Title Saved", Toast.LENGTH_SHORT).show());
+        // runOnUiThread(() -> Toast.makeText(NoteActivity.this, "Title Saved", Toast.LENGTH_SHORT).show());
     }
 
     /**
@@ -1368,7 +1359,7 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
             logNoteItems("Contents after saving");
 
             // Inform user of the save on the UI thread
-            runOnUiThread(() -> Toast.makeText(NoteActivity.this, "Note saved", Toast.LENGTH_SHORT).show());
+            // runOnUiThread(() -> Toast.makeText(NoteActivity.this, "Note saved", Toast.LENGTH_SHORT).show());
         });
     }
 
@@ -1423,7 +1414,6 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
         }
 
         // set last edited date before exiting
-        //@TODO currently, it only updates whenever note is visited, however should update if note is edited not visited
         noteViewModel.updateNoteLastEditedDate(getDateAsString(), note.getId());
         finish();
     }

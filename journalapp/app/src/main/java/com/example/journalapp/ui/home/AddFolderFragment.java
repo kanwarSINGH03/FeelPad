@@ -104,6 +104,8 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
                 Folder newFolder = new Folder(folderName, ConversionUtil.getDateAsString(), selectedIcon, selectedColor);
                 folderViewModel.insertFolder(newFolder);
 
+                Toast.makeText(getContext(), "Folder created", Toast.LENGTH_LONG).show();
+
                 dismiss(); // close fragment
             }
             else{

@@ -25,7 +25,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -225,7 +224,6 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     /**
      * Highlights the item at the given position in the adapter
      * @param position int position of item to be highlighted
-     * @TODO fix highlight UI
      */
     public void highlightItem(int position){
 
@@ -386,25 +384,6 @@ public class NoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 cardView.setCardElevation(0);
                 dragHandle.setVisibility(View.INVISIBLE);
             }
-            //int backgroundId = isHighlighted ? R.drawable.edit_text_background_highlight : R.drawable.edit_text_background;
-            //editText.setBackgroundResource(backgroundId);
-
-            // OnKeyListener for enter key. @TODO not being used at the moment.
-            /*
-            editText.setOnKeyListener(new View.OnKeyListener(){
-
-                @Override
-                public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                    if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == keyEvent.KEYCODE_ENTER){
-                        if (onKeyListener != null){
-                            onKeyListener.onEnterKeyPressed(getAdapterPosition());
-                        }
-                        return true; // consume event
-                    }
-                    return false; // do not consume event
-                }
-            });
-            */
 
         }
 

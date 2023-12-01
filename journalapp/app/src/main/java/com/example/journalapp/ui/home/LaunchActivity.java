@@ -3,6 +3,7 @@ package com.example.journalapp.ui.home;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -101,6 +102,7 @@ public class LaunchActivity extends AppCompatActivity implements NameDialogFragm
 
         // first-time-flag is set once user gives their name
         if (isFirstTime()) {
+            Log.e("FirstTimeFlag", "First Time Flag has been set to false");
             setFirstTimeFlag(false);
         }
 
