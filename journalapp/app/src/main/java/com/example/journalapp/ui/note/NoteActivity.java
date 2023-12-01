@@ -1280,8 +1280,14 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
      */
     public void saveNoteTitle(String title) {
         Log.d("TextWatcher", "Updating the title: " + title);
-        note.setTitle(title);
-        noteViewModel.updateNoteTitle(note);
+        try{
+            note.setTitle(title);
+            noteViewModel.updateNoteTitle(note);
+        }
+        catch(Exception e){
+            // do nothing
+            Log.e("SaveNoteTitle", "Error in SaveNoteTitle");
+        }
 
         // runOnUiThread(() -> Toast.makeText(NoteActivity.this, "Title Saved", Toast.LENGTH_SHORT).show());
     }

@@ -4,11 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -27,7 +27,6 @@ import android.widget.Toast;
 
 import com.example.journalapp.R;
 import com.example.journalapp.database.entity.Note;
-import com.example.journalapp.ui.home.FolderViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -63,6 +62,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private Button save_button;
     private ImageView saved_location;
+    private ImageButton searchBtn;
 
     //marker on create
     private MarkerOptions marker;
@@ -89,6 +89,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Apply the theme
+        SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        String themeName = preferences.getString("SelectedTheme", "DefaultTheme");
+        int themeId = getThemeId(themeName);
+        setTheme(themeId);
+
         Intent intent = getIntent();
         noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
 
@@ -106,10 +112,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        mSearchText = (EditText) findViewById(R.id.input_search);
+        mSearchText = (EditText) findViewById(R.id.maps_search_bar);
         mGps =(ImageView) findViewById(R.id.ic_gps );
-        save_button = (Button) findViewById(R.id.save_button);
-        saved_location = (ImageView) findViewById(R.id.saved_location);
+        save_button = (Button) findViewById(R.id.maps_save_btn);
+        saved_location = (ImageView) findViewById(R.id.maps_save_location_btn);
+        searchBtn = findViewById(R.id.maps_search_btn);
+
+        // set onclicklsitener
+        searchBtn.setOnClickListener(v ->{
+            geoLocate();
+        });
 
         getLocationPermission();
 
@@ -145,17 +157,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(MapsActivity.this,"Location saved",Toast.LENGTH_SHORT).show();
-                marker = new MarkerOptions()
-                        .position(cur_latlng)
-                        .title(cur_title);
+                if (!(cur_latlng == null || cur_title.isEmpty())){
+                    marker = new MarkerOptions()
+                            .position(cur_latlng)
+                            .title(cur_title);
 
-                // change the market title
-                markerTitle = marker.getTitle();
+                    // change the market title
+                    markerTitle = marker.getTitle();
 
-                // after this, save to database
-                noteViewModel.updateNoteLocation(note.getId(), markerTitle);
+                    // after this, save to database
+                    noteViewModel.updateNoteLocation(note.getId(), markerTitle);
 
+                    Toast.makeText(MapsActivity.this,"Location saved",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(MapsActivity.this, "Please choose a location first (Only Cities).", Toast.LENGTH_SHORT).show();
+                }
             }
 
         });
@@ -401,6 +418,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
 
             }
+        }
+    }
+
+    /**
+     * Retrieves the theme ID based on the provided theme name.
+     * Exists in every activity when applying the assigned theme
+     * @param themeName String themeName (from SharedPreferences)
+     * @return an integer representing the theme
+     */
+    private int getThemeId(String themeName) {
+        switch (themeName) {
+            case "Blushing Tomato":
+                return R.style.Theme_LightRed;
+            case "Dragon's Fury":
+                return R.style.Theme_Red;
+            case "Mermaid Tail":
+                return R.style.Theme_BlueGreen;
+            case "Elephant in the Room":
+                return R.style.Theme_Grey;
+            case "Stormy Monday":
+                return R.style.Theme_GreyBlue;
+            case "Sunshine Sneezing":
+                return R.style.Theme_Yellow;
+
+            default:
+                return R.style.Base_Theme;
         }
     }
 

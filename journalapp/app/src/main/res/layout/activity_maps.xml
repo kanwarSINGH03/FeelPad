@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
     <fragment
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:map="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,80 +17,98 @@
         tools:context=".MapsActivity" />
 
     <ImageButton
-        android:id="@+id/backButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/white_border"
+        android:id="@+id/maps_back_btn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:onClick="exitMap"
         android:scaleType="fitCenter"
-        android:src="@drawable/back" />
+        android:src="@drawable/ic_maps_back"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="15dp"/>
 
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:id="@+id/maps_search_holder"
+        android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
         android:elevation="10dp"
-        android:layout_toRightOf="@id/backButton"
-        android:background="@drawable/white_border"
-        android:id="@+id/relLayout1"
+        android:background="@color/white"
+        app:layout_constraintStart_toEndOf="@id/maps_back_btn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"
+        android:padding="12dp"
+
         >
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:id="@+id/ic_magnify"
+        <ImageButton
+            android:id="@+id/maps_search_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/ic_magnify"
+            android:src="@drawable/ic_maps_magnify_button"
+            android:backgroundTint="@android:color/transparent"
+            android:background="?attr/selectableItemBackgroundBorderless"
             />
+
         <EditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@id/ic_magnify"
+            android:id="@+id/maps_search_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:textSize="15sp"
             android:textColor="#000"
             android:gravity="center"
-            android:id="@+id/input_search"
             android:background="@null"
+            android:layout_toRightOf="@id/maps_search_btn"
             android:hint="Enter Address, City or Zipcode"
             android:imeOptions="actionSearch"
-
+            android:layout_marginStart="16dp"
+            android:maxLines="1"
             />
+
+
     </RelativeLayout>
 
     <ImageView
         android:id="@+id/ic_gps"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_below="@+id/relLayout1"
+        android:layout_below="@+id/maps_search_holder"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        app:srcCompat="@drawable/ic_gps" />
+        app:srcCompat="@drawable/ic_maps_my_location_btn"
+        app:layout_constraintTop_toBottomOf="@id/maps_search_holder"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="12dp"
+        />
 
     <Button
-        android:id="@+id/save_button"
+        android:id="@+id/maps_save_btn"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:layout_below="@+id/ic_gps"
-        android:layout_marginLeft="150dp"
-        android:layout_marginTop="591dp"
         android:text="Save"
-        android:backgroundTint="?attr/colorAccent"/>
+        android:textColor="@color/theme_black"
+        android:backgroundTint="?attr/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="18dp"/>
 
     <ImageView
-        android:id="@+id/saved_location"
+        android:id="@+id/maps_save_location_btn"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_below="@id/backButton"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        app:srcCompat="@drawable/ic_note_location_button" />
+        android:layout_below="@id/maps_back_btn"
+        app:srcCompat="@drawable/ic_note_location_button"
+        app:layout_constraintTop_toBottomOf="@id/maps_back_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:elevation="6dp"
+        />
 
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
