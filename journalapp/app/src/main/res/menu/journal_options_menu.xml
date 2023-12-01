@@ -35,9 +35,18 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/item5"
+        android:icon="@drawable/ic_note_menu_template"
         android:title="Add Template"
-        app:showAsAction="never" />
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/item5"
+                android:icon="@drawable/ic_note_menu_exercise"
+                android:title="Exercise Template"
+                app:showAsAction="never" />
+
+        </menu>
+    </item>
 
 
 </menu>

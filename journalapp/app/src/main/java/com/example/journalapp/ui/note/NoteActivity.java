@@ -438,7 +438,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
                     selectPdf();
                     return true;
                 } else if (menuItem.getItemId() == R.id.item5) {
-                    Toast.makeText(getApplicationContext(), "Add Template", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Adding Exercise Template", Toast.LENGTH_SHORT).show();
+                    addExerciseTemplate();
                     return true;
                 }
                 return true;
@@ -604,6 +605,39 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
     }
 
     /**
+     * Add a template to the note
+     */
+    private void addExerciseTemplate(){
+
+        // first we delete everything inside the note
+        noteItems.clear();
+
+        // we repopulate the note with our template
+        noteItems.add(0, new NoteItem(NoteItem.ItemType.TEXT, null, "<p dir=\"ltr\"><span style=\"color:#9BA7A9;\"><b>Name:</b></span></p>", 0));
+        noteItems.add(1, new NoteItem(NoteItem.ItemType.TEXT, null, "<p dir=\"ltr\">Morning <br>\n" +
+                "<span style=\"color:#F5D1C3;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#94AFA7;\">Food:</span></span></b></span><br>\n" +
+                "<span style=\"color:#F5D1C3;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F0BC68;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"><span style=\"color:#94AFA7;\">Workout</span></span></span></span></span></span></b></span><span style=\"color:#F5D1C3;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F0BC68;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"><span style=\"color:#94AFA7;\"> </span></span></span></span></span></span></b></span><span style=\"color:#F5D1C3;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F0BC68;\"><span style=\"color:#F0BC68;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"><span style=\"color:#94AFA7;\">Type</span></span></span></span></span></span></span></b></span><span style=\"color:#F5D1C3;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F0BC68;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"><span style=\"color:#94AFA7;\">:</span></span></span></span></span></span></b></span><span style=\"color:#F5D1C3;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"><span style=\"color:#94AFA7;\"> </span></span></span></span></span></b></span><br>\n" +
+                "<span style=\"color:#F5D1C3;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"><span style=\"color:#94AFA7;\">Exercise Time: </span></span></span></span></span></b></span><br>\n" +
+                "<span style=\"color:#F5D1C3;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"><span style=\"color:#94AFA7;\">Calories Cost</span></span></span></span></span></b></span><span style=\"color:#F5D1C3;\"><span style=\"color:#FFB6A3;\"><span style=\"color:#94AFA7;\">:</span></span></span></p>\n", 1));
+        noteItems.add(2, new NoteItem(NoteItem.ItemType.TEXT, null, "<p dir=\"ltr\">Afternoon <br>\n" +
+                "<b><span style=\"color:#FFB6A3;\">Food:</span></b><br>\n" +
+                "<b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F0BC68;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\">Workout</span></span></span></span></span></b><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F0BC68;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"> </span></span></span></span></span></b><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F0BC68;\"><span style=\"color:#F0BC68;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\">Type</span></span></span></span></span></span></b><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F0BC68;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\">:</span></span></span></span></span></b><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"> </span></span></span></span></b><br>\n" +
+                "<b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\">Exercise Time: </span></span></span></span></b><br>\n" +
+                "<b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\">Calories Cost</span></span></span></span></b><span style=\"color:#FFB6A3;\">:</span></p>\n", 2));
+        noteItems.add(3, new NoteItem(NoteItem.ItemType.TEXT, null, "<p dir=\"ltr\"><u>Night</u><br>\n" +
+                "<span style=\"color:#F0BC68;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F0BC68;\">Food:</span></span></b></span><br>\n" +
+                "<span style=\"color:#F0BC68;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F0BC68;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"><span style=\"color:#F0BC68;\">Workout</span></span></span></span></span></span></b></span><span style=\"color:#F0BC68;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F0BC68;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"><span style=\"color:#F0BC68;\"> </span></span></span></span></span></span></b></span><span style=\"color:#F0BC68;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F0BC68;\"><span style=\"color:#F0BC68;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"><span style=\"color:#F0BC68;\">Type</span></span></span></span></span></span></span></b></span><span style=\"color:#F0BC68;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F0BC68;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"><span style=\"color:#F0BC68;\">:</span></span></span></span></span></span></b></span><span style=\"color:#F0BC68;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"><span style=\"color:#F0BC68;\"> </span></span></span></span></span></b></span><br>\n" +
+                "<span style=\"color:#F0BC68;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"><span style=\"color:#F0BC68;\">Exercise Time: </span></span></span></span></span></b></span><br>\n" +
+                "<span style=\"color:#F0BC68;\"><b><span style=\"color:#FFB6A3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#F5D1C3;\"><span style=\"color:#94AFA7;\"><span style=\"color:#F0BC68;\">Calories Cost</span></span></span></span></span></b></span><span style=\"color:#F0BC68;\"><span style=\"color:#FFB6A3;\">:</span></span></p>\n", 3));
+        noteItems.add(4, new NoteItem(NoteItem.ItemType.TEXT, null, "<p dir=\"ltr\">Sleep Hours:</p>\n", 4));
+        noteItems.add(5, new NoteItem(NoteItem.ItemType.TEXT, null, "<p dir=\"ltr\"><b>&#127945; Be football player!</b>&#127944;</p>\n", 5));
+
+        noteAdapter.notifyDataSetChanged();
+
+
+    }
+
+    /**
      * Callback Interface for the adapter to implement.
      */
     public interface TextFormattingHandler{
@@ -742,6 +776,8 @@ public class NoteActivity extends AppCompatActivity implements NoteAdapter.OnNot
 
 
     }
+
+
 
 
     // ==============================
