@@ -34,7 +34,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // add top navbar fragment
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.topNavBarFragmentContainer, TopNavBarFragment.newInstance(true, false))
+                .replace(R.id.topNavBarFragmentContainer, TopNavBarFragment.newInstance(true, false, ""))
                 .commit();
 
         getSupportFragmentManager().beginTransaction()

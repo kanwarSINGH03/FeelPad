@@ -36,7 +36,7 @@ public class LaunchActivity extends AppCompatActivity implements NameDialogFragm
 
         // add top navbar fragment
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.topNavBarFragmentContainer, TopNavBarFragment.newInstance(true, false))
+                .replace(R.id.topNavBarFragmentContainer, TopNavBarFragment.newInstance(true, false, ""))
                 .commit();
 
         // add bottom navbar fragment

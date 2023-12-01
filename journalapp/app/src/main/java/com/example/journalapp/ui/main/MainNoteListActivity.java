@@ -108,7 +108,7 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
 
         // add top navbar fragment
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.topNavBarFragmentContainer, TopNavBarFragment.newInstance(false, true))
+                .replace(R.id.topNavBarFragmentContainer, TopNavBarFragment.newInstance(false, true, folder_id))
                 .commit();
 
         getSupportFragmentManager().beginTransaction()

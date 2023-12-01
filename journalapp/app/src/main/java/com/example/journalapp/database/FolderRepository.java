@@ -74,6 +74,10 @@ public class FolderRepository {
         return folderDao.getAllNotesFromFolderOrderByLastEditedDateDesc(folderId);
     }
 
+    public List<Note> getAllNotesFromFolderOrderByLastEditedDateDescSync(String folderId){
+        return folderDao.getAllNotesFromFolderOrderByLastEditedDateDescSync(folderId);
+    }
+
     public LiveData<List<Note>> SearchNotesInFolder(String folderId, String query){
         return folderDao.searchNotesInFolder(folderId, query);
     }
