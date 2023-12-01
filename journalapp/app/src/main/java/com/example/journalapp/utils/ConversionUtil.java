@@ -122,4 +122,12 @@ public class ConversionUtil {
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         return sdf.format(new Date(timestamp));
     }
+
+    public static String trimDateToDay(String fullDateTime) {
+        if (fullDateTime != null && !fullDateTime.isEmpty()) {
+            String[] parts = fullDateTime.split("T");
+            return parts[0];
+        }
+        return fullDateTime;
+    }
 }

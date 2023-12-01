@@ -57,7 +57,9 @@ dependencies {
     implementation("androidx.media3:media3-ui:1.1.1")
     implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
     implementation("com.github.chrisbanes:PhotoView:2.0.0")
-    implementation("it.xabaras.android:recyclerview-swipedecorator:1.4");
+    implementation("it.xabaras.android:recyclerview-swipedecorator:1.4")
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation("androidx.test:core:1.5.0")
@@ -71,5 +73,4 @@ dependencies {
     androidTestImplementation("androidx.room:room-testing:2.6.0")
     androidTestImplementation("org.robolectric:robolectric:4.11.1")
     androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
-    implementation ("com.google.android.gms:play-services-location:21.0.1")
 }

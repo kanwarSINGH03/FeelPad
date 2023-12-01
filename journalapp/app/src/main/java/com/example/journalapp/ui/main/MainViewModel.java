@@ -94,4 +94,7 @@ public class MainViewModel extends AndroidViewModel {
         return noteRepository.searchNotesAndFilterEmotionDate(folderId, query, emotion, startDate, endDate);
     }
 
+    public LiveData<List<Note>> getNotesFromLast30Days(){
+        return noteRepository.getNotesFromLast30Days();
+    }
 }

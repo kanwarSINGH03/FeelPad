@@ -14,6 +14,7 @@ import com.example.journalapp.database.entity.NoteFtsEntity;
 import com.example.journalapp.database.entity.NoteItemEntity;
 import com.example.journalapp.database.entity.Folder;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -201,5 +202,10 @@ public interface NoteDao {
 
     @Query("UPDATE note_table SET marker_title = :markerLocation WHERE id = :noteId ")
     void updateNoteLocation(String noteId, String markerLocation);
+
+    @Query("SELECT * FROM note_table WHERE create_date >= :thirtyDaysAgoIso ORDER BY create_date DESC")
+    LiveData<List<Note>> getNotesFromLast30Days(String thirtyDaysAgoIso);
+
+
 }
 

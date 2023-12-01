@@ -13,7 +13,11 @@ import com.example.journalapp.ui.note.NoteItem;
 import com.example.journalapp.utils.ConversionUtil;
 import com.example.journalapp.utils.ItemTypeConverter;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Repository class to manage interactions with database
@@ -312,9 +316,26 @@ public class NoteRepository {
         });
     }
 
+    public LiveData<List<Note>> getNotesFromLast30Days(){
+        return noteDao.getNotesFromLast30Days(getThirtyDaysAgo());
+    }
+
+
+
     // ==============================
     // Internal Methods
     // ==============================
+
+    private String getThirtyDaysAgo(){
+        SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC")); // Set the timezone to UTC
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -30);
+        String thirtyDaysAgoIso = iso8601Format.format(calendar.getTime());
+
+        return thirtyDaysAgoIso;
+    }
 
     /**
      * Synchronizes (updates) the NoteFtsEntity with a corresponding Note (given its ID)
@@ -349,6 +370,8 @@ public class NoteRepository {
         Log.e("CombinedText", "Combined text is:" + combinedTextBuilder.toString().trim());
         return combinedTextBuilder.toString().trim();
     }
+
+
 
 
 

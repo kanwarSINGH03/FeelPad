@@ -24,6 +24,8 @@ import com.example.journalapp.ui.main.MainNoteListActivity;
 import com.example.journalapp.ui.main.MainViewModel;
 import com.example.journalapp.ui.main.TopNavBarFragment;
 import com.example.journalapp.utils.ConversionUtil;
+import com.example.journalapp.utils.GraphHelperUtil;
+import com.github.mikephil.charting.charts.BarChart;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
 
     private FolderAdapter folderAdapter;
     private FolderViewModel folderViewModel;
+    private MainViewModel mainViewModel;
     private int selectedFolderPosition = -1;
 
     private RecyclerView folderRecyclerView;
@@ -94,6 +97,7 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
         initRecyclerView(); // init recyclerView to display notes
         createNoteObserver(); // observer to watch for changes in list of notes
         initButtons(); // initialize buttons
+        initGraph();
 
     }
 
@@ -186,6 +190,21 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
         else{
             folderViewModel.deleteFolder(folderToDelete);
         }
+    }
+
+    private void initGraph(){
+        // observe livedata of all folders to update the graph
+
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
+        mainViewModel.getNotesFromLast30Days().observe(this, notes ->{
+            if (notes != null && !notes.isEmpty()) {
+                BarChart barChart = findViewById(R.id.barChart);
+                GraphHelperUtil.setupBarChart(barChart, notes);
+            }
+        });
+
+
     }
 
 
