@@ -43,17 +43,14 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
 
     // UI Components
     private TextView userNameTextView;
-    private MaterialButton changeNameBtn;
-    private MaterialButton themesBtn;
-
+    private MaterialButton changeNameBtn, themesBtn;
     private FolderAdapter folderAdapter;
     private FolderViewModel folderViewModel;
     private MainViewModel mainViewModel;
+    private RecyclerView folderRecyclerView;
     private int selectedFolderPosition = -1;
 
-    private RecyclerView folderRecyclerView;
-
-    // for deleting folders
+    // TouchHelper Callback for deleting folders onSwipe
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
         @Override
@@ -108,22 +105,32 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
         initRecyclerView(); // init recyclerView to display notes
         createNoteObserver(); // observer to watch for changes in list of notes
         initButtons(); // initialize buttons
-        initGraph();
+        initGraph(); // emotions graph
 
     }
 
+    // ==============================
+    // REGION: UI Initialization
+    // ==============================
+
+    /**
+     * Initializes UI
+     */
     private void initButtons(){
+
+        // set up UI
         userNameTextView = findViewById(R.id.userNameTextView);
         changeNameBtn = findViewById(R.id.home_left_btn);
         themesBtn = findViewById(R.id.home_right_btn);
 
+        // populate preferred name
         SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
         userNameTextView.setText(preferences.getString("PreferredName","Esteemed Guest"));
 
+        // -- On Click Listeners -- //
 
         changeNameBtn.setOnClickListener(v ->{
             showNameDialog();
-
         });
 
         themesBtn.setOnClickListener(v ->{
@@ -132,59 +139,17 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
             startActivity(intent);
         });
 
-        // set on click listeners
     }
 
-    private void showNameDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("What name would you like to be called by?");
-
-        // inflate layout
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_change_name, null);
-        builder.setView(dialogView);
-
-        TextInputEditText editTextName = dialogView.findViewById(R.id.edit_text_name);
-
-        // Set up the buttons
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String name = editTextName.getText().toString();
-
-                // Change the name to new text and save to SharedPreferences
-                userNameTextView.setText(name);
-
-                SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString("PreferredName", name);
-                editor.apply();
-
-
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
-    }
-
-
-
-    private void createNoteObserver(){
-        folderViewModel = new ViewModelProvider(this).get(FolderViewModel.class);
-        folderViewModel.getAllFolders().observe(this, folders -> folderAdapter.submitList(folders));
-    }
-
+    /**
+     * Initialize the RecyclerView
+     */
     private void initRecyclerView(){
         // Initialize recyclerview and adapter
         folderRecyclerView = findViewById(R.id.folderRecyclerView);
         folderAdapter = new FolderAdapter(new FolderAdapter.NoteDiff());
 
-        // set up recyclerview
+        // set up recyclerview as a grid
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2) {
             @Override
             public boolean canScrollVertically() {
@@ -194,37 +159,208 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
         folderRecyclerView.setLayoutManager(layoutManager);
         folderRecyclerView.setAdapter(folderAdapter);
 
+        // for Callback from adapter when a folder is clicked
         folderAdapter.setFolderClickListener(this);
 
+        // for Callback from adapter when a folder is held
         folderAdapter.setFolderLongClickListener(position -> {
+
+            // prompt user to encrypt, decrypt
             Folder folder = folderAdapter.getFolderAt(position);
             showPasswordDialogEncrypt(folder);
         });
 
-        // callback
+        // for Callback from activity when folder is swiped (delete)
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(folderRecyclerView);
 
     }
 
+    /**
+     * Give the Adapter list of all folders
+     */
+    private void createNoteObserver(){
+        folderViewModel = new ViewModelProvider(this).get(FolderViewModel.class);
+        folderViewModel.getAllFolders().observe(this, folders -> folderAdapter.submitList(folders));
+    }
+
+    /**
+     * Initialize the emotion graph
+     */
+    private void initGraph(){
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
+        // Dynamic graph observing notes from last 30 days
+        mainViewModel.getNotesFromLast30Days().observe(this, notes ->{
+            if (notes != null && !notes.isEmpty()) {
+                BarChart barChart = findViewById(R.id.barChart);
+                GraphHelperUtil.setupBarChart(barChart, notes);
+            }
+        });
+
+
+    }
+
+    // ==============================
+    // REGION: Popups
+    // ==============================
+
+    /**
+     * Dialog to change the preferred name
+     */
+    private void showNameDialog(){
+
+        // -- Build the AlertDialog -- //
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("What name would you like to be called by?");
+
+        // inflate layout
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_change_name, null);
+        builder.setView(dialogView);
+
+        TextInputEditText editTextName = dialogView.findViewById(R.id.edit_text_name);
+
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            String name = editTextName.getText().toString();
+
+            // Change the name to new text and save to SharedPreferences
+            userNameTextView.setText(name);
+
+            SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("PreferredName", name);
+            editor.apply();
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+    /**
+     * Dialog to ask to encrypt/decrypt a folder
+     * Specifically called when a folder is long-clicked
+     * @param folder Folder object
+     */
+    public void showPasswordDialogEncrypt(Folder folder) {
+
+        // -- Build the AlertDialog -- //
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(folder.getEncrypted() ? "Enter Password to Remove Encryption" : "Encrypt Folder"); // change title based on if encrypted
+
+        // inflate layout
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_ask_password, null);
+        builder.setView(dialogView);
+
+        TextInputEditText editTextPassword = dialogView.findViewById(R.id.edit_text_password);
+        editTextPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+        // if encrypted, decrypt; if not, then encrypt
+        builder.setPositiveButton(folder.getEncrypted() ? "Decrypt" : "Encrypt", (dialog, which) -> {
+            String password = editTextPassword.getText().toString(); // password i
+
+            if (folder.getEncrypted()) {
+
+                // decrypt and compare password
+                String decryptedPassword = CryptoUtil.decrypt(folder.getPassword());
+                if (password.equals(decryptedPassword)) {
+
+                    // if password is correct, remove encryption
+                    folder.setIsEncrypted(false);
+                    folder.setPassword(null);
+                    updateFolderInDatabase(folder);
+                }
+                else {
+                    Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+
+                // if not encrypted, then ask to encrypt
+                if (!password.isEmpty()){
+                    String encryptedPassword = CryptoUtil.encrypt(password);
+                    folder.setIsEncrypted(true);
+                    folder.setPassword(encryptedPassword);
+                    updateFolderInDatabase(folder);
+                }
+                else{
+                    Toast.makeText(this, "Password cannot be empty", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+    /**
+     * Dialog before opening a folder's contents
+     * Checks if encrypted, and if it is, then asks for a password
+     * Specifically called when a folder is clicked
+     * @param folder Folder object
+     */
+    public void showPasswordDialogOpen(Folder folder) {
+
+        // if encrypted, ask for password before opening
+        if (folder.getEncrypted()) {
+
+            // -- Build the AlertDialog -- //
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Enter Password to Open Folder");
+
+            // inflate layout
+            View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_ask_password, null);
+            builder.setView(dialogView);
+
+            TextInputEditText editTextPassword = dialogView.findViewById(R.id.edit_text_password);
+            editTextPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+
+            builder.setPositiveButton("Unlock", (dialog, which) -> {
+                String enteredPassword = editTextPassword.getText().toString();
+
+                // decrypt password from database
+                String decryptedPassword = CryptoUtil.decrypt(folder.getPassword());
+
+                // check if both passwords are equal
+                if (enteredPassword.equals(decryptedPassword)) {
+
+                    // open folder
+                    Intent intent = new Intent(this, MainNoteListActivity.class);
+                    intent.putExtra("folder_id", folder.getFolderId());
+                    startActivity(intent);
+                }
+                else {
+                    Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+            builder.show();
+
+        } else {
+            // non-encrypted => go straight into folder
+            Intent intent = new Intent(this, MainNoteListActivity.class);
+            intent.putExtra("folder_id", folder.getFolderId());
+            startActivity(intent);
+        }
+    }
+
+    // ==============================
+    // REGION: Other
+    // ==============================
     @Override
     public void onFolderClicked(int position){
         this.selectedFolderPosition = position;
 
+        // before opening, check if there is password and ask for it
         showPasswordDialogOpen(folderAdapter.getFolderAt(position));
-
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (selectedFolderPosition != -1){
-            folderViewModel.updateFolderTimestamp(folderAdapter.getFolderAt(selectedFolderPosition).getFolderId(), ConversionUtil.getDateAsString());
-            Log.e("ItemChange", "Notifying item changed at position " + selectedFolderPosition);
-            folderAdapter.notifyItemChanged(selectedFolderPosition);
-        }
-    }
-
+    /**
+     * Retrieves the theme ID based on the provided theme name.
+     * Exists in every activity when applying the assigned theme
+     * @param themeName String themeName (from SharedPreferences)
+     * @return an integer representing the theme
+     */
     private int getThemeId(String themeName) {
         switch (themeName) {
             case "Blushing Tomato":
@@ -245,6 +381,10 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
         }
     }
 
+    /**
+     * Deletes a folder at a specified position
+     * @param position int position in the RecyclerView
+     */
     private void deleteItem(int position){
         Folder folderToDelete = folderAdapter.getFolderAt(position);
         folderAdapter.removeFolderAt(position);
@@ -257,101 +397,10 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
         }
     }
 
-    private void initGraph(){
-        // observe livedata of all folders to update the graph
-
-        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-
-        mainViewModel.getNotesFromLast30Days().observe(this, notes ->{
-            if (notes != null && !notes.isEmpty()) {
-                BarChart barChart = findViewById(R.id.barChart);
-                GraphHelperUtil.setupBarChart(barChart, notes);
-            }
-        });
-
-
-    }
-
-    public void showPasswordDialogEncrypt(Folder folder) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        builder.setView(input);
-
-        if (folder.getEncrypted()) {
-            builder.setTitle("Enter Password to Remove Encryption");
-            builder.setPositiveButton("Decrypt", (dialog, which) -> {
-                String enteredPassword = input.getText().toString();
-
-                // decrypt the stored password to read
-                String decryptedPassword = CryptoUtil.decrypt(folder.getPassword());
-                if (enteredPassword.equals(decryptedPassword)) {
-                    folder.setIsEncrypted(false);
-                    folder.setPassword(null);
-                    updateFolderInDatabase(folder);
-                } else {
-                    Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            builder.setTitle("Encrypt Folder");
-            builder.setPositiveButton("Encrypt", (dialog, which) -> {
-                String password = input.getText().toString();
-                if (!password.isEmpty()){
-
-                    // encrypt password before saving
-                    String encryptedPassword = CryptoUtil.encrypt(password);
-                    folder.setIsEncrypted(true);
-                    folder.setPassword(encryptedPassword);
-                    updateFolderInDatabase(folder);
-
-                }
-                else{
-                    Toast.makeText(this, "Password cannot be empty", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-        builder.show();
-    }
-
-
-    public void showPasswordDialogOpen(Folder folder) {
-
-        if (folder.getEncrypted()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            final EditText input = new EditText(this);
-            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            builder.setView(input);
-
-
-            builder.setTitle("Enter Password to Open Folder");
-            builder.setPositiveButton("Decrypt", (dialog, which) -> {
-                String enteredPassword = input.getText().toString();
-                // Decrypt the stored password
-                String decryptedPassword = CryptoUtil.decrypt(folder.getPassword());
-
-                if (enteredPassword.equals(decryptedPassword)) {
-
-                    // if password is correct
-                    Intent intent = new Intent(this, MainNoteListActivity.class);
-                    intent.putExtra("folder_id", folder.getFolderId());
-                    startActivity(intent);
-                } else {
-
-                    Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show();
-                }
-            });
-            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-            builder.show();
-        }
-        else{
-            // go straight into the intent
-            Intent intent = new Intent(this, MainNoteListActivity.class);
-            intent.putExtra("folder_id", folder.getFolderId());
-            startActivity(intent);
-        }
-    }
+    /**
+     * Uses a background thread to update a folder in the database
+     * @param folder
+     */
     private void updateFolderInDatabase(Folder folder) {
         new Thread(()-> {
             folderViewModel.updateFolder(folder);
@@ -361,6 +410,18 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
     @Override
     protected void onPause() {
         super.onPause();
+
+        // when user leaves, we destroy the activity to prevent memory leaks
         finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (selectedFolderPosition != -1){
+            folderViewModel.updateFolderTimestamp(folderAdapter.getFolderAt(selectedFolderPosition).getFolderId(), ConversionUtil.getDateAsString());
+            Log.e("ItemChange", "Notifying item changed at position " + selectedFolderPosition);
+            folderAdapter.notifyItemChanged(selectedFolderPosition);
+        }
     }
 }

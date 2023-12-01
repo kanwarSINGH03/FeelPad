@@ -37,15 +37,20 @@ import java.util.Objects;
 
 public class AddFolderFragment extends BottomSheetDialogFragment {
 
+    // UI
     private MaterialButton btnCancel;
     private MaterialButton btnCreate;
     private TextInputLayout editTextHolder;
     private TextInputEditText editTextFolderName;
-
-    private int selectedColor = -1;
-    private int selectedIcon;
     private FolderViewModel folderViewModel;
 
+    // Temp Vars
+    private int selectedColor = -1;
+    private int selectedIcon;
+
+    /**
+     * Default empty constructor
+     */
     public AddFolderFragment(){
         // empty constructor
     }
@@ -61,7 +66,7 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // inflate layout
         return inflater.inflate(R.layout.fragment_add_folder, container, false);
     }
 
@@ -69,36 +74,33 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // initialize buttons and editText
+        // initialize UI Components
         btnCancel = view.findViewById(R.id.folder_add_cancel_button);
         btnCreate = view.findViewById(R.id.folder_add_create_button);
         editTextHolder = view.findViewById(R.id.folder_add_title_holder);
         editTextFolderName = view.findViewById(R.id.folder_add_title);
 
-
         // initialize color circles
         initColorCircles(view);
 
-
-        // Handle button listeners
         btnCancel.setOnClickListener(v ->{
-
             dismiss();
-
         });
 
+        // when create button is pressed, verify the data
         btnCreate.setOnClickListener(v ->{
             // Take title data from input
             String folderName = Objects.requireNonNull(editTextFolderName.getText()).toString();
 
             // check if folderName is empty and check if user has not chosen color
             if (!folderName.isEmpty() && selectedColor != -1){
+
                 // pass the folder title
                 if (selectedIcon == 0){
                     selectedIcon = R.drawable.ic_folder_icon1;
                 }
 
-                // Create a new folder
+                // create a new folder
                 Folder newFolder = new Folder(folderName, ConversionUtil.getDateAsString(), selectedIcon, selectedColor);
                 folderViewModel.insertFolder(newFolder);
 
@@ -119,11 +121,19 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
 
         });
 
+        // if user presses icon, do icon popup
         editTextHolder.setStartIconOnClickListener(v ->{
             showIconSelectionDialog();
         });
 
-        // TODO: Implement color selection and other functionalities
+        initBottomSheet(); // initialize bottom sheet behaviour
+
+    }
+
+    /**
+     * Initializes the Bottom Sheet behaviour (e.g. how much of the sheet shows)
+     */
+    private void initBottomSheet(){
         FrameLayout bottomSheet = (FrameLayout) getDialog().findViewById(com.google.android.material.R.id.design_bottom_sheet);
         BottomSheetBehavior<FrameLayout> bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
 
@@ -135,21 +145,26 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
         bottomSheetBehavior.setPeekHeight(screenHeight/2);
     }
 
+    /**
+     * Initializes the Color Circles UI component in the fragment
+     * @param view
+     */
     private void initColorCircles(View view) {
-        int[] colorViewIds = {R.id.colorCircle1, R.id.colorCircle2,R.id.colorCircle3, R.id.colorCircle4, R.id.colorCircle5, R.id.colorCircle6}; // Add all color view IDs
+        int[] colorViewIds = {R.id.colorCircle1, R.id.colorCircle2,R.id.colorCircle3, R.id.colorCircle4, R.id.colorCircle5, R.id.colorCircle6}; // add all color view IDs
 
         for (int id : colorViewIds) {
             View colorView = view.findViewById(id);
             colorView.setOnClickListener(v -> {
-                // Reset all views
+
+                // reset all views
                 for (int innerId : colorViewIds) {
                     view.findViewById(innerId).setSelected(false);
                 }
 
-                // Select the clicked one
+                // select clicked one
                 v.setSelected(true);
 
-                // get background tint color
+                // get background tint color from clicked one
                 ColorStateList tintList = ViewCompat.getBackgroundTintList(v);
                 if (tintList != null){
                     selectedColor = tintList.getDefaultColor(); // returns as a color value in ARGB format
@@ -158,19 +173,24 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
         }
     }
 
+    /**
+     * A separate dialog to show all icons the user can choose from
+     */
     private void showIconSelectionDialog() {
+        // inlate layout and setup grid
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View view = inflater.inflate(R.layout.fragment_icon_grid, null);
         GridView gridView = view.findViewById(R.id.gridView);
 
-        // Load array of Drawable ID's
+        // load array of Drawable ID's (50)
         TypedArray ta = getResources().obtainTypedArray(R.array.icon_array);
         Integer[] icons = new Integer[ta.length()];
         for (int i = 0; i < ta.length(); i++) {
             icons[i] = ta.getResourceId(i, 0);
         }
-        ta.recycle();
+        ta.recycle(); // recycle after to save memory
 
+        // create a custom adapter
         ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_list_item_1, icons) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -189,18 +209,19 @@ public class AddFolderFragment extends BottomSheetDialogFragment {
         };
         gridView.setAdapter(adapter);
 
+        // -- Build the alert dialog -- //
         final AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setView(view)
                 .create();
 
+        // each icon has an listener
         gridView.setOnItemClickListener((parent, view1, position, id) -> {
             selectedIcon = icons[position];
             editTextHolder.setStartIconDrawable(selectedIcon);
-            // Dismiss the dialog
             dialog.dismiss();
         });
 
-        // Set the background color of the dialog
+        // set background color of dialog
         Window window = dialog.getWindow();
         if (window != null) {
             window.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getContext(), R.color.white_smoke)));

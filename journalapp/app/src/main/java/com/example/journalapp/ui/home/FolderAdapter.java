@@ -38,6 +38,10 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
     FolderClickListener folderClickListener;
     FolderLongClickListener folderLongClickListener;
 
+    /**
+     * Constructor for FolderAdapter
+     * @param diffCallback
+     */
     public FolderAdapter(@NonNull DiffUtil.ItemCallback<Folder> diffCallback) {
         super(diffCallback);
     }
@@ -55,12 +59,14 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
         Folder folder = getItem(position);
         holder.bind(folder);
 
+        // handle Callback to activity when a folder is clicked
         holder.itemView.setOnClickListener(v ->{
 
             folderClickListener.onFolderClicked(position);
 
         });
 
+        // handle Callback to activity when a folder is long clicked
         holder.itemView.setOnLongClickListener(v -> {
             if (folderLongClickListener != null) {
                 folderLongClickListener.onFolderLongClicked(position);
@@ -72,12 +78,21 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
 
     }
 
+    /**
+     * Retrieve the Folder at a given position in a list
+     * @param position int position inside the database
+     * @return Folder object
+     */
     public Folder getFolderAt(int position){
         return getItem(position);
     }
 
+    /**
+     * Remove a folder at a given position in the list
+     * @param position int position inside the database
+     * @return Folder object
+     */
     public void removeFolderAt(int position) {
-        // Create a new list that excludes the item at the specified position
         List<Folder> currentList = new ArrayList<>(getCurrentList());
         if (position >= 0 && position < currentList.size()) {
             currentList.remove(position);
@@ -85,22 +100,44 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
         }
     }
 
+    /**
+     * Callback click interface for the attached Activity
+     */
     public interface FolderClickListener {
         void onFolderClicked(int position);
     }
 
+    /**
+     * Callback long-click interface for the attached Activity
+     */
     public interface FolderLongClickListener {
         void onFolderLongClicked(int position);
     }
 
+    /**
+     * Set the listener
+     * Usually done from the activity => adapter.setlistener(this)
+     * @param listener
+     */
     public void setFolderLongClickListener(FolderLongClickListener listener){
         this.folderLongClickListener = listener;
     }
 
+    /**
+     * Set the listener
+     * Usually done from the activity => adapter.setlistener(this)
+     * @param listener
+     */
     public void setFolderClickListener(FolderClickListener listener){
         this.folderClickListener = listener;
     }
+
+    /**
+     * Class that represents the viewHolder for each folder
+     */
     static class FolderViewHolder extends RecyclerView.ViewHolder {
+
+        // UI Components
         private ImageView icon;
         private TextView title;
         private ProgressBar dataBar;
@@ -130,14 +167,20 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
                 }
                 folderHolder.setBackground(rippleDrawable);
             }
+
+            // set other UI
             icon.setImageResource(folder.getIconResourceId());
             title.setText(folder.getFolderName());
 
-            // dataBar.setProgress((int) folder.getEmotionPercentage());
+            // Update progress bar
             updateProgressBar(folder.getEmotionPercentage());
             noteCount.setText(String.valueOf(folder.getNumItems()));
         }
 
+        /**
+         * Updates the progress bar
+         * @param emotionPercentage float percentage of average emotion level inside the folder
+         */
         private void updateProgressBar(float emotionPercentage){
             Log.e("EmotionPercentage", "emotion percentage is: " + emotionPercentage);
             int color;

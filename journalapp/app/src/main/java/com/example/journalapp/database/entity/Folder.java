@@ -48,7 +48,7 @@ public class Folder {
     private boolean ifEncrypted;
 
     @ColumnInfo(name = "password")
-    private String password;
+    private String password; // stored as an encrypted password
 
     /**
      * Constructor to create a Folder entity
