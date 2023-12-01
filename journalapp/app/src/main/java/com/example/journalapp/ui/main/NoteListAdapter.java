@@ -168,7 +168,12 @@ public class NoteListAdapter extends ListAdapter<Note, NoteListAdapter.NoteViewH
             titleTextView.setText(note.getTitle());
 
             // set the location
-            locationTextView.setText(note.getMarkerTitle());
+            if (note.getMarkerTitle().isEmpty()){
+                locationTextView.setText("Nowhere");
+            }
+            else{
+                locationTextView.setText(note.getMarkerTitle());
+            }
 
             // for subheader (depends on whether first item is a text or image)
             if (firstNoteItem != null) {

@@ -167,7 +167,8 @@
                         app:layout_constraintStart_toStartOf="@id/textView2"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintWidth_percent="1"
-                        android:visibility="visible"/>
+                        android:visibility="visible"
+                        android:layout_marginTop="18dp"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>

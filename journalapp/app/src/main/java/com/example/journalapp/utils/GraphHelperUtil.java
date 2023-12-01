@@ -1,5 +1,6 @@
 package com.example.journalapp.utils;
 
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.util.Log;
 
@@ -56,6 +57,12 @@ public class GraphHelperUtil {
             xIndex++;
         }
 
+        // check dark mode
+        int currentNightMode = barchart.getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        boolean isDarkMode = currentNightMode == Configuration.UI_MODE_NIGHT_YES;
+        // Set colors based on the mode
+        int textColor = isDarkMode ? Color.WHITE : Color.BLACK;
+
         YAxis yAxis = barchart.getAxisLeft();
         yAxis.setTextSize(10f);
         yAxis.setAxisMinimum(1f);
@@ -64,7 +71,8 @@ public class GraphHelperUtil {
         List<String> yValues = Arrays.asList("","😡", "😠", "😐", "😊", "😄");
         yAxis.setValueFormatter(new IndexAxisValueFormatter(yValues));
 
-        BarDataSet dataset = new BarDataSet(entries, "Emotional State Overview");
+        BarDataSet dataset = new BarDataSet(entries, "");
+        dataset.setDrawValues(false);
         dataset.setColors(ColorTemplate.MATERIAL_COLORS);
         dataset.setValueTextSize(14f);
         BarData barData = new BarData(dataset);
@@ -76,6 +84,7 @@ public class GraphHelperUtil {
         XAxis xAxis = barchart.getXAxis();
         xAxis.setAxisMinimum(0f);
         xAxis.setAxisMaximum(30f);
+        xAxis.setTextColor(textColor);
         barchart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         barchart.getXAxis().setGranularity(1f);
         barchart.getXAxis().setGranularityEnabled(true);
