@@ -114,6 +114,11 @@ public class ConversionUtil {
         return currentDateStr;
     }
 
+    /**
+     * Converts a Long date value into a String date using ISO 8601 format
+     * @param timestamp Long date value
+     * @return String date value in ISO 8601
+     */
     public static String convertLongToIso8601(Long timestamp) {
         if (timestamp == null) {
             return null;
@@ -123,6 +128,12 @@ public class ConversionUtil {
         return sdf.format(new Date(timestamp));
     }
 
+    /**
+     * Used to trim an ISO 8601 String date value's time
+     * Keeps only the Month, year, day
+     * @param fullDateTime a String in ISO 8601 format
+     * @return a trimmed ISO 8601 date only keeping the month, year, and date
+     */
     public static String trimDateToDay(String fullDateTime) {
         if (fullDateTime != null && !fullDateTime.isEmpty()) {
             String[] parts = fullDateTime.split("T");

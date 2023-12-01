@@ -250,6 +250,9 @@ public class NoteListAdapter extends ListAdapter<Note, NoteListAdapter.NoteViewH
 
         }
 
+        /**
+         * Sets all UI to be GONE
+         */
         private void setAllGone(){
             subheaderTextView.setVisibility(View.GONE);
             subheaderImageView.setVisibility(View.GONE);
@@ -257,6 +260,11 @@ public class NoteListAdapter extends ListAdapter<Note, NoteListAdapter.NoteViewH
             subheaderAudioView.setVisibility(View.GONE);
         }
 
+        /**
+         * Sets the background of the Constraint Layout to be a ripple with a colored background
+         * @param constraintLayout
+         * @param resId
+         */
         private void setBackgroundConstraintLayout(ConstraintLayout constraintLayout, @ColorRes int resId){
             int color = ContextCompat.getColor(itemView.getContext(), resId);
             Drawable background = ContextCompat.getDrawable(itemView.getContext(), R.drawable.ripple_note);

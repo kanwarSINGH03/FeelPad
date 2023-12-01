@@ -23,6 +23,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    // UI Components
     private ShapeableImageView b1;
     private ShapeableImageView b2;
     private ShapeableImageView b3;
@@ -49,11 +50,23 @@ public class SettingsActivity extends AppCompatActivity {
                 .replace(R.id.bottomNavBarFragmentContainer, BottomNavBarFragment.newInstance("settings", "none", null))
                 .commit();
 
-        // Define the color names and corresponding icon resource IDs
+        initColorThemeDropdown();
+        initNoteBackgroundTheme();
+
+    }
+
+    /**
+     * Initialize the color theme dropdown menu
+     */
+    private void initColorThemeDropdown(){
+
+        // define the color names and corresponding icon resource ids
         String[] colorNames = {"Blushing Tomato", "Dragon's Fury", "Mermaid Tail", "Elephant in the Room", "Stormy Monday", "Sunshine Sneezing"};
         Integer[] colorIcons = {R.drawable.ic_folder_color_light_red, R.drawable.ic_folder_color_red, R.drawable.ic_folder_color_blue_green, R.drawable.ic_folder_color_grey, R.drawable.ic_folder_color_grey_blue, R.drawable.ic_folder_color_yellow};
 
         TextInputLayout dropdownLayout = findViewById(R.id.settings_layout_dropdown);
+
+        // Custom adapter to populate the dropdown menu
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.item_dropdown, R.id.text, colorNames) {
             @NonNull
             @Override
@@ -74,21 +87,32 @@ public class SettingsActivity extends AppCompatActivity {
             }
         };
 
+        // set the adapter to AutoCompleteTextView
         AutoCompleteTextView autoCompleteTextView = dropdownLayout.findViewById(R.id.settings_auto_complete_text_view);
         autoCompleteTextView.setAdapter(adapter);
+
+        // listeners for each menu item
+        // when selected, apply theme selection and changes
         autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
             String selectedColor = colorNames[position];
             saveThemeChoice(selectedColor);
             applyTheme(selectedColor);
             Toast.makeText(this,"Loading Theme Changes",Toast.LENGTH_SHORT).show();
         });
+    }
+
+    /**
+     * Initialize note background theme selection
+     */
+    private void initNoteBackgroundTheme(){
 
         // check toggle button from shared preferences
+        SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
         togglebtn = findViewById(R.id.settings_background_toggle);
-
         boolean savedToggleState = preferences.getBoolean("ToggleBackgroundState", false); // Default value is false
         togglebtn.setChecked(savedToggleState);
 
+        // if toggle button is pressed, save button to SharedPreferences
         togglebtn.setOnCheckedChangeListener((buttonView, isChecked) -> {
             saveButtonChecked(isChecked);
 
@@ -121,13 +145,10 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
-    private void saveThemeBackground(@DrawableRes int backgroundDrawable){
-        SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("NoteBackgroundDrawable", backgroundDrawable);
-        editor.apply();
-    }
-
+    /**
+     * Saves the selected theme name to SharedPreferences
+     * @param themeName
+     */
     private void saveThemeChoice(String themeName) {
         SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -135,6 +156,21 @@ public class SettingsActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    /**
+     * Saves the selected background drawable resource ID to sharedPreferences
+     * @param backgroundDrawable
+     */
+    private void saveThemeBackground(@DrawableRes int backgroundDrawable){
+        SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("NoteBackgroundDrawable", backgroundDrawable);
+        editor.apply();
+    }
+
+    /**
+     * Saves the state of the background toggle button to SharedPreferences
+     * @param isChecked
+     */
     private void saveButtonChecked(boolean isChecked){
         SharedPreferences sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -142,16 +178,24 @@ public class SettingsActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    /**
+     * Applys the theme by restarting the activity
+     * @param themeName String theme name
+     */
     private void applyTheme(String themeName) {
         int themeId = getThemeId(themeName);
         setTheme(themeId);
 
-        // Restart the activity or the entire app for the theme to take effect
-        // Example: restarting the current activity
         finish();
         startActivity(getIntent());
     }
 
+    /**
+     * Retrieves the theme ID based on the provided theme name.
+     * Exists in every activity when applying the assigned theme
+     * @param themeName String themeName (from SharedPreferences)
+     * @return an integer representing the theme
+     */
     private int getThemeId(String themeName) {
         switch (themeName) {
             case "Blushing Tomato":

@@ -9,6 +9,9 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * Utility to encrypt and decrypt strings using AES Algorithm
+ */
 public class CryptoUtil {
 
     private static final String ALGORITHM = "AES";
@@ -16,6 +19,11 @@ public class CryptoUtil {
     private static final String KEY = "YourSecretKeyHere";
     private static final byte[] IV = new byte[16];
 
+    /**
+     * Encrypts plain text string using AES algorithm
+     * @param value the plain text string to be encrypted
+     * @return String the encrypted string in Base64 encoding
+     */
     public static String encrypt(String value) {
         try {
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);
@@ -27,6 +35,11 @@ public class CryptoUtil {
         }
     }
 
+    /**
+     * Decrypts an encryped string using AES algorithm
+     * @param encrypted the encrypted string in Base64 encoding to be decrypted
+     * @return String the decrypted plain text string
+     */
     public static String decrypt(String encrypted) {
         try {
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);
@@ -38,8 +51,12 @@ public class CryptoUtil {
         }
     }
 
+    /**
+     * Generates a SecretKeySpec based on the predefined key string
+     * @return a SecretKeySpec for use with AES Algorithm
+     */
     private static Key generateKey() {
-        byte[] keyBytes = new byte[16]; // Choose 16, 24, or 32 bytes for 128, 192, or 256 bits
+        byte[] keyBytes = new byte[16];
         byte[] keyStringBytes = KEY.getBytes(StandardCharsets.UTF_8);
 
         System.arraycopy(keyStringBytes, 0, keyBytes, 0, Math.min(keyStringBytes.length, keyBytes.length));

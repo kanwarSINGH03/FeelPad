@@ -6,11 +6,9 @@ import android.graphics.Canvas;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.TypedValue;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,18 +36,19 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
     private FolderViewModel folderViewModel;
     private MainViewModel mainViewModel;
     private RecyclerView noteRecyclerView;
-    private String folder_id;
 
+    // UI
     private EditText noteListTitleEditText;
     private ImageButton folderFilterImageButton;
 
     // For Searching
+    private String folderId;
     private String currentSearchQuery = "";
     private Long filterStartDate = null;
     private Long filterEndDate = null;
     private String filterEmotion = null;
 
-    // swipe watcher for deleting notes
+    // ItemTouchHelper Callback for onSwipe deletion of notes
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
         @Override
@@ -98,25 +97,28 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
         Intent intent = getIntent();
 
         if (intent.hasExtra("folder_id")){
-            folder_id = intent.getStringExtra("folder_id");
-            createNoteObserverForFolder(folder_id);
+            folderId = intent.getStringExtra("folder_id");
+            createNoteObserverForFolder(folderId);
         }
         else{
-            // catch
-            Toast.makeText(this, "Illegal folder", Toast.LENGTH_SHORT).show();
+            throw new RuntimeException("Illegal folder created");
         }
 
         // add top navbar fragment
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.topNavBarFragmentContainer, TopNavBarFragment.newInstance(false, true, folder_id))
+                .replace(R.id.topNavBarFragmentContainer, TopNavBarFragment.newInstance(false, true, folderId))
                 .commit();
 
+        // add bottom navbar fragment
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.bottomNavBarFragmentContainer, BottomNavBarFragment.newInstance("add", "note", folder_id))
+                .replace(R.id.bottomNavBarFragmentContainer, BottomNavBarFragment.newInstance("add", "note", folderId))
                 .commit();
 
     }
 
+    /**
+     * Initialize the Recyclerview
+     */
     private void initRecyclerView(){
         noteRecyclerView = findViewById(R.id.notes_list_recyclerview);
         noteListAdapter = new NoteListAdapter(new NoteListAdapter.NoteDiff(),mainViewModel,this);
@@ -128,22 +130,33 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
         itemTouchHelper.attachToRecyclerView(noteRecyclerView);
     }
 
+    /**
+     * Attaches the Observer to the RecyclerView to always have all notes belonging to folder
+     * @param folderId
+     */
     private void createNoteObserverForFolder(String folderId){
         folderViewModel = new ViewModelProvider(this).get(FolderViewModel.class);
         folderViewModel.getAllNotesFromFolderOrderByLastEditedDateDesc(folderId).observe(this, notes -> noteListAdapter.submitList(notes));
 
+        // Synchronously retrieve folder using id
         Executors.newSingleThreadExecutor().execute(() -> {
             Folder folder = folderViewModel.getFolderByIdSync(folderId);
             runOnUiThread(() -> initComponents(folder));
         });
     }
-    // initialize components
+
+    /**
+     * Initialize UI components
+     * @param folder Folder object
+     */
     private void initComponents(Folder folder) {
+        // set title
         noteListTitleEditText = findViewById(R.id.notes_list_folder_name);
         if (folder != null) {
+
+            // Check if user changes title of folder
             noteListTitleEditText.setText(folder.getFolderName());
 
-            // Add Text Change Listener
             noteListTitleEditText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -163,6 +176,7 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
             Toast.makeText(this, "Folder not found", Toast.LENGTH_SHORT).show();
         }
 
+        // When filter button is pressed
         folderFilterImageButton = findViewById(R.id.notes_list_filter_btn);
         folderFilterImageButton.setOnClickListener(v ->{
             FilterFragment filterFragment = new FilterFragment();
@@ -171,27 +185,38 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
 
     }
 
+    /**
+     * Callback for search query being changed
+     * from the FilterFragment
+     * @param query
+     */
     @Override
     public void onSearchQueryChanged(String query){
         currentSearchQuery = query;
         updateNotesList();
-
-
     }
+
+    /**
+     * Callback that user has confirmed their filtering options
+     * @param startDate Long startDate (Long is returned by MaterialDatePickers)
+     * @param endDate Long endDate (Long is returned by MaterialDatePickers)
+     * @param emotion int from 1-5 for the emotion
+     */
     @Override
     public void onConfirmButtonClick(Long startDate, Long endDate, String emotion) {
-        // Reset filters
+
+        // first, reset filters
         filterStartDate = null;
         filterEndDate = null;
         filterEmotion = null;
 
-        // Check if valid dates are selected
+        // check if dates are valid
         boolean validDatesSelected = startDate != null && endDate != null && startDate <= endDate;
 
-        // Check if a valid emotion is selected
+        // check if emotions are valid
         boolean validEmotionSelected = emotion != null && !emotion.equals("N/A");
 
-        // Update filters based on user selection
+        // update filters based on selection
         if (validDatesSelected) {
             filterStartDate = startDate;
             filterEndDate = endDate;
@@ -204,40 +229,47 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
         updateNotesList();
     }
 
+    /**
+     * Updates the observable notes list based on Search Query and/or filters
+     */
     private void updateNotesList() {
-        if (filterStartDate != null && filterEndDate != null && filterEmotion != null) {
-            // Filter by both dates and emotion
-            int emotionNum = emotionStringToInt(filterEmotion);
 
+        // Case 1: Search a query while filtering both date and emotion
+        if (filterStartDate != null && filterEndDate != null && filterEmotion != null) {
+            int emotionNum = emotionStringToInt(filterEmotion);
             if (emotionNum != 0){
-                mainViewModel.searchNotesAndFilterEmotionDate(folder_id, currentSearchQuery, emotionNum, ConversionUtil.convertLongToIso8601(filterStartDate), ConversionUtil.convertLongToIso8601(filterEndDate))
+                mainViewModel.searchNotesAndFilterEmotionDate(folderId, currentSearchQuery, emotionNum, ConversionUtil.convertLongToIso8601(filterStartDate), ConversionUtil.convertLongToIso8601(filterEndDate))
                         .observe(this, notes -> noteListAdapter.submitList(notes));
             }
 
-
+        // Case 2: Search a query while filtering only date
         } else if (filterStartDate != null && filterEndDate != null) {
-
-            mainViewModel.searchNotesAndFilterDate(folder_id, currentSearchQuery, ConversionUtil.convertLongToIso8601(filterStartDate), ConversionUtil.convertLongToIso8601(filterEndDate))
+            mainViewModel.searchNotesAndFilterDate(folderId, currentSearchQuery, ConversionUtil.convertLongToIso8601(filterStartDate), ConversionUtil.convertLongToIso8601(filterEndDate))
                     .observe(this, notes -> noteListAdapter.submitList(notes));
 
-
+        // Case 3: Search a query while filtering only emotion
         } else if (filterEmotion != null) {
-            // Filter only by emotion
-
             int emotionNum = emotionStringToInt(filterEmotion);
-
             if (emotionNum != 0){
-                mainViewModel.searchNotesAndFilterEmotion(folder_id, currentSearchQuery, emotionNum)
+                mainViewModel.searchNotesAndFilterEmotion(folderId, currentSearchQuery, emotionNum)
                         .observe(this, notes -> noteListAdapter.submitList(notes));
             }
 
-        } else {
+        }
+
+        // Default Case: Only searching for a query
+        else {
             // Search without filters
-            mainViewModel.searchNotesInFolder(folder_id, currentSearchQuery)
+            mainViewModel.searchNotesInFolder(folderId, currentSearchQuery)
                     .observe(this, notes -> noteListAdapter.submitList(notes));
         }
     }
 
+    /**
+     * Helper function to retrieve the integer from an emotion name (string)
+     * @param emotion String emotion of the emotion names
+     * @return int 1-5 representing emotion
+     */
     private int emotionStringToInt(String emotion){
         switch (emotion){
             case "Horrible":
@@ -262,6 +294,12 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
 
     }
 
+    /**
+     * Retrieves the theme ID based on the provided theme name.
+     * Exists in every activity when applying the assigned theme
+     * @param themeName String themeName (from SharedPreferences)
+     * @return an integer representing the theme
+     */
     private int getThemeId(String themeName) {
         switch (themeName) {
             case "Blushing Tomato":
@@ -282,6 +320,11 @@ public class MainNoteListActivity extends AppCompatActivity implements TopNavBar
         }
     }
 
+    /**
+     * Deletes an item from the RecyclerView
+     * Specifically for use from onSwipe delete callback
+     * @param position
+     */
     private void deleteItem(int position){
         Note noteToDelete = noteListAdapter.getNoteAt(position);
         noteListAdapter.removeNoteAt(position);

@@ -52,21 +52,34 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Fragment representing the top navigation bar
+ */
 public class TopNavBarFragment extends Fragment {
 
+    // ARGS
     private static final String ARG_HIDE_BUTTONS = "hideButtons";
     private static final String ARG_SEARCH_TOGGLE = "searchToggle";
     private static final String ARG_FOLDER_ID = "folderId";
-    private OnSearchQueryChangeListener searchQueryChangeListener;
-    public static final int REQUEST_CODE = 1234;
-    private List<Note> folderNotes;
-    private String folderId;
 
+    // UI
     FolderViewModel folderViewModel;
     NoteViewModel noteViewModel;
 
+    // Other
+    private OnSearchQueryChangeListener searchQueryChangeListener;
+    private List<Note> folderNotes;
+    private String folderId;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    public static final int REQUEST_CODE = 1234;
 
+    /**
+     * Creates a new instance with specified arguments
+     * @param hideButtons bool; true: hide buttons, false: buttons visible
+     * @param searchToggle bool; true: can use search function, false: can't use search
+     * @param folderId String; expected value if `searchToggle` is true
+     * @return
+     */
     public static TopNavBarFragment newInstance(boolean hideButtons, boolean searchToggle, String folderId){
         TopNavBarFragment fragment = new TopNavBarFragment();
         Bundle args = new Bundle();
@@ -89,13 +102,12 @@ public class TopNavBarFragment extends Fragment {
                         + " must implement OnSearchQueryChangeListener");
             }
         }
-
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // inflate layout
         return inflater.inflate(R.layout.nav_bar_top, container, false);
     }
 
@@ -103,6 +115,7 @@ public class TopNavBarFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // UI initialization
         ImageButton btnSearchExpand = view.findViewById(R.id.btnSearchExpand);
         ImageButton btnMenu = view.findViewById(R.id.btnMenu);
         SearchView noteSearchView = view.findViewById(R.id.noteSearchView);
@@ -113,51 +126,42 @@ public class TopNavBarFragment extends Fragment {
             btnMenu.setVisibility(View.GONE);
         }
 
-        btnSearchExpand.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnSearchExpand.setOnClickListener(v -> {
 
-                // if SearchView is not visible, then toggle
-                if (noteSearchView.getVisibility() == View.GONE){
-                    noteSearchView.setVisibility(View.VISIBLE);
+            // if SearchView is not visible, then toggle
+            if (noteSearchView.getVisibility() == View.GONE){
+                noteSearchView.setVisibility(View.VISIBLE);
 
-                    // change the icon as well for search expansion/minimize
-                    btnSearchExpand.setImageResource(R.drawable.ic_top_nav_bar_minimize_search);
+                // change the icon as well for search expansion/minimize
+                btnSearchExpand.setImageResource(R.drawable.ic_top_nav_bar_minimize_search);
 
-                } else{
-                    noteSearchView.setVisibility(View.GONE);
-                    btnSearchExpand.setImageResource(R.drawable.ic_top_nav_bar_expand_search);
+            } else{
+                noteSearchView.setVisibility(View.GONE);
+                btnSearchExpand.setImageResource(R.drawable.ic_top_nav_bar_expand_search);
+            }
+        });
+
+        btnMenu.setOnClickListener(v -> {
+            // set up popup menu
+            PopupMenu popupMenu = new PopupMenu(getContext(), view);
+            popupMenu.getMenuInflater().inflate(R.menu.note_list_menu, popupMenu.getMenu());
+
+            // handle menu item choices and clicks
+            popupMenu.setOnMenuItemClickListener(menuItem ->{
+                if (menuItem.getItemId() == R.id.action_export_to_pdf){
+                    getPdfPermissions();
+                    pdfBookletGeneration();
+                    Toast.makeText(getContext(), "Exporting to PDF", Toast.LENGTH_SHORT).show();
                 }
-            }
+                return true;
+            });
+
+            popupMenu.show();
+
         });
 
-        btnMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle menu button click
-
-                // set up popup menu
-                PopupMenu popupMenu = new PopupMenu(getContext(), view);
-                popupMenu.getMenuInflater().inflate(R.menu.note_list_menu, popupMenu.getMenu());
-
-
-
-                // handle menu item choices and clicks
-                popupMenu.setOnMenuItemClickListener(menuItem ->{
-                    if (menuItem.getItemId() == R.id.action_export_to_pdf){
-                        getPdfPermissions();
-                        pdfBookletGeneration();
-                        Toast.makeText(getContext(), "Exporting to PDF", Toast.LENGTH_SHORT).show();
-                    }
-                    return true;
-                });
-
-                popupMenu.show();
-
-            }
-        });
-
-        // set search text listener
+        // set search text listener for searchView
+        // set up callbacks to Activity to give search results
         noteSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -176,10 +180,13 @@ public class TopNavBarFragment extends Fragment {
 
     }
 
-    public interface OnSearchQueryChangeListener {
-        void onSearchQueryChanged(String query);
-    }
+    // ==============================
+    // REGION: PDF Generation
+    // ==============================
 
+    /**
+     * Checks for PDF permissions (write)
+     */
     private void getPdfPermissions() {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions( //Method of Fragment
@@ -198,24 +205,32 @@ public class TopNavBarFragment extends Fragment {
         }
     }
 
+    /**
+     * Generates the PDF Booklet
+     */
     private void pdfBookletGeneration() {
         folderId = getArguments().getString(ARG_FOLDER_ID);
-
         folderViewModel = new ViewModelProvider(this).get(FolderViewModel.class);
         noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
 
+        // take all notes synchronously, and create a pdf from it
         executorService.execute(() ->{
             folderNotes = folderViewModel.getAllNotesFromFolderOrderByLastEditedDateDescSync(folderId);
 
             Uri bookletPdfUri = generatePdf();
             if (Objects.nonNull(bookletPdfUri)) {
-                assert bookletPdfUri != null; // Redundant check for compiler
+                assert bookletPdfUri != null; // redundant check for compiler
                 openPdf(bookletPdfUri);
             }
         });
-
     }
 
+    /**
+     * Generate a PDF using custom draw values
+     * Currently only takes text and images
+     * Will skip & iterate over other media items
+     * @return
+     */
     private Uri generatePdf() {
         PdfDocument noteBooklet = new PdfDocument();
         final int PAGE_HEIGHT = 595;
@@ -242,7 +257,7 @@ public class TopNavBarFragment extends Fragment {
         int PAGE_BOTTOM = PAGE_HEIGHT - PAGE_MARGIN;
 
         int pageNumber = 0;
-        // TODO: Query to get all notes in folder ordered by creation date -> selectedNote List<Notes>
+
         for (Note note : folderNotes) {
             PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, pageNumber).create();
             PdfDocument.Page page = noteBooklet.startPage(pageInfo);
@@ -375,21 +390,16 @@ public class TopNavBarFragment extends Fragment {
             noteBooklet.finishPage(page);
         }
 
-            /*
-
-            File downloadFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            String fileName = "notebook.pdf";
-            File file = new File(downloadFolder, fileName);
-
-             */
+        // Create the internal URI link
         String fileExtension = ".pdf";
         String fileNamePrefix = "pdf_";
 
-        // Create appropriate filename with timestamp and create new file object
         String fileName = fileNamePrefix + System.currentTimeMillis() + fileExtension;
         File outputFile = new File(requireContext().getFilesDir(), fileName);
 
+        // Attempt to write to the file
         try {
+
             FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
             noteBooklet.writeTo(fileOutputStream);
             noteBooklet.close();
@@ -404,11 +414,23 @@ public class TopNavBarFragment extends Fragment {
         return FileProvider.getUriForFile(requireContext(), "com.example.journalapp.fileprovider", outputFile);
     }
 
+    /**
+     * Opens a PDF
+     * Specifically used after generating the PDF
+     * @param pdfUri
+     */
     private void openPdf(Uri pdfUri) {
         Log.i("SelectPdfContentsAct", "Pdf of given URI: " + pdfUri.toString());
         PdfViewerFragment pdfViewerFragment = PdfViewerFragment.newInstance(pdfUri);
         FragmentManager fragmentManager = getParentFragmentManager();
         pdfViewerFragment.show(fragmentManager, "audioPlayer");
+    }
+
+    /**
+     * Callback interface to associated Activity when search query changes
+     */
+    public interface OnSearchQueryChangeListener {
+        void onSearchQueryChanged(String query);
     }
 
 }
