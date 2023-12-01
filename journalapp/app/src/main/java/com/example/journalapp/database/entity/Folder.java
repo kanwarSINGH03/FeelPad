@@ -1,5 +1,7 @@
 package com.example.journalapp.database.entity;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -8,7 +10,11 @@ import androidx.room.PrimaryKey;
 import java.util.Objects;
 import java.util.UUID;
 
-
+/**
+ * An entity class used to create a Room database table called folder_table
+ * Represents a folder's metadata
+ * Has a one-to-many relationship with a Note
+ */
 @Entity(tableName = "folder_table")
 public class Folder {
 
@@ -24,14 +30,17 @@ public class Folder {
     private String create_date;
 
     @ColumnInfo(name ="total_emotion_value")
-    private int totalEmotionValue; // sum of all notes emotionValue
+    private int totalEmotionValue;
 
     @ColumnInfo(name = "num_items")
-    private int numItems; // should be calculate as a sum of all note items
+    private int numItems;
+
     @ColumnInfo(name = "icon_resource_id")
     private int iconResourceId;
+
     @ColumnInfo(name = "folder_color")
     private int folderColor;
+
     @ColumnInfo(name = "last_modified")
     private String lastModified;
 
@@ -41,7 +50,14 @@ public class Folder {
     @ColumnInfo(name = "password")
     private String password;
 
-    public Folder(String folderName, String create_date,int iconResourceId, int folderColor) {
+    /**
+     * Constructor to create a Folder entity
+     * @param folderName String name of the folder
+     * @param create_date String date in ISO 8601 format
+     * @param iconResourceId int representing a Drawable Resource for the icon
+     * @param folderColor int representing a Color Resource for the folder color
+     */
+    public Folder(String folderName, String create_date, @DrawableRes int iconResourceId, @ColorRes int folderColor) {
         this.folderId = UUID.randomUUID().toString();
         this.folderName = folderName;
         this.create_date = create_date;

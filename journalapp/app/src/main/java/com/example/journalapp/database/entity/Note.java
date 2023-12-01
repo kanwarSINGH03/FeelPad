@@ -28,10 +28,10 @@ public class Note {
     private String title;
 
     @ColumnInfo(name = "create_date")
-    private String createdDate; // iso8601 format
+    private String createdDate; // uses ISO 8601 format to be sorted in database
 
     @ColumnInfo(name = "last_edited_date")
-    private String lastEditedDate;
+    private String lastEditedDate; // uses ISO 8601 format to be sorted in database
 
     @ColumnInfo(name = "emotion")
     private int emotion; // This will hold an int value 1-5

@@ -9,8 +9,8 @@ import com.example.journalapp.database.entity.NoteItemEntity;
 import java.util.List;
 
 /**
- * Links two Entity databases together: Note & NoteItemEntity
- * Represents a one-to-many relationship between a Note entity and a NoteItemEntity
+ * Serves as a data structure to represent 1-to-many relationship between a Note and NoteItemEntities
+ * (SQLite can't store data structures)
  */
 public class NoteWithItems {
     @Embedded // indicates that fields of the Note class are to be treated as if they were part of this class

@@ -133,6 +133,17 @@ public class NoteRepository {
     }
 
     /**
+     * Update a Note's location variable using a NoteId
+     * @param noteId String noteId
+     * @param markerLocation String representing the location of a Note
+     */
+    public void updateNoteLocation(String noteId, String markerLocation){
+        NoteDatabase.databaseWriteExecutor.execute(() ->{
+            noteDao.updateNoteLocation(noteId, markerLocation);
+        });
+    }
+
+    /**
      * Delete a note from the database given the Note object
      * Also deletes the associated NoteFtsEntity
      * @param note Note object to be deleted
@@ -171,6 +182,15 @@ public class NoteRepository {
      */
     public LiveData<List<Note>> getAllNotesOrderedByLastEditedDateDesc() {
         return noteDao.getAllNotesOrderByLastEditedDateDesc();
+    }
+
+    /**
+     * Retrieve all notes from the last 30 days using a separate function to retrieve the string
+     * for the date 30 days ago
+     * @return a LiveData list containing notes only from the last 30 days
+     */
+    public LiveData<List<Note>> getNotesFromLast30Days(){
+        return noteDao.getNotesFromLast30Days(getThirtyDaysAgo());
     }
 
     // =================================
@@ -213,6 +233,11 @@ public class NoteRepository {
         });
     }
 
+    /**
+     * Retrieve the first NoteItem given a Note's id
+     * @param noteId String noteId
+     * @return LiveData containing a single NoteItemEntity
+     */
     public LiveData<NoteItemEntity> getFirstNoteItemByNoteId(String noteId){
         return noteDao.getFirstNoteItemByNoteId(noteId);
     }
@@ -294,44 +319,66 @@ public class NoteRepository {
         return noteDao.searchNotes(query);
     }
 
+    /**
+     * Regular search (inside a specific folder) for notes using title and note contents using FTS Table
+     * @param folderId String folderId
+     * @param query String query that the user is searching for
+     * @return a LiveData list of notes matching the search
+     */
     public LiveData<List<Note>> searchNotesInFolder(String folderId, String query){
         return noteDao.searchNotesInFolder(folderId, query);
     }
 
+    /**
+     * Regular note folder search with a combination of filtering a certain emotion (1-5)
+     * @param folderId String folderId
+     * @param query String query that the user is searching for
+     * @param emotion int from 1-5 representing the emotion of to filter for
+     * @return a LiveData list of notes matching the search and emotion filter
+     */
     public LiveData<List<Note>> searchNotesAndFilterEmotion(String folderId, String query, int emotion){
         return noteDao.searchNotesAndFilterEmotion(folderId, query, emotion);
     }
 
+    /**
+     * Regular note folder search with a combination of filtering between two dates
+     * @param folderId String folderId
+     * @param query String query that the user is searching for
+     * @param startDate String date in ISO 8601 format
+     * @param endDate String date in ISO 8601 format
+     * @return a LiveData list of notes matching the search and date filter
+     */
     public LiveData<List<Note>> searchNotesAndFilterDate(String folderId, String query, String startDate, String endDate){
         return noteDao.searchNotesAndFilterDate(folderId, query, startDate, endDate);
     }
 
+    /**
+     * Regular note folder search with filtering of a certain emotion between two dates
+     * @param folderId String folderId
+     * @param query String query that the user is searching for
+     * @param emotion int from 1-5 representing the emotion of to filter for
+     * @param startDate String date in the ISO 8601 format
+     * @param endDate String date in the ISO 8601 format
+     * @return
+     */
     public LiveData<List<Note>> searchNotesAndFilterEmotionDate(String folderId, String query, int emotion, String startDate, String endDate){
         return noteDao.searchNotesAndFilterEmotionDate(folderId, query, emotion, startDate, endDate);
     }
-
-    public void updateNoteLocation(String noteId, String markerLocation){
-        NoteDatabase.databaseWriteExecutor.execute(() ->{
-            noteDao.updateNoteLocation(noteId, markerLocation);
-        });
-    }
-
-    public LiveData<List<Note>> getNotesFromLast30Days(){
-        return noteDao.getNotesFromLast30Days(getThirtyDaysAgo());
-    }
-
-
 
     // ==============================
     // Internal Methods
     // ==============================
 
+    /**
+     * A function to get the string for the 30th day back
+     * @return a String date in ISO 8601 format representing the day 30 days ago from today
+     */
     private String getThirtyDaysAgo(){
-        SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC")); // Set the timezone to UTC
+        SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // this is ISO 8601
+        iso8601Format.setTimeZone(TimeZone.getTimeZone("CST"));
 
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -30);
+        calendar.add(Calendar.DAY_OF_YEAR, -30); // today - 30
         String thirtyDaysAgoIso = iso8601Format.format(calendar.getTime());
 
         return thirtyDaysAgoIso;

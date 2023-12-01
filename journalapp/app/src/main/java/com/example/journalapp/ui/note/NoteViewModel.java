@@ -140,6 +140,11 @@ public class NoteViewModel extends AndroidViewModel {
         return noteRepository.getNoteItemsForNoteSync(noteId);
     }
 
+    /**
+     * Update a Note's location variable using a NoteId
+     * @param noteId String noteId
+     * @param markerLocation String representing the location of a Note
+     */
     public void updateNoteLocation(String noteId, String markerLocation){
         noteRepository.updateNoteLocation(noteId, markerLocation);
     }

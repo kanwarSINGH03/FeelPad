@@ -69,6 +69,14 @@ public interface NoteDao {
     @Query("SELECT * FROM note_table WHERE folder_id = :folderId ORDER BY last_edited_date DESC")
     List<Note> getAllNotesFromFolderOrderByLastEditedDateDescSync(String folderId);
 
+    /**
+     * Retrieve all notes until 30 days ago
+     * @param thirtyDaysAgoIso String date in ISO 8601 format to query against
+     * @return
+     */
+    @Query("SELECT * FROM note_table WHERE create_date >= :thirtyDaysAgoIso ORDER BY create_date DESC")
+    LiveData<List<Note>> getNotesFromLast30Days(String thirtyDaysAgoIso);
+
     // ==============================
     // Single NoteItem Queries
     // ==============================
@@ -81,12 +89,20 @@ public interface NoteDao {
     @Update
     void updateNoteItem(NoteItemEntity noteItem);
 
+    @Query("UPDATE note_table SET marker_title = :markerLocation WHERE id = :noteId ")
+    void updateNoteLocation(String noteId, String markerLocation);
     // Deletes a NoteItemEntity
     @Delete
     void deleteNoteItem(NoteItemEntity noteItem);
 
+    /**
+     * Get the first NoteItem of the Note given the noteId
+     * Specifically for use for Note ViewHolders
+     */
     @Query("SELECT * FROM note_items WHERE note_id = :noteId AND order_index = 0")
     LiveData<NoteItemEntity> getFirstNoteItemByNoteId(String noteId);
+
+    // Update a note's location
 
     // ==============================
     // <List> NoteItem Queries
@@ -136,76 +152,103 @@ public interface NoteDao {
     @Query("DELETE FROM NoteFtsEntity WHERE noteId = :noteId")
     void deleteNoteFts(String noteId);
 
+    // Retrieve a NoteFtsEntity given the noteId
+    @Query("SELECT rowid, noteId, combinedText FROM NoteFtsEntity WHERE noteId = :noteId")
+    NoteFtsEntity getNoteFtsById(String noteId);
+
+
     // ==============================
     // Search Queries
     // ==============================
 
     /**
-     * Searches notes by title or FTS combined content
+     * Regular search for notes using title and note contents using FTS Table
      */
     @Query("SELECT * FROM note_table WHERE title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)")
     LiveData<List<Note>> searchNotes(String query);
 
+    /**
+     * Regular search (inside a specific folder) for notes using title and note contents using FTS Table
+     */
     @Query("SELECT * FROM note_table WHERE folder_id = :folderId AND (title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)) ORDER BY last_edited_date DESC")
     LiveData<List<Note>> searchNotesInFolder(String folderId, String query);
 
+    /**
+     * Regular note folder search with a combination of filtering a certain emotion (1-5)
+     * @param emotion int from 1-5 represents an emotion
+     */
     @Query("SELECT * FROM note_table WHERE folder_id = :folderId AND emotion = :emotion AND (title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)) ORDER BY last_edited_date DESC")
     LiveData<List<Note>> searchNotesAndFilterEmotion(String folderId, String query, int emotion);
 
+    /**
+     * Regular note folder search with a combination of filtering between two dates
+     * @param startDate String date in ISO 8601 format
+     * @param endDate String date in ISO 8601 format
+     */
     @Query("SELECT * FROM note_table WHERE folder_id = :folderId AND create_date BETWEEN :startDate AND :endDate AND (title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)) ORDER BY last_edited_date DESC")
     LiveData<List<Note>> searchNotesAndFilterDate(String folderId, String query, String startDate, String endDate);
 
+    /**
+     * Regular note folder search with filtering of a certain emotion between two dates
+     * @param emotion int from 1-5 represents an emotion
+     * @param startDate String date in ISO 8601 format
+     * @param endDate String date in ISO 8601 format
+     */
     @Query("SELECT * FROM note_table WHERE folder_id = :folderId AND emotion = :emotion AND create_date BETWEEN :startDate AND :endDate AND (title LIKE '%' || :query || '%' OR id IN (SELECT noteId FROM NoteFtsEntity WHERE NoteFtsEntity MATCH :query)) ORDER BY last_edited_date DESC")
     LiveData<List<Note>> searchNotesAndFilterEmotionDate(String folderId, String query, int emotion, String startDate, String endDate);
 
-
-    // Retrieves all notes with selected title
-    @Query("SELECT * FROM note_table WHERE title = :providedTitle")
-    LiveData<List<Note>> getNotesWithTitle(String providedTitle);
-
-    @Query("SELECT rowid, noteId, combinedText FROM NoteFtsEntity WHERE noteId = :noteId")
-    NoteFtsEntity getNoteFtsById(String noteId);
-
-
-    @Query("DELETE FROM note_table")
-    void deleteAllNotes();
-
-
     // ==============================
-    // Folder Queries
+    // Single Folder Queries
     // ==============================
 
+    // Inserts a new folder
     @Insert
     void insertFolder(Folder folder);
 
+    // Updates an existing folder
     @Update
     void updateFolder(Folder folder);
-    @Delete
-    void deleteFolder(Folder folder);
 
+    // Update an existing folder's title
     @Query("UPDATE folder_table SET folder_name = :providedTitle WHERE id = :folderId")
     void updateFolderTitle(String providedTitle, String folderId);
 
+    /**
+     * Updates an existing folder's last modified timestamp
+     * @param lastModified String date in ISO 8601 format
+     */
     @Query("UPDATE folder_table SET last_modified = :lastModified WHERE id = :folderId")
     void updateFolderTimestamp(String folderId, String lastModified);
 
-    @Query("SELECT * FROM folder_table")
-    LiveData<List<Folder>> getAllFolders();
+    // Delete an existing folder
+    @Delete
+    void deleteFolder(Folder folder);
+
+    // Retrieve a folder given the ID
     @Query("SELECT * FROM folder_table WHERE id = :folderId")
     Folder getFolderById(String folderId);
 
+    // ==============================
+    // List<Folder> Queries
+    // ==============================
+
+    // Retrieve all folders
+    @Query("SELECT * FROM folder_table")
+    LiveData<List<Folder>> getAllFolders();
+
+    /**
+     * Retrieve all notes with a Folder ID asynchronously
+     * This is ASYNCHRONOUS and can be done using the main ui thread.
+     */
     @Query("SELECT * FROM note_table WHERE folder_id = :folderId")
     LiveData<List<Note>> getNotesByFolderId(String folderId);
 
+    /**
+     * Retrieve all notes with a Folder ID synchronously
+     * This is SYNCHRONOUS so it must be done using a background thread (executorService)
+     */
     @Query("SELECT * FROM note_table WHERE folder_id = :folderId")
     List<Note> getNotesByFolderIdSync(String folderId);
-
-    @Query("UPDATE note_table SET marker_title = :markerLocation WHERE id = :noteId ")
-    void updateNoteLocation(String noteId, String markerLocation);
-
-    @Query("SELECT * FROM note_table WHERE create_date >= :thirtyDaysAgoIso ORDER BY create_date DESC")
-    LiveData<List<Note>> getNotesFromLast30Days(String thirtyDaysAgoIso);
-
 
 }
 

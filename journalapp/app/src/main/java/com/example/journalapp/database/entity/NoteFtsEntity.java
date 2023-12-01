@@ -24,8 +24,8 @@ public class NoteFtsEntity {
 
     /**
      * Constructor for NoteFtsEntity
-     * @param noteId
-     * @param combinedText
+     * @param noteId String id of the attached note
+     * @param combinedText String combined text that is stripped from HTML tags (regular text)
      */
     public NoteFtsEntity(String noteId, String combinedText){
         this.noteId = noteId;

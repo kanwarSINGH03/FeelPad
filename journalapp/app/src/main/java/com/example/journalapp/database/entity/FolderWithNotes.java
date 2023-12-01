@@ -8,6 +8,10 @@ import com.example.journalapp.database.entity.Note;
 
 import java.util.List;
 
+/**
+ * Serves as a data structure to represent 1-to-many relationship between a Folder and Note(s)
+ * (SQLite can't store data structures)
+ */
 public class FolderWithNotes {
     @Embedded
     public Folder folder;
