@@ -7,7 +7,7 @@
 3. How to make an emulator
 > - Click on Device Manager on the write side of the window![ALT](./images_readme/6.png)
 > - Click on Create Device ![ALT](./images_readme/7.png) ![ALT](./images_readme/8.png) ![ALT](./images_readme/9.png)
->   ![ALT](./images_readme/10.png)
+>   ![ALT](./images_readme/10.png) ![ALT](./images_readme/11.png)
 
 
 
