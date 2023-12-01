@@ -83,7 +83,7 @@ public class LaunchActivity extends AppCompatActivity implements NameDialogFragm
         SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("isFirstTime", isFirstTime);
-        editor.apply();
+        editor.commit();
     }
 
     /**
