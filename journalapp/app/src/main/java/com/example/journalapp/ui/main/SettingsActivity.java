@@ -16,6 +16,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.journalapp.R;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.shape.Shapeable;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -73,6 +75,21 @@ public class SettingsActivity extends AppCompatActivity {
             saveThemeChoice(selectedColor);
             applyTheme(selectedColor);
             Toast.makeText(this,"Loading Theme Changes",Toast.LENGTH_SHORT).show();
+        });
+
+        // set up background
+        ShapeableImageView b1 = findViewById(R.id.settings_bg1);
+        ShapeableImageView b2 = findViewById(R.id.settings_bg2);
+        ShapeableImageView b3 = findViewById(R.id.settings_bg3);
+
+        b1.setOnClickListener(v ->{
+
+        });
+        b2.setOnClickListener(v ->{
+
+        });
+        b3.setOnClickListener(v ->{
+
         });
     }
 
