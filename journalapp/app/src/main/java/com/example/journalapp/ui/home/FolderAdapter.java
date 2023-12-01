@@ -36,6 +36,7 @@ import java.util.List;
 public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewHolder> {
 
     FolderClickListener folderClickListener;
+    FolderLongClickListener folderLongClickListener;
 
     public FolderAdapter(@NonNull DiffUtil.ItemCallback<Folder> diffCallback) {
         super(diffCallback);
@@ -58,11 +59,16 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
 
             folderClickListener.onFolderClicked(position);
 
-            // need to pass the folder_id to main note list activity
-            Intent intent = new Intent(v.getContext(), MainNoteListActivity.class);
-            intent.putExtra("folder_id", folder.getFolderId());
-            v.getContext().startActivity(intent);
         });
+
+        holder.itemView.setOnLongClickListener(v -> {
+            if (folderLongClickListener != null) {
+                folderLongClickListener.onFolderLongClicked(position);
+            }
+            return true;
+        });
+
+
 
     }
 
@@ -81,6 +87,14 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
 
     public interface FolderClickListener {
         void onFolderClicked(int position);
+    }
+
+    public interface FolderLongClickListener {
+        void onFolderLongClicked(int position);
+    }
+
+    public void setFolderLongClickListener(FolderLongClickListener listener){
+        this.folderLongClickListener = listener;
     }
 
     public void setFolderClickListener(FolderClickListener listener){

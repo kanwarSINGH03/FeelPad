@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -18,18 +22,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.journalapp.R;
 import com.example.journalapp.database.entity.Folder;
-import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.ui.main.BottomNavBarFragment;
 import com.example.journalapp.ui.main.MainNoteListActivity;
 import com.example.journalapp.ui.main.MainViewModel;
 import com.example.journalapp.ui.main.TopNavBarFragment;
 import com.example.journalapp.utils.ConversionUtil;
+import com.example.journalapp.utils.CryptoUtil;
 import com.example.journalapp.utils.GraphHelperUtil;
 import com.github.mikephil.charting.charts.BarChart;
 import com.google.android.material.button.MaterialButton;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
@@ -139,6 +140,11 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
 
         folderAdapter.setFolderClickListener(this);
 
+        folderAdapter.setFolderLongClickListener(position -> {
+            Folder folder = folderAdapter.getFolderAt(position);
+            showPasswordDialogEncrypt(folder);
+        });
+
         // callback
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(folderRecyclerView);
@@ -148,6 +154,9 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
     @Override
     public void onFolderClicked(int position){
         this.selectedFolderPosition = position;
+
+        showPasswordDialogOpen(folderAdapter.getFolderAt(position));
+
     }
 
     @Override
@@ -207,5 +216,89 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
 
     }
 
+    public void showPasswordDialogEncrypt(Folder folder) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(input);
 
+        if (folder.getEncrypted()) {
+            builder.setTitle("Enter Password to Remove Encryption");
+            builder.setPositiveButton("Decrypt", (dialog, which) -> {
+                String enteredPassword = input.getText().toString();
+
+                // decrypt the stored password to read
+                String decryptedPassword = CryptoUtil.decrypt(folder.getPassword());
+                if (enteredPassword.equals(decryptedPassword)) {
+                    folder.setIsEncrypted(false);
+                    folder.setPassword(null);
+                    updateFolderInDatabase(folder);
+                } else {
+                    Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            builder.setTitle("Encrypt Folder");
+            builder.setPositiveButton("Encrypt", (dialog, which) -> {
+                String password = input.getText().toString();
+                if (!password.isEmpty()){
+
+                    // encrypt password before saving
+                    String encryptedPassword = CryptoUtil.encrypt(password);
+                    folder.setIsEncrypted(true);
+                    folder.setPassword(encryptedPassword);
+                    updateFolderInDatabase(folder);
+
+                }
+                else{
+                    Toast.makeText(this, "Password cannot be empty", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
+
+    public void showPasswordDialogOpen(Folder folder) {
+
+        if (folder.getEncrypted()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+
+
+            builder.setTitle("Enter Password to Open Folder");
+            builder.setPositiveButton("Decrypt", (dialog, which) -> {
+                String enteredPassword = input.getText().toString();
+                // Decrypt the stored password
+                String decryptedPassword = CryptoUtil.decrypt(folder.getPassword());
+
+                if (enteredPassword.equals(decryptedPassword)) {
+
+                    // if password is correct
+                    Intent intent = new Intent(this, MainNoteListActivity.class);
+                    intent.putExtra("folder_id", folder.getFolderId());
+                    startActivity(intent);
+                } else {
+
+                    Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show();
+                }
+            });
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+            builder.show();
+        }
+        else{
+            // go straight into the intent
+            Intent intent = new Intent(this, MainNoteListActivity.class);
+            intent.putExtra("folder_id", folder.getFolderId());
+            startActivity(intent);
+        }
+    }
+    private void updateFolderInDatabase(Folder folder) {
+        new Thread(()-> {
+            folderViewModel.updateFolder(folder);
+        }).start();
+    }
 }

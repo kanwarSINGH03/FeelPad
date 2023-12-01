@@ -69,5 +69,9 @@ public class FolderViewModel extends AndroidViewModel {
         return folderRepository.getAllNotesFromFolderOrderByLastEditedDateDescSync(folderId);
     }
 
+    public void updateFolder(Folder folder){
+        folderRepository.updateFolder(folder);
+    }
+
 
 }
