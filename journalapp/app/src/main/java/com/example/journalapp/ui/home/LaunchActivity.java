@@ -53,7 +53,7 @@ public class LaunchActivity extends AppCompatActivity implements NameDialogFragm
     }
 
     private boolean isFirstTime() {
-        SharedPreferences preferences = getSharedPreferences("MyPreferences", MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
         return preferences.getBoolean("isFirstTime", true);
     }
 
@@ -64,7 +64,7 @@ public class LaunchActivity extends AppCompatActivity implements NameDialogFragm
     }
 
     private void setFirstTimeFlag(boolean isFirstTime) {
-        SharedPreferences preferences = getSharedPreferences("MyPreferences", MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("isFirstTime", isFirstTime);
         editor.apply();
@@ -73,7 +73,7 @@ public class LaunchActivity extends AppCompatActivity implements NameDialogFragm
     @Override
     public void onNameEntered(String name) {
         // Save the name in SharedPreferences or handle it as needed
-        SharedPreferences preferences = getSharedPreferences("MyPreferences", MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("PreferredName", name);
         editor.apply();

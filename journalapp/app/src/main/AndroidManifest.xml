@@ -51,11 +51,13 @@
             android:name=".ui.note.MapsActivity"
             android:exported="false"
             android:label="@string/title_activity_maps"
+            android:launchMode="singleTop"
             />
         <activity
             android:name=".ui.home.LaunchActivity"
             android:exported="true"
-            android:label="FeelPad">
+            android:label="FeelPad"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -72,12 +74,14 @@
             android:name=".ui.main.MainNoteListActivity"
             android:exported="false"
             android:label="MainNoteListActivity"
+            android:launchMode="singleTop"
             />
 
         <activity
             android:name=".ui.main.SettingsActivity"
             android:exported="false"
             android:label="SettingsActivity"
+            android:launchMode="singleTop"
             />
 
         <provider
@@ -90,7 +94,10 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".ui.note.NoteActivity" />
+        <activity android:name=".ui.note.NoteActivity"
+            android:label="NoteActivity"
+            android:exported="true"
+            android:launchMode="singleTop"/>
 
     </application>
 

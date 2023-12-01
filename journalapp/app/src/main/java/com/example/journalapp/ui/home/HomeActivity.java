@@ -1,5 +1,6 @@
 package com.example.journalapp.ui.home;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
@@ -7,6 +8,8 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,16 +28,23 @@ import com.example.journalapp.database.entity.Folder;
 import com.example.journalapp.ui.main.BottomNavBarFragment;
 import com.example.journalapp.ui.main.MainNoteListActivity;
 import com.example.journalapp.ui.main.MainViewModel;
+import com.example.journalapp.ui.main.SettingsActivity;
 import com.example.journalapp.ui.main.TopNavBarFragment;
 import com.example.journalapp.utils.ConversionUtil;
 import com.example.journalapp.utils.CryptoUtil;
 import com.example.journalapp.utils.GraphHelperUtil;
 import com.github.mikephil.charting.charts.BarChart;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
 public class HomeActivity extends AppCompatActivity implements FolderAdapter.FolderClickListener {
+
+    // UI Components
+    private TextView userNameTextView;
+    private MaterialButton changeNameBtn;
+    private MaterialButton themesBtn;
 
     private FolderAdapter folderAdapter;
     private FolderViewModel folderViewModel;
@@ -103,20 +113,66 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
     }
 
     private void initButtons(){
-        TextView userNameTextView = findViewById(R.id.userNameTextView);
-        MaterialButton btn1 = findViewById(R.id.button1);
-        MaterialButton btn2 = findViewById(R.id.button2);
+        userNameTextView = findViewById(R.id.userNameTextView);
+        changeNameBtn = findViewById(R.id.home_left_btn);
+        themesBtn = findViewById(R.id.home_right_btn);
 
-        SharedPreferences preferences = getSharedPreferences("MyPreferences", MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
         userNameTextView.setText(preferences.getString("PreferredName","Esteemed Guest"));
-        btn1.setOnClickListener(v ->{
-            Intent intent = new Intent(this, MainNoteListActivity.class);
-            startActivity(intent);
 
+
+        changeNameBtn.setOnClickListener(v ->{
+            showNameDialog();
+
+        });
+
+        themesBtn.setOnClickListener(v ->{
+            // Second Button to lead user to themes
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
         });
 
         // set on click listeners
     }
+
+    private void showNameDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("What name would you like to be called by?");
+
+        // inflate layout
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_change_name, null);
+        builder.setView(dialogView);
+
+        TextInputEditText editTextName = dialogView.findViewById(R.id.edit_text_name);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String name = editTextName.getText().toString();
+
+                // Change the name to new text and save to SharedPreferences
+                userNameTextView.setText(name);
+
+                SharedPreferences preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("PreferredName", name);
+                editor.apply();
+
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+
 
     private void createNoteObserver(){
         folderViewModel = new ViewModelProvider(this).get(FolderViewModel.class);
@@ -300,5 +356,11 @@ public class HomeActivity extends AppCompatActivity implements FolderAdapter.Fol
         new Thread(()-> {
             folderViewModel.updateFolder(folder);
         }).start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
     }
 }
