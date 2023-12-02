@@ -29,11 +29,11 @@
 > ![ALT](./images_readme/25.png)
 > - Here you click on go to google maps platform and copy the key![ALT](./images_readme/26.png)
 > - Click on keys and credentials to view information related to key ![ALT](./images_readme/27.png)
->![ALT](./images_readme/28.png)
->![ALT](./images_readme/29.png)
->![ALT](./images_readme/30.png)
->![ALT](./images_readme/31.png)
->![ALT](./images_readme/32.png)
+> - Now go to res>values>strings.xml ![ALT](./images_readme/28.png)
+> - Copy paste the Key similar to highlighted format![ALT](./images_readme/29.png)
+> - Now go to Android manifest file and look for maps meta data tag![ALT](./images_readme/30.png)
+> - Write the name of the key as highlighted![ALT](./images_readme/31.png)
+> - Maps appear like this![ALT](./images_readme/32.png)
 
 
 
