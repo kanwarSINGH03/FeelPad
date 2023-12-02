@@ -13,7 +13,7 @@
 4. How to get Maps API key and to use it
 >   - Go to android manifest file and use the link highlighted ![ALT](./images_readme/12.png)
 >   - Now follow the steps on the website ![ALT](./images_readme/13.png)
->  - Click on credentials page ![ALT](./images_readme/14.> png) 
+>  - Click on credentials page ![ALT](./images_readme/14.png) 
 > - Agree to terms and conditions![ALT](./images_readme/15.png) 
 > - Go to keys and credentials and create a project 
 > ![ALT](./images_readme/16.png) 
