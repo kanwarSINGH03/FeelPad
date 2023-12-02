@@ -16,8 +16,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.journalapp.database.NoteDao;
 import com.example.journalapp.database.NoteDatabase;
+import com.example.journalapp.database.entity.Folder;
 import com.example.journalapp.database.entity.Note;
 import com.example.journalapp.database.entity.NoteFtsEntity;
+import com.example.journalapp.utils.ConversionUtil;
 
 import org.junit.After;
 import org.junit.Before;
@@ -28,10 +30,10 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 /**
- * Tests for NoteDao Queries
+ * Tests for NoteDao & Search Queries
  */
 @RunWith(AndroidJUnit4.class)
-public class NoteDaoTest {
+public class SearchFeatureDaoTest {
     private NoteDatabase db;
     private NoteDao noteDao;
 
@@ -94,8 +96,11 @@ public class NoteDaoTest {
      */
     @Test
     public void searchNotes() throws Exception {
+
+        Folder folder = new Folder("Test Folder", ConversionUtil.getDateAsString(), 1, 1);
+        noteDao.insertFolder(folder);
         // insert a test note
-        Note note = new Note("Test Title", "Test Date", 0);
+        Note note = new Note("Test Title", "Test Date", 0, folder.getFolderId());
         noteDao.insertNote(note);
 
         // Search for notes containing "Test" in the title or content

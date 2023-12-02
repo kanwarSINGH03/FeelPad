@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * Makes sure that Repository is having the correct access to the NoteDao Queries
  */
 @RunWith(RobolectricTestRunner.class)
-public class NoteRepositoryUnitTests {
+public class SearchFeatureRepositoryTest {
     private NoteRepository repository;
     private NoteDao noteDao;
     private NoteDatabase database;
