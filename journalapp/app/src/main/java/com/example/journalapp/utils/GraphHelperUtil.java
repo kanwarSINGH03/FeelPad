@@ -91,7 +91,7 @@ public class GraphHelperUtil {
 
 
     }
-    private static float findAverageOfEachEmotion(List<Note> allNotes) {
+    public static float findAverageOfEachEmotion(List<Note> allNotes) {
         if (allNotes.isEmpty()) {
             return 0f;
         }
