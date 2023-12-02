@@ -3,7 +3,10 @@
 ![ALT](./images_readme/1.png)
 2. Project32 installation process on android studio
 > First install Android Studio from Internet
->![ALT](./images_readme/2.png) ![ALT](./images_readme/3.png) ![ALT](./images_readme/4.png) ![ALT](./images_readme/5.png)
+>![ALT](./images_readme/2.png) 
+>![ALT](./images_readme/3.png) 
+> - Open the journal app folder inside Project32 ![ALT](./images_readme/4.png) 
+>![ALT](./images_readme/5.png)
 
 3. How to make an emulator
 > - Click on Device Manager on the write side of the window![ALT](./images_readme/6.png)
@@ -34,6 +37,8 @@
 > - Now go to Android manifest file and look for maps meta data tag![ALT](./images_readme/30.png)
 > - Write the name of the key as highlighted![ALT](./images_readme/31.png)
 > - Maps appear like this![ALT](./images_readme/32.png)
+
+4. Note whenever the map opens , it will never show correct device location(on the emulator) due to privacy reasons and the device location is by default set to google headquarters. However, correcct device can be seen on an actual android phone. Click on round circle to go to device location and click on location icon to go to saved location.
 
 
 
