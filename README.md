@@ -9,5 +9,8 @@
 > - Click on Create Device ![ALT](./images_readme/7.png) ![ALT](./images_readme/8.png) ![ALT](./images_readme/9.png)
 >   ![ALT](./images_readme/10.png) ![ALT](./images_readme/11.png)
 
+4. How to get Maps API key and how to use it
+>   - Go to android manifest file and use the link highlighted ![ALT](./images_readme/12.png)
+
 
 
