@@ -28,6 +28,13 @@
 > ![ALT](./images_readme/24.png) 
 > ![ALT](./images_readme/25.png)
 > - Here you click on go to google maps platform and copy the key![ALT](./images_readme/26.png)
+> - Click on keys and credentials to view information related to key ![ALT](./images_readme/27.png)
+>![ALT](./images_readme/28.png)
+>![ALT](./images_readme/29.png)
+>![ALT](./images_readme/30.png)
+>![ALT](./images_readme/31.png)
+>![ALT](./images_readme/32.png)
+
 
 
 
