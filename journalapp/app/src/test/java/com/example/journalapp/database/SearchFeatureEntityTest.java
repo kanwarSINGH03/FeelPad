@@ -10,7 +10,7 @@ import org.junit.Test;
 /**
  * NoteFtsEntity Unit Tests
  */
-public class NoteFtsEntityUnitTests {
+public class SearchFeatureEntityTest {
 
     private NoteFtsEntity noteFtsEntity;
 
